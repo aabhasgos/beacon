@@ -70,9 +70,9 @@ export default function LoginPage() {
         }
       }
 
-      // If Supabase OAuth did not redirect, use email provided or testing fallback
-      const targetEmail = (email || "test.student@beacon.dev").trim();
-      const derivedName = email ? email.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Test Student";
+      // If Supabase OAuth did not redirect, use email provided or primary account
+      const targetEmail = (email || "aabhasgos2@gmail.com").trim();
+      const derivedName = email ? email.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "Aabhas Goswami";
       const res = await fetch("/api/auth/google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
