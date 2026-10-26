@@ -9,7 +9,8 @@ export function getDb(): Database.Database {
     return dbInstance;
   }
 
-  const dbDirectory = path.join(process.cwd(), "data");
+  const isServerless = Boolean(process.env.VERCEL) || Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME);
+  const dbDirectory = isServerless ? "/tmp" : path.join(process.cwd(), "data");
   if (!fs.existsSync(dbDirectory)) {
     fs.mkdirSync(dbDirectory, { recursive: true });
   }
@@ -17,7 +18,11 @@ export function getDb(): Database.Database {
   const dbPath = path.join(dbDirectory, "beacon.db");
   const db = new Database(dbPath, { timeout: 15000 });
   try {
-    db.pragma("journal_mode = WAL");
+    if (!isServerless) {
+      db.pragma("journal_mode = WAL");
+    } else {
+      db.pragma("journal_mode = DELETE");
+    }
     db.pragma("busy_timeout = 15000");
   } catch (e) {
     // ignore

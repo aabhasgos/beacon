@@ -1,9 +1,11 @@
 import fs from "fs";
 import path from "path";
 
-const CERTIFICATES_DIR = path.join(process.cwd(), "storage", "certificates");
-const RESUMES_DIR = path.join(process.cwd(), "storage", "resumes");
-const AVATARS_DIR = path.join(process.cwd(), "storage", "avatars");
+const isServerless = Boolean(process.env.VERCEL) || Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME);
+const baseStorageDir = isServerless ? path.join("/tmp", "storage") : path.join(process.cwd(), "storage");
+const CERTIFICATES_DIR = path.join(baseStorageDir, "certificates");
+const RESUMES_DIR = path.join(baseStorageDir, "resumes");
+const AVATARS_DIR = path.join(baseStorageDir, "avatars");
 
 function ensureDirectoryExists(dir: string) {
   if (!fs.existsSync(dir)) {
