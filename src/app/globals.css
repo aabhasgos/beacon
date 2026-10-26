@@ -1,26 +1,206 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --primary-light: #EEF2FF;
+  --emerald: #10B981;
+  --amber: #F59E0B;
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+  --bg-page: #F8FAFC;
+  --card-bg: #FFFFFF;
+  --border-color: #E2E8F0;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html.dark {
+  --primary: #6366F1;
+  --primary-hover: #4F46E5;
+  --primary-light: #1E1B4B;
+  --emerald: #10B981;
+  --amber: #F59E0B;
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --bg-page: #090D16;
+  --card-bg: #111827;
+  --border-color: #1F293D;
+  color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+html, body {
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Base link behavior: do NOT force color: inherit unlayered as that breaks utility text colors */
+a {
+  text-decoration: none;
+}
+
+/* Light Mode High-Contrast Typography & Button Guarantees */
+html:not(.dark) .text-slate-950 {
+  color: #020617 !important;
+}
+
+html:not(.dark) .text-slate-900 {
+  color: #0F172A !important;
+}
+
+html:not(.dark) .text-slate-800 {
+  color: #1E293B !important;
+}
+
+html:not(.dark) .text-slate-700 {
+  color: #334155 !important;
+}
+
+/* Light mode white buttons must always display obsidian dark text */
+html:not(.dark) .bg-white.text-slate-950,
+html:not(.dark) .bg-white .text-slate-950 {
+  color: #020617 !important;
+}
+
+/* Dark mode global overrides for consistent, high-contrast viewing */
+html.dark body {
+  background-color: #090D16 !important;
+  color: #F8FAFC !important;
+}
+
+html.dark header {
+  background-color: #0E1424 !important;
+  border-color: #24334C !important;
+}
+
+html.dark aside {
+  background-color: #0E1424 !important;
+  border-color: #24334C !important;
+}
+
+html.dark .bg-white {
+  background-color: #111827 !important;
+  border-color: #24334C !important;
+  color: #F8FAFC !important;
+}
+
+/* Elevated nested containers inside dark cards */
+html.dark .bg-slate-50 {
+  background-color: #162032 !important;
+  border-color: #24334C !important;
+}
+
+html.dark .bg-slate-100 {
+  background-color: #1E2B42 !important;
+  border-color: #2D3E5D !important;
+  color: #F8FAFC !important;
+}
+
+/* High contrast text hierarchy for dark mode */
+html.dark .text-slate-950,
+html.dark .text-slate-900,
+html.dark .text-slate-800 {
+  color: #FFFFFF !important;
+}
+
+html.dark .text-slate-700 {
+  color: #E2E8F0 !important;
+}
+
+html.dark .text-slate-600 {
+  color: #CBD5E1 !important;
+}
+
+html.dark .text-slate-500 {
+  color: #94A3B8 !important;
+}
+
+html.dark .text-slate-400 {
+  color: #94A3B8 !important;
+}
+
+html.dark .border-slate-100,
+html.dark .border-slate-200,
+html.dark .border-slate-300 {
+  border-color: #24334C !important;
+}
+
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #162032 !important;
+  border-color: #2D3E5D !important;
+  color: #FFFFFF !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748B !important;
+}
+
+/* Badges & highlights in dark mode */
+html.dark .bg-indigo-50 {
+  background-color: #1E1B4B !important;
+  color: #C7D2FE !important;
+  border-color: #3730A3 !important;
+}
+
+html.dark .bg-indigo-100 {
+  background-color: #312E81 !important;
+  color: #E0E7FF !important;
+  border-color: #4338CA !important;
+}
+
+html.dark .text-indigo-700,
+html.dark .text-indigo-800,
+html.dark .text-indigo-900 {
+  color: #A5B4FC !important;
+}
+
+html.dark .bg-emerald-50 {
+  background-color: #064E3B !important;
+  color: #6EE7B7 !important;
+  border-color: #047857 !important;
+}
+
+html.dark .text-emerald-800,
+html.dark .text-emerald-900 {
+  color: #A7F3D0 !important;
+}
+
+/* Friendly smooth animations and scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+html.dark ::-webkit-scrollbar-track {
+  background: #0E1424;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
