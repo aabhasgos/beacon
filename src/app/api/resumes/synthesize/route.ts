@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     const projects = db.prepare("SELECT * FROM projects WHERE user_id = ? ORDER BY rubric_score DESC, created_at DESC").all(userId) as any[];
     const certificates = db.prepare("SELECT * FROM certificates WHERE user_id = ? ORDER BY created_at DESC").all(userId) as any[];
     const primaryResume = db.prepare("SELECT * FROM resumes WHERE user_id = ? ORDER BY is_primary DESC, uploaded_at DESC LIMIT 1").get(userId) as any;
-    const verifiedSkills = db.prepare("SELECT skill_name, category, provenance FROM skills WHERE user_id = ?").all(userId) as any[];
+    const verifiedSkills = db.prepare("SELECT skill_name, level, provenance FROM skill_claims WHERE user_id = ?").all(userId) as any[];
 
     // Extract all skills from resume and skills table
     let parsedSkillsList: string[] = [];
