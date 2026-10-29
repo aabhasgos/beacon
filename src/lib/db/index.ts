@@ -435,6 +435,7 @@ export function initDatabase(db: Database.Database) {
     try { db.exec("ALTER TABLE learning_tasks ADD COLUMN evaluation_score INTEGER;"); } catch (e) {}
     try { db.exec("ALTER TABLE learning_tasks ADD COLUMN evaluation_feedback TEXT;"); } catch (e) {}
     try { db.exec("ALTER TABLE learning_tasks ADD COLUMN task_type TEXT;"); } catch (e) {}
+    try { db.exec("ALTER TABLE learning_tasks ADD COLUMN recruiter_impact TEXT;"); } catch (e) {}
 
     seedInitialData(db);
   } catch (e) {
