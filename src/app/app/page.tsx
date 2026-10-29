@@ -22,7 +22,7 @@ import {
   IconShield,
 } from "@/components/icons/Icons";
 
-// Curated live ecosystem items tailored for addictive high-signal engineering browsing
+// Curated live ecosystem items tailored for high-signal engineering browsing
 const ECOSYSTEM_STREAM_ITEMS = [
   {
     id: "eco_sih_2026",
@@ -118,85 +118,85 @@ const ECOSYSTEM_STREAM_ITEMS = [
     organizerType: "Big Tech",
     badge: "Global Tech Fellowship",
     timestamp: "12 hours ago",
-    highlightText: "₹1,15,000/month stipend + comprehensive corporate housing and mentorship.",
-    description: "Development internship program designed for 2nd and 3rd-year undergraduate students. Combines hands-on software engineering with technical development and direct mentorship from Google senior engineers.",
-    tags: ["Google India", "Data Structures", "C++", "Java", "Python"],
+    highlightText: "₹1,15,000/month stipend + 1:1 Senior Engineering Mentorship + Bangalore / Hyderabad campus.",
+    description: "Student Training in Engineering Program (STEP) for undergraduate students. Focuses on systems software, machine learning algorithms, and planetary-scale distributed infrastructure with dedicated mentor fellows.",
+    tags: ["Google India", "STEP 2026", "C++", "Java", "Data Structures"],
     stipendOrPrize: "₹1,15,000 / month",
-    eligibility: "2nd / 3rd Year B.Tech / B.E. Computer Science",
-    primaryActionLabel: "Apply with Audited Passport",
+    eligibility: "1st & 2nd Year Computer Science / IT Undergraduates",
+    primaryActionLabel: "View Full Opportunity Details",
     primaryActionHref: "/app/opportunities",
     externalUrl: "https://careers.google.com/students",
-    stats: { likes: 672, bookmarks: 390 },
+    stats: { likes: 671, bookmarks: 382 },
     verifiedProof: true,
   },
   {
-    id: "eco_proof_campusone",
-    channel: "peer-proof",
-    channelLabel: "Peer Proof of Work",
-    title: "CampusOne — Integrated Higher Education ERP & Cryptographic Ledger Mesh",
-    organizer: "Full-Stack Architecture Showcase",
-    organizerMonogram: "C1",
-    organizerType: "Production System",
-    badge: "Beacon Rubric: 92 / 100",
-    timestamp: "1 day ago",
-    highlightText: "Production multi-tier web application benchmarked to 1,500 req/sec peak concurrency.",
-    description: "Engineered with Next.js 14 App Router, SQLite/PostgreSQL transactional isolation, and role-based access control (RBAC). Validated on Beacon cryptographic proof ledger.",
-    tags: ["Next.js", "TypeScript", "PostgreSQL", "RBAC", "Docker"],
-    stipendOrPrize: "Beacon Verified Artifact",
-    eligibility: "GitHub Repository Audited",
-    primaryActionLabel: "Inspect Project Proof",
-    primaryActionHref: "/app/projects",
-    externalUrl: "https://github.com/aabhasgos/campusone",
-    stats: { likes: 198, bookmarks: 76 },
-    verifiedProof: true,
-  },
-  {
-    id: "eco_isro_sac",
+    id: "eco_isro_telemetry",
     channel: "job",
-    channelLabel: "Verified Tech Job",
-    title: "ISRO Space Applications Centre (SAC) — Satellite Telemetry Data Systems Research",
+    channelLabel: "Research Fellowship",
+    title: "ISRO Space Applications Centre (SAC) — Satellite Telemetry Ground Software Fellow",
     organizer: "Indian Space Research Organisation (ISRO)",
     organizerMonogram: "ISRO",
-    organizerType: "Central Government",
-    badge: "Government Research Fellowship",
-    timestamp: "1 day ago",
-    highlightText: "₹45,000/month government research grant + ISRO Scientist Mentorship.",
-    description: "Opportunity to contribute to real satellite ground station telemetry decoding, CCSDS packet demuxing, and orbital sensor data pipelines at SAC Ahmedabad.",
-    tags: ["ISRO", "Satellite Telemetry", "C / C++", "Binary Buffers", "Aerospace"],
-    stipendOrPrize: "₹45,000 / month",
-    eligibility: "Pre-final / Final Year Tech & Research Scholars",
-    primaryActionLabel: "Review & Apply",
+    organizerType: "Space & Research",
+    badge: "Govt Research Fellowship",
+    timestamp: "14 hours ago",
+    highlightText: "₹35,000/month research stipend + Direct security clearance for Ahmedabad Earth Station.",
+    description: "Work with senior scientists on demodulation software, high-frequency orbit telemetry decoding, and CCSDS packet validation engines. Open to Indian nationals enrolled in accredited engineering institutes.",
+    tags: ["ISRO SAC", "SpaceTech", "C++", "DSP / Telemetry", "Embedded"],
+    stipendOrPrize: "₹35,000 / month",
+    eligibility: "Pre-final & Final Year B.Tech / M.Tech Students",
+    primaryActionLabel: "Inspect Fellowship Requirements",
     primaryActionHref: "/app/opportunities",
-    externalUrl: "https://www.sac.gov.in",
-    stats: { likes: 410, bookmarks: 188 },
+    externalUrl: "https://sac.gov.in",
+    stats: { likes: 589, bookmarks: 310 },
     verifiedProof: true,
   },
   {
-    id: "eco_mentor_masterclass",
+    id: "eco_mentor_priya",
     channel: "mentor",
-    channelLabel: "Mentor Council Masterclass",
-    title: "Engineering Masterclass: How to Design Low-Latency Systems & Crack FAANG Interviews",
-    organizer: "Senior Staff Engineer (14+ Yrs Ex-Google & Uber)",
-    organizerMonogram: "SMC",
-    organizerType: "Senior Mentor Council",
-    badge: "100% Pro-Bono Session",
-    timestamp: "2 days ago",
-    highlightText: "Live architectural breakdown of concurrent lock contention, Raft consensus, and resume rubrics.",
-    description: "Interactive Saturday workshop organized by Beacon Senior Mentor Council. Includes live code review of student passports and direct Q&A for tier-2/3 college candidates.",
-    tags: ["Masterclass", "System Design", "Staff Engineer", "Zero Fee", "Live AMA"],
-    stipendOrPrize: "Zero Fee Pro-Bono Access",
-    eligibility: "Verified Beacon Students",
-    primaryActionLabel: "RSVP in Mentors Hub",
+    channelLabel: "Senior Mentor Council",
+    title: "Staff SRE Masterclass: Debugging Cascading Failures in Distributed Kubernetes Clusters",
+    organizer: "Priya Sen (Staff Infrastructure SRE • 11 Yrs Industry Tenure)",
+    organizerMonogram: "PS",
+    organizerType: "Senior Mentor Fellow",
+    badge: "Pro-Bono Student Masterclass",
+    timestamp: "1 day ago",
+    highlightText: "Free live workshop: Real outage postmortems, thread pool exhaustion, and eBPF kernel profiling.",
+    description: "Exclusive interactive deep dive with Priya Sen (Staff SRE at Uber, ex-Hotstar). Strictly pro-bono for ambitious tier-2/3 college students. 30 seats reserved for students with verified Student Passports.",
+    tags: ["SRE Masterclass", "Kubernetes", "eBPF", "System Design", "Zero Fee"],
+    stipendOrPrize: "100% Free Pro-Bono",
+    eligibility: "Beacon Verified Student Passport Holders",
+    primaryActionLabel: "Reserve Slot in Mentor Council",
     primaryActionHref: "/app/mentors",
     externalUrl: "",
-    stats: { likes: 312, bookmarks: 145 },
+    stats: { likes: 412, bookmarks: 201 },
+    verifiedProof: true,
+  },
+  {
+    id: "eco_proof_dtu_os",
+    channel: "peer-proof",
+    channelLabel: "Peer Proof of Work",
+    title: "Zero-Copy TCP Network Stack in Rust with Ring-Buffer Monotonic Timers",
+    organizer: "Delhi Technological University (DTU) Systems Guild",
+    organizerMonogram: "DTU",
+    organizerType: "Student Research",
+    badge: "Beacon Rubric: 96 / 100",
+    timestamp: "1 day ago",
+    highlightText: "Tested against 50,000 concurrent synthetic socket connections with zero memory leaks.",
+    description: "High-performance userspace network driver avoiding Linux kernel context switches via io_uring. Documented with complete architectural rubric and automated test suites on GitHub.",
+    tags: ["Rust", "Systems Programming", "Networking", "io_uring", "Linux Kernel"],
+    stipendOrPrize: "Beacon Verified Artifact",
+    eligibility: "Open Source Code Benchmark Available",
+    primaryActionLabel: "Inspect Rubric in Passport",
+    primaryActionHref: "/app/passport",
+    externalUrl: "",
+    stats: { likes: 320, bookmarks: 145 },
     verifiedProof: true,
   },
 ];
 
 const TICKER_HEADLINES = [
-  "Smart India Hackathon (SIH 2026) central problem statements published across 52 central ministries",
-  "Razorpay opens 2026 Core Payments SDE Internships with ₹1.2L/month compensation",
+  "Smart India Hackathon (SIH 2026) officially announces 52 central ministry challenges with ₹1L problem pools",
+  "Razorpay opens verified summer backend engineering internship applications with ₹1.2L/month stipend",
   "Flipkart GRiD 7.0 registers over 40,000 engineers with direct PPO interview tracks",
   "Bennett University Computational Intelligence Lab verifies 3D point cloud computer vision benchmark",
   "Google India STEP Software Engineering Program applications closing this month",
@@ -226,14 +226,12 @@ export default function StudentAppTodayPage() {
     }
     loadData();
 
-    // Initialize likes counts
     const counts: Record<string, number> = {};
     ECOSYSTEM_STREAM_ITEMS.forEach((it) => {
       counts[it.id] = it.stats.likes;
     });
     setLikesCount(counts);
 
-    // Headline ticker rotation
     const interval = setInterval(() => {
       setTickerIndex((prev) => (prev + 1) % TICKER_HEADLINES.length);
     }, 4500);
@@ -291,7 +289,7 @@ export default function StudentAppTodayPage() {
         )}
 
         {/* Live Ecosystem Telemetry Pulse Bar */}
-        <div className="bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-xs text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+        <div className="bg-slate-900 dark:bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-xs text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
           <div className="flex items-center gap-2.5 shrink-0">
             <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -320,26 +318,26 @@ export default function StudentAppTodayPage() {
         </div>
 
         {/* Executive Greeting & Student Cockpit Header */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6 transition-colors">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200/80 px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-black uppercase tracking-wider bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 px-2.5 py-0.5 rounded-full">
                 Engineering Talent OS
               </span>
-              <span className="text-xs font-semibold text-slate-500">
+              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
                 {user?.college || "Undergraduate Engineering"}
               </span>
               {user?.cgpa && (
-                <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded-md">
                   CGPA: {user.cgpa} / 10
                 </span>
               )}
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white tracking-tight">
               Welcome back, {user?.full_name || "Engineer"}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed font-medium">
               Explore live verified technical opportunities, national innovation competitions, peer-reviewed engineering artifacts, and direct recruiter pipelines.
             </p>
           </div>
@@ -347,7 +345,7 @@ export default function StudentAppTodayPage() {
           <div className="flex items-center gap-3 shrink-0">
             <Link
               href="/app/passport"
-              className="px-4 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors flex items-center gap-2"
+              className="px-4 py-2.5 rounded-xl bg-slate-950 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-xs shadow-xs transition-colors flex items-center gap-2 border border-slate-800 dark:border-slate-700"
             >
               <IconAward size={15} />
               <span>Student Passport</span>
@@ -364,7 +362,7 @@ export default function StudentAppTodayPage() {
         </div>
 
         {/* Channel Navigation Pills */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
           <div className="flex flex-wrap items-center gap-2">
             {[
               { id: "all", label: "All Ecosystem Highlights" },
@@ -379,8 +377,8 @@ export default function StudentAppTodayPage() {
                 onClick={() => setActiveChannel(tab.id)}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeChannel === tab.id
-                    ? "bg-indigo-600 text-white shadow-xs"
-                    : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
+                    ? "bg-indigo-600 text-white shadow-xs font-black"
+                    : "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
                 }`}
               >
                 {tab.label}
@@ -388,7 +386,7 @@ export default function StudentAppTodayPage() {
             ))}
           </div>
 
-          <span className="text-xs text-slate-500 font-medium">
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
             Showing {filteredItems.length} curated engineering entries
           </span>
         </div>
@@ -405,7 +403,7 @@ export default function StudentAppTodayPage() {
               return (
                 <article
                   key={item.id}
-                  className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-xs hover:border-indigo-300 hover:shadow-md transition-all space-y-4 group"
+                  className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-7 shadow-xs hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-md transition-all space-y-4 group"
                 >
                   {/* Entity Header Bar */}
                   <div className="flex items-start justify-between gap-4">
@@ -416,46 +414,46 @@ export default function StudentAppTodayPage() {
 
                       <div className="min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <strong className="text-xs sm:text-sm font-black text-slate-950 truncate">
+                          <strong className="text-xs sm:text-sm font-black text-slate-950 dark:text-white truncate">
                             {item.organizer}
                           </strong>
-                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                          <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                             • {item.organizerType}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 px-2 py-0.2 rounded-md">
+                          <span className="text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 px-2 py-0.2 rounded-md">
                             {item.channelLabel}
                           </span>
-                          <span className="text-[11px] text-slate-400 font-medium">
+                          <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                             {item.timestamp}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <span className="text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-full shrink-0">
+                    <span className="text-[10px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-full shrink-0">
                       {item.badge}
                     </span>
                   </div>
 
                   {/* Post Title & Highlight Banner */}
                   <div className="space-y-2">
-                    <h2 className="text-base sm:text-lg font-black text-slate-950 tracking-tight group-hover:text-indigo-600 transition-colors">
+                    <h2 className="text-base sm:text-lg font-black text-slate-950 dark:text-white tracking-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                       {item.title}
                     </h2>
 
-                    <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5 text-slate-800 font-semibold">
-                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 shrink-0" />
+                    <div className="p-3 bg-slate-50 dark:bg-slate-950/70 rounded-2xl border border-slate-200 dark:border-slate-800 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-200 font-semibold">
+                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 dark:bg-indigo-400 shrink-0" />
                         <span>{item.highlightText}</span>
                       </div>
-                      <span className="text-emerald-700 font-black font-mono shrink-0 text-xs">
+                      <span className="text-emerald-700 dark:text-emerald-400 font-black font-mono shrink-0 text-xs">
                         {item.stipendOrPrize}
                       </span>
                     </div>
 
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
                       {item.description}
                     </p>
                   </div>
@@ -465,7 +463,7 @@ export default function StudentAppTodayPage() {
                     {item.tags.map((tag, idx) => (
                       <span
                         key={idx}
-                        className="text-[11px] font-semibold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-lg border border-slate-200/80"
+                        className="text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2.5 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700"
                       >
                         {tag}
                       </span>
@@ -473,7 +471,7 @@ export default function StudentAppTodayPage() {
                   </div>
 
                   {/* Action Bar & Social Engagement */}
-                  <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
                     <div className="flex items-center gap-1.5">
                       {/* Like / Upvote Button */}
                       <button
@@ -481,8 +479,8 @@ export default function StudentAppTodayPage() {
                         onClick={() => toggleLike(item.id)}
                         className={`px-3 py-1.5 rounded-xl border font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                           isLiked
-                            ? "bg-rose-50 border-rose-200 text-rose-700"
-                            : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                            ? "bg-rose-50 dark:bg-rose-950/60 border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300"
+                            : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300"
                         }`}
                       >
                         <span>{isLiked ? "♥" : "♡"}</span>
@@ -495,8 +493,8 @@ export default function StudentAppTodayPage() {
                         onClick={() => toggleSave(item.id)}
                         className={`px-3 py-1.5 rounded-xl border font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                           isSaved
-                            ? "bg-indigo-50 border-indigo-200 text-indigo-700"
-                            : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                            ? "bg-indigo-50 dark:bg-indigo-950 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300"
+                            : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300"
                         }`}
                       >
                         <span>{isSaved ? "Saved ✓" : "Save"}</span>
@@ -506,7 +504,7 @@ export default function StudentAppTodayPage() {
                       <button
                         type="button"
                         onClick={() => handleShare(item.title)}
-                        className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:border-slate-300 font-bold transition-all cursor-pointer"
+                        className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 font-bold transition-all cursor-pointer"
                         title="Copy link to clipboard"
                       >
                         Share
@@ -516,7 +514,7 @@ export default function StudentAppTodayPage() {
                     {/* Primary Link CTA */}
                     <Link
                       href={item.primaryActionHref}
-                      className="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white font-bold transition-all flex items-center gap-1.5 shadow-xs"
+                      className="px-4 py-2 rounded-xl bg-slate-950 dark:bg-indigo-600 hover:bg-slate-800 dark:hover:bg-indigo-500 text-white font-bold transition-all flex items-center gap-1.5 shadow-xs"
                     >
                       <span>{item.primaryActionLabel}</span>
                       <IconChevronRight size={13} />
@@ -527,8 +525,8 @@ export default function StudentAppTodayPage() {
             })}
 
             {/* Bottom Feed Milestone */}
-            <div className="text-center py-6 bg-slate-100 rounded-3xl border border-slate-200 text-xs text-slate-500 font-medium space-y-1">
-              <span className="font-bold text-slate-700 block">End of Current Live Wire</span>
+            <div className="text-center py-6 bg-slate-100 dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 font-medium space-y-1">
+              <span className="font-bold text-slate-700 dark:text-slate-300 block">End of Current Live Wire</span>
               <p>All national hackathons, verified jobs, and peer proof streams are up to date.</p>
             </div>
           </div>
@@ -536,11 +534,11 @@ export default function StudentAppTodayPage() {
           {/* Sticky Radar & Retention Rail */}
           <div className="space-y-5 lg:sticky lg:top-20">
             {/* Widget 1: Weekly Recruiter Focus Invariants */}
-            <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-xs space-y-3.5">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-xs space-y-3.5 transition-colors">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-indigo-600" />
-                  <h3 className="font-black text-sm text-slate-950 tracking-tight">
+                  <span className="w-2 h-2 rounded-full bg-indigo-600 dark:bg-indigo-400" />
+                  <h3 className="font-black text-sm text-slate-950 dark:text-white tracking-tight">
                     Weekly Focus Invariants
                   </h3>
                 </div>
@@ -549,7 +547,7 @@ export default function StudentAppTodayPage() {
                 </span>
               </div>
 
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
                 Core engineering concepts actively tested by hiring committees at top tech firms this week:
               </p>
 
@@ -573,18 +571,18 @@ export default function StudentAppTodayPage() {
                 ].map((inv, idx) => (
                   <div
                     key={idx}
-                    className="p-3 bg-slate-50 rounded-2xl border border-slate-200 hover:border-indigo-300 transition-all text-xs space-y-1"
+                    className="p-3 bg-slate-50 dark:bg-slate-950/70 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-700 transition-all text-xs space-y-1"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-black uppercase tracking-wider text-indigo-700">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-400">
                         {inv.type}
                       </span>
-                      <span className="text-[10px] text-slate-500 font-bold">{inv.company}</span>
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">{inv.company}</span>
                     </div>
-                    <strong className="text-slate-900 font-bold block">{inv.title}</strong>
+                    <strong className="text-slate-900 dark:text-white font-bold block">{inv.title}</strong>
                     <Link
                       href="/app/roadmap"
-                      className="text-[11px] font-bold text-indigo-600 hover:underline inline-block pt-0.5"
+                      className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline inline-block pt-0.5"
                     >
                       Solve in Interactive Workbench →
                     </Link>
@@ -594,11 +592,11 @@ export default function StudentAppTodayPage() {
             </div>
 
             {/* Widget 2: National Hackathon Countdown Badges */}
-            <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-xs space-y-3.5">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-xs space-y-3.5 transition-colors">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-amber-500" />
-                  <h3 className="font-black text-sm text-slate-950 tracking-tight">
+                  <h3 className="font-black text-sm text-slate-950 dark:text-white tracking-tight">
                     National Challenge Deadlines
                   </h3>
                 </div>
@@ -631,17 +629,17 @@ export default function StudentAppTodayPage() {
                   <Link
                     key={idx}
                     href={item.href}
-                    className="p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl border border-slate-200 block transition-all group"
+                    className="p-3 bg-slate-50 dark:bg-slate-950/70 hover:bg-slate-100 dark:hover:bg-slate-850 rounded-2xl border border-slate-200 dark:border-slate-800 block transition-all group"
                   >
                     <div className="flex items-center justify-between">
-                      <strong className="text-slate-950 font-bold text-xs group-hover:text-indigo-600 transition-colors">
+                      <strong className="text-slate-950 dark:text-white font-bold text-xs group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                         {item.title}
                       </strong>
-                      <span className="text-[10px] font-black bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full shrink-0">
+                      <span className="text-[10px] font-black bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-2 py-0.5 rounded-full shrink-0">
                         {item.daysLeft}
                       </span>
                     </div>
-                    <span className="text-[11px] text-slate-500 block mt-0.5">
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 block mt-0.5 font-medium">
                       {item.subtext}
                     </span>
                   </Link>
@@ -650,7 +648,7 @@ export default function StudentAppTodayPage() {
             </div>
 
             {/* Widget 3: Verified Recruiter Activity Ticker */}
-            <div className="bg-slate-950 text-white rounded-3xl border border-slate-800 p-5 sm:p-6 shadow-md space-y-2.5">
+            <div className="bg-slate-900 dark:bg-slate-950 text-white rounded-3xl border border-slate-800 p-5 sm:p-6 shadow-md space-y-2.5">
               <div className="flex items-center gap-2">
                 <IconShield size={16} className="text-indigo-400" />
                 <h3 className="font-black text-xs sm:text-sm text-white uppercase tracking-wider">
@@ -669,7 +667,7 @@ export default function StudentAppTodayPage() {
 
               <Link
                 href="/app/passport"
-                className="w-full mt-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors"
+                className="w-full mt-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors shadow-sm"
               >
                 <span>Audit My Passport Proof →</span>
               </Link>

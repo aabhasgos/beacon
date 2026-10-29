@@ -8,6 +8,8 @@ import {
   IconCheckCircle,
   IconSparkles,
   IconChevronRight,
+  IconShield,
+  IconGraph,
 } from "@/components/icons/Icons";
 
 const PRESET_PAIRS = [
@@ -117,37 +119,41 @@ export default function DecisionStudioPage() {
   return (
     <AppLayout>
       <div className="space-y-6 max-w-5xl mx-auto">
-        {/* Header Banner */}
-        <div className="bg-slate-950 text-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        {/* Unified Page Header Banner */}
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6 transition-colors">
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-black bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-3 py-1 rounded-full uppercase tracking-wider">
-                Decision Studio & Trade-Offs
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[11px] font-black bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 px-3 py-1 rounded-full uppercase tracking-wider">
+                DECISION STUDIO & TRADE-OFFS
               </span>
-              <span className="text-[11px] font-bold text-slate-400">
-                Counterfactual Engine
+              <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Counterfactual Engine</span>
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white tracking-tight">
               Compare Career Directions
             </h1>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
               Compare two study pathways side-by-side with objective reversibility scoring, time budget matching, and market demand calibration grounded in your verified Student Passport.
             </p>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 text-center shrink-0">
-            <span className="block text-2xl font-black text-white">Live RAG</span>
-            <span className="text-xs text-indigo-200">Grounded Career Intel</span>
+          <div className="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 text-center shrink-0 self-start md:self-auto min-w-[150px]">
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">
+              Engine Status
+            </span>
+            <span className="text-xl font-black text-slate-950 dark:text-white block">Live RAG</span>
+            <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400">Grounded Career Intel</span>
           </div>
         </div>
 
         {/* Pathway Inputs Card */}
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-xs space-y-6 transition-colors">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
             <div>
-              <h2 className="text-base sm:text-lg font-black text-slate-900">Configure Trade-Off Analysis</h2>
-              <p className="text-xs text-slate-500">Pick two career directions to evaluate counterfactual costs and returns.</p>
+              <h2 className="text-base sm:text-lg font-black text-slate-950 dark:text-white">Configure Trade-Off Analysis</h2>
+              <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Pick two career directions to evaluate counterfactual costs and returns.</p>
             </div>
 
             <div className="flex flex-wrap gap-1.5">
@@ -161,7 +167,7 @@ export default function DecisionStudioPage() {
                     setAnalysisResult(null);
                     setAdoptedSuccess(false);
                   }}
-                  className="text-[11px] font-bold bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 px-3 py-1.5 rounded-xl transition-colors cursor-pointer"
+                  className="text-[11px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950 hover:text-indigo-700 dark:hover:text-indigo-300 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-xl transition-colors cursor-pointer"
                 >
                   {pair.label}
                 </button>
@@ -171,7 +177,7 @@ export default function DecisionStudioPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-indigo-700 uppercase tracking-wider">
+              <label className="block text-xs font-black text-indigo-700 dark:text-indigo-400 uppercase tracking-wider">
                 Pathway A (Primary Contender)
               </label>
               <input
@@ -179,12 +185,12 @@ export default function DecisionStudioPage() {
                 value={optionA}
                 onChange={(e) => setOptionA(e.target.value)}
                 placeholder="e.g. Core Systems Engineering (Rust / Distributed Primitives)"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 font-semibold focus:outline-none focus:border-indigo-500"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 dark:focus:border-indigo-400 transition-all"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+              <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 Pathway B (Alternative Contender)
               </label>
               <input
@@ -192,13 +198,13 @@ export default function DecisionStudioPage() {
                 value={optionB}
                 onChange={(e) => setOptionB(e.target.value)}
                 placeholder="e.g. Full-Stack Web App Development (React / Node.js)"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 font-semibold focus:outline-none focus:border-indigo-500"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 dark:focus:border-indigo-400 transition-all"
               />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-700">
+            <label className="block text-xs font-black text-slate-700 dark:text-slate-300">
               Personal Constraints & Context (Optional)
             </label>
             <input
@@ -206,7 +212,7 @@ export default function DecisionStudioPage() {
               value={studentNotes}
               onChange={(e) => setStudentNotes(e.target.value)}
               placeholder="e.g. 15 hours/week study budget; university mid-term exams approaching next month"
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 dark:focus:border-indigo-400 transition-all"
             />
           </div>
 
@@ -217,7 +223,7 @@ export default function DecisionStudioPage() {
               className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-black px-6 py-3 rounded-xl cursor-pointer transition-all shadow-md disabled:opacity-50 flex items-center gap-2"
             >
               <IconSparkles size={16} />
-              <span>{analyzing ? "Running Trade-Off Calibration..." : "Calibrate Trade-offs with Beacon AI"}</span>
+              <span>{analyzing ? "Running Trade-Off Calibration..." : "Calibrate Trade-offs with Beacon AI →"}</span>
             </button>
           </div>
         </div>
@@ -227,131 +233,116 @@ export default function DecisionStudioPage() {
           <div className="space-y-6 animate-in fade-in duration-200">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Option A Card */}
-              <div className="bg-white rounded-3xl border-2 border-indigo-500/40 p-6 space-y-4 shadow-xs">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  <span className="text-xs font-black text-indigo-700 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full uppercase">
+              <div className="bg-white dark:bg-slate-900 rounded-3xl border-2 border-indigo-500/60 p-6 sm:p-7 space-y-4 shadow-xs">
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                  <span className="text-xs font-black text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950 border border-indigo-200 dark:border-indigo-800 px-3 py-1 rounded-full uppercase">
                     Pathway A
                   </span>
-                  <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-0.5 rounded-full">
+                  <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 rounded-full">
                     {analysisResult.pathA.differentiation}
                   </span>
                 </div>
 
-                <h2 className="text-lg font-black text-slate-900">{analysisResult.pathA.title}</h2>
+                <h2 className="text-lg font-black text-slate-950 dark:text-white">{analysisResult.pathA.title}</h2>
 
                 <div className="space-y-3 text-xs sm:text-sm">
-                  <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                    <strong className="text-slate-900 block font-bold mb-1">Prerequisite Depth:</strong>
-                    <p className="text-slate-600 leading-relaxed">{analysisResult.pathA.prerequisiteDepth}</p>
+                  <div className="bg-slate-50 dark:bg-slate-950/70 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <strong className="text-slate-950 dark:text-white block font-black mb-1">Prerequisite Depth:</strong>
+                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">{analysisResult.pathA.prerequisiteDepth}</p>
                   </div>
 
-                  <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                    <strong className="text-slate-900 block font-bold mb-1">Constraint Compatibility:</strong>
-                    <p className="text-slate-600 leading-relaxed">{analysisResult.pathA.constraintCompatibility}</p>
+                  <div className="bg-slate-50 dark:bg-slate-950/70 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <strong className="text-slate-950 dark:text-white block font-black mb-1">Constraint Compatibility:</strong>
+                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">{analysisResult.pathA.constraintCompatibility}</p>
                   </div>
 
-                  <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                    <strong className="text-slate-900 block font-bold mb-1">Reversibility:</strong>
-                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md inline-block mb-1 border border-emerald-200">
+                  <div className="bg-slate-50 dark:bg-slate-950/70 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <strong className="text-slate-950 dark:text-white block font-black mb-1">Reversibility:</strong>
+                    <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-md inline-block mb-1 border border-emerald-200 dark:border-emerald-800">
                       {analysisResult.pathA.reversibility}
                     </span>
-                    <p className="text-slate-600 leading-relaxed">{analysisResult.pathA.reversibilityNotes}</p>
+                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">{analysisResult.pathA.reversibilityNotes}</p>
                   </div>
                 </div>
               </div>
 
               {/* Option B Card */}
-              <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4 shadow-xs">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  <span className="text-xs font-black text-slate-700 bg-slate-100 px-3 py-1 rounded-full uppercase">
+              <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-7 space-y-4 shadow-xs">
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                  <span className="text-xs font-black text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full uppercase border border-slate-200 dark:border-slate-700">
                     Pathway B
                   </span>
-                  <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                  <span className="text-xs font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 px-2.5 py-0.5 rounded-full">
                     {analysisResult.pathB.differentiation}
                   </span>
                 </div>
 
-                <h2 className="text-lg font-black text-slate-900">{analysisResult.pathB.title}</h2>
+                <h2 className="text-lg font-black text-slate-950 dark:text-white">{analysisResult.pathB.title}</h2>
 
                 <div className="space-y-3 text-xs sm:text-sm">
-                  <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                    <strong className="text-slate-900 block font-bold mb-1">Prerequisite Depth:</strong>
-                    <p className="text-slate-600 leading-relaxed">{analysisResult.pathB.prerequisiteDepth}</p>
+                  <div className="bg-slate-50 dark:bg-slate-950/70 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <strong className="text-slate-950 dark:text-white block font-black mb-1">Prerequisite Depth:</strong>
+                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">{analysisResult.pathB.prerequisiteDepth}</p>
                   </div>
 
-                  <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                    <strong className="text-slate-900 block font-bold mb-1">Constraint Compatibility:</strong>
-                    <p className="text-slate-600 leading-relaxed">{analysisResult.pathB.constraintCompatibility}</p>
+                  <div className="bg-slate-50 dark:bg-slate-950/70 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <strong className="text-slate-950 dark:text-white block font-black mb-1">Constraint Compatibility:</strong>
+                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">{analysisResult.pathB.constraintCompatibility}</p>
                   </div>
 
-                  <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                    <strong className="text-slate-900 block font-bold mb-1">Reversibility:</strong>
-                    <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md inline-block mb-1 border border-indigo-200">
+                  <div className="bg-slate-50 dark:bg-slate-950/70 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <strong className="text-slate-950 dark:text-white block font-black mb-1">Reversibility:</strong>
+                    <span className="text-xs font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950 px-2 py-0.5 rounded-md inline-block mb-1 border border-amber-200 dark:border-amber-800">
                       {analysisResult.pathB.reversibility}
                     </span>
-                    <p className="text-slate-600 leading-relaxed">{analysisResult.pathB.reversibilityNotes}</p>
+                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">{analysisResult.pathB.reversibilityNotes}</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Recommendation & Roadmap Adoption */}
-            <div className="bg-slate-950 text-white rounded-3xl p-6 sm:p-8 shadow-sm space-y-4 border border-slate-800">
-              <div className="flex items-center gap-2 text-indigo-300">
+            {/* Strategic Synthesis Card */}
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 shadow-xs">
+              <div className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400 font-black text-sm uppercase tracking-wider">
                 <IconSparkles size={18} />
-                <span className="text-xs font-black uppercase tracking-wider">
-                  Beacon AI Executive Recommendation
-                </span>
+                <span>Beacon Career Synthesis & Strategic Direction</span>
               </div>
 
-              <p className="text-sm sm:text-base leading-relaxed text-slate-200 font-medium">
+              <div className="bg-indigo-50 dark:bg-indigo-950/70 p-5 rounded-2xl border border-indigo-200 dark:border-indigo-800 text-xs sm:text-sm text-indigo-950 dark:text-indigo-100 font-medium leading-relaxed">
                 {analysisResult.recommendation}
-              </p>
+              </div>
 
-              {/* Actionable Milestones */}
-              {analysisResult.suggestedTasks && analysisResult.suggestedTasks.length > 0 && (
-                <div className="pt-3 border-t border-slate-800 space-y-2">
-                  <span className="text-xs font-bold text-slate-400 block uppercase tracking-wider">
-                    Recommended Milestone Checklist:
-                  </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {analysisResult.suggestedTasks.map((task, i) => (
-                      <div
-                        key={i}
-                        className="p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-300 flex items-center justify-between gap-2"
-                      >
-                        <span className="font-medium">{task.title}</span>
-                        <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded-md shrink-0 font-bold">
-                          {task.minutes}m
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+              <div className="space-y-3 pt-2">
+                <span className="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 block">
+                  Recommended Immediate Milestones:
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {analysisResult.suggestedTasks.map((t, i) => (
+                    <div
+                      key={i}
+                      className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs"
+                    >
+                      <span className="font-bold text-slate-900 dark:text-white">{t.title}</span>
+                      <span className="text-[10px] font-black bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300 px-2 py-0.5 rounded-full shrink-0 border border-indigo-200 dark:border-indigo-800">
+                        {t.minutes} mins
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              )}
+              </div>
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-slate-800">
-                {adoptedSuccess ? (
-                  <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-4 py-2.5 rounded-xl">
-                    <IconCheckCircle size={16} />
-                    <span>Adopted! Target milestone and tasks written to your Roadmap.</span>
-                    <Link href="/app/roadmap" className="underline ml-2 hover:text-white">
-                      View Roadmap →
-                    </Link>
-                  </div>
-                ) : (
-                  <span className="text-xs text-slate-400">
-                    Ready to turn this decision into an actionable semester schedule?
-                  </span>
-                )}
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  Adopting this pathway automatically synchronizes tasks into your Personal Roadmap.
+                </span>
 
                 <button
                   onClick={handleAdoptRoadmap}
                   disabled={adopting || adoptedSuccess}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-black px-5 py-2.5 rounded-xl cursor-pointer transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2 shrink-0 self-end sm:self-auto"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-black px-6 py-3 rounded-xl cursor-pointer transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  <span>{adopting ? "Adopting..." : adoptedSuccess ? "Roadmap Active" : "Adopt Recommendation into Roadmap"}</span>
-                  <IconChevronRight size={14} />
+                  <IconCheckCircle size={16} />
+                  <span>{adoptedSuccess ? "Adopted into Roadmap ✓" : adopting ? "Synchronizing..." : "Adopt Path & Add to Roadmap →"}</span>
                 </button>
               </div>
             </div>
