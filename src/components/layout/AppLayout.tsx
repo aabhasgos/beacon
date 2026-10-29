@@ -120,7 +120,10 @@ export function AppLayout({ children }: AppLayoutProps) {
     { href: "/app/radar", label: "Talent Radar", icon: IconTarget, badge: "Recruiters" },
     { href: "/app/reviews", label: "Weekly Review", icon: IconCheckCircle },
     ...(currentUser?.role === "admin"
-      ? [{ href: "/app/telemetry", label: "Candidate Intelligence", icon: IconShield, badge: "Admin" }]
+      ? [
+          { href: "/app/admin", label: "Admin Control Center", icon: IconShield, badge: "Master" },
+          { href: "/app/telemetry", label: "Candidate Intelligence", icon: IconShield, badge: "Admin" },
+        ]
       : []),
     { href: "/app/settings", label: "Account & Privacy", icon: IconSettings },
   ];
@@ -263,6 +266,13 @@ export function AppLayout({ children }: AppLayoutProps) {
             >
               Manage Credentials Vault →
             </Link>
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[10px] font-bold text-slate-500">
+              <Link href="/mentor-login" className="hover:text-amber-600 transition-colors">Mentors</Link>
+              <span>•</span>
+              <Link href="/recruiter-login" className="hover:text-cyan-600 transition-colors">Recruiters</Link>
+              <span>•</span>
+              <Link href="/admin-login" className="hover:text-indigo-600 transition-colors">Admin</Link>
+            </div>
           </div>
         </aside>
 

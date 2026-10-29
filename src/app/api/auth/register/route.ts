@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     }
 
     const cleanEmail = email.toLowerCase().trim();
-    const cleanRole = role === "mentor" ? "mentor" : "student";
+    const cleanRole = role === "mentor" ? "mentor" : role === "recruiter" ? "recruiter" : role === "admin" ? "admin" : "student";
 
     // Phase 3: Strict 10+ Year Mentorship Experience Verification
     if (cleanRole === "mentor") {
@@ -74,8 +74,8 @@ export async function POST(request: Request) {
         degree || existingUser.degree,
         graduationYear ? Number(graduationYear) : existingUser.graduation_year,
         cgpa ? Number(cgpa) : existingUser.cgpa,
-        headline || (cleanRole === "mentor" ? `${title || "Senior Practitioner"} @ ${company || "Tech"}` : existingUser.headline),
-        bio || existingUser.bio,
+        headline || (cleanRole === "mentor" ? `${title || "Senior Practitioner"} @ ${company || "Tech"}` : cleanRole === "recruiter" ? `${title || "Talent Partner"} @ ${company || "Enterprise"}` : existingUser.headline),
+        bio || (cleanRole === "recruiter" ? `Verified enterprise talent partner at ${company || "Enterprise"}.` : existingUser.bio),
         experienceYears ? Number(experienceYears) : existingUser.experience_years,
         linkedinUrl || existingUser.linkedin_url,
         userId
@@ -93,8 +93,8 @@ export async function POST(request: Request) {
         fullName,
         cleanRole,
         null,
-        headline || (cleanRole === "mentor" ? `${title || "Senior Practitioner"} @ ${company || "Tech"}` : null),
-        bio || null,
+        headline || (cleanRole === "mentor" ? `${title || "Senior Practitioner"} @ ${company || "Tech"}` : cleanRole === "recruiter" ? `${title || "Talent Partner"} @ ${company || "Enterprise"}` : null),
+        bio || (cleanRole === "recruiter" ? `Verified enterprise talent partner at ${company || "Enterprise"}.` : null),
         college ? college.trim() : null,
         degree ? degree.trim() : null,
         graduationYear ? Number(graduationYear) : null,
@@ -172,9 +172,19 @@ export async function POST(request: Request) {
     // Fetch fresh synchronized record from database
     const freshUser = db.prepare("SELECT * FROM users WHERE id = ?").get(userId) as any;
 
+    const redirectUrl =
+      freshUser.role === "admin"
+        ? "/app/admin"
+        : freshUser.role === "mentor"
+        ? "/app/mentors"
+        : freshUser.role === "recruiter"
+        ? "/app/opportunities?recruiter=true"
+        : "/app/passport?onboarding=true";
+
     const res = NextResponse.json({
       success: true,
       userId,
+      redirectUrl,
       user: {
         id: freshUser.id,
         email: freshUser.email,
@@ -187,7 +197,15 @@ export async function POST(request: Request) {
         cgpa: freshUser.cgpa,
         avatar_url: freshUser.avatar_url,
       },
-      message: `${cleanRole === "mentor" ? "Mentor application verified & active!" : "Student profile saved successfully!"} Redirecting...`,
+      message: `${
+        cleanRole === "mentor"
+          ? "Senior Mentor Council credential verified & registered!"
+          : cleanRole === "recruiter"
+          ? "Enterprise talent partner account registered!"
+          : cleanRole === "admin"
+          ? "System administrator account initialized!"
+          : "Student profile saved successfully!"
+      } Redirecting...`,
     });
 
     res.cookies.set("beacon_session", userId, {

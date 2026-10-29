@@ -100,7 +100,36 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans relative">
-      <div className="absolute top-6 right-6">
+      <div className="absolute top-5 left-4 right-4 sm:left-8 sm:right-8 flex items-center justify-between z-20">
+        <div className="flex items-center gap-2">
+          <Link
+            href="/"
+            className="text-xs font-bold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-100 border border-slate-300 px-3 py-1.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-2xs"
+          >
+            <span>←</span>
+            <span>Gateway</span>
+          </Link>
+          <div className="hidden md:flex items-center gap-2">
+            <Link
+              href="/mentor-login"
+              className="text-xs font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-300 px-3 py-1.5 rounded-xl transition-all shadow-2xs"
+            >
+              Mentor Council
+            </Link>
+            <Link
+              href="/recruiter-login"
+              className="text-xs font-bold text-cyan-900 bg-cyan-50 hover:bg-cyan-100 border border-cyan-300 px-3 py-1.5 rounded-xl transition-all shadow-2xs"
+            >
+              Recruiter Hub
+            </Link>
+            <Link
+              href="/admin-login"
+              className="text-xs font-bold text-indigo-900 bg-indigo-50 hover:bg-indigo-100 border border-indigo-300 px-3 py-1.5 rounded-xl transition-all shadow-2xs"
+            >
+              Admin Console
+            </Link>
+          </div>
+        </div>
         <ThemeToggle />
       </div>
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
@@ -218,7 +247,7 @@ export default function LoginPage() {
                 Create your free student profile
               </Link>
             </p>
-            <div className="pt-2 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="pt-2 border-t border-slate-200 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/mentor-login"
                 className="font-bold text-amber-700 hover:text-amber-900 inline-flex items-center gap-1"
@@ -226,12 +255,20 @@ export default function LoginPage() {
                 <span>Mentor Council</span>
                 <span>→</span>
               </Link>
-              <span className="hidden sm:inline text-slate-300">•</span>
+              <span className="text-slate-300">•</span>
               <Link
                 href="/recruiter-login"
                 className="font-bold text-cyan-700 hover:text-cyan-900 inline-flex items-center gap-1"
               >
-                <span>Recruiter Portal</span>
+                <span>Recruiter Hub</span>
+                <span>→</span>
+              </Link>
+              <span className="text-slate-300">•</span>
+              <Link
+                href="/admin-login"
+                className="font-bold text-indigo-700 hover:text-indigo-900 inline-flex items-center gap-1"
+              >
+                <span>Admin Console</span>
                 <span>→</span>
               </Link>
             </div>

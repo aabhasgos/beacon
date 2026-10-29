@@ -5,8 +5,8 @@ export function PublicFooter() {
   return (
     <footer className="bg-white border-t border-slate-300 pt-14 pb-10 mt-16 text-slate-700 text-xs sm:text-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
-          <div className="space-y-4 md:col-span-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-10">
+          <div className="space-y-4 lg:col-span-1">
             <div className="flex items-center gap-3">
               <img
                 src="/logo-icon.jpg"
@@ -23,7 +23,7 @@ export function PublicFooter() {
               </div>
             </div>
             <p className="text-xs text-slate-700 leading-relaxed font-medium">
-              Your all-in-one student operating system. Find verified internships, discover courses, manage your certificate locker, and get tailored guidance from Beacon AI.
+              All-in-one student operating system. Find verified internships, discover courses, manage your certificate locker, and get tailored guidance from Beacon AI.
             </p>
           </div>
 
@@ -34,7 +34,7 @@ export function PublicFooter() {
             <ul className="space-y-2 text-xs font-semibold text-slate-700">
               <li><Link href="/opportunities" className="hover:text-indigo-600">Software Internships</Link></li>
               <li><Link href="/opportunities" className="hover:text-indigo-600">Research Fellowships</Link></li>
-              <li><Link href="/opportunities" className="hover:text-indigo-600">Engineering Challenges</Link></li>
+              <li><Link href="/app/hackathons" className="hover:text-indigo-600">Hackathons Across India</Link></li>
               <li><Link href="/academy" className="hover:text-indigo-600">Curated Courses</Link></li>
             </ul>
           </div>
@@ -48,6 +48,18 @@ export function PublicFooter() {
               <li><Link href="/app/passport" className="hover:text-indigo-600">Certificate Locker</Link></li>
               <li><Link href="/app/guide" className="hover:text-indigo-600">Beacon AI Career Coach</Link></li>
               <li><Link href="/app/roadmap" className="hover:text-indigo-600">Personal Roadmap</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-slate-950 text-xs uppercase tracking-wider mb-3">
+              Access Portals
+            </h4>
+            <ul className="space-y-2 text-xs font-semibold text-slate-700">
+              <li><Link href="/login" className="hover:text-indigo-600 font-bold text-indigo-700">Student Portal</Link></li>
+              <li><Link href="/mentor-login" className="hover:text-amber-700 font-bold text-amber-800">Senior Mentor Council (10+ Yr)</Link></li>
+              <li><Link href="/recruiter-login" className="hover:text-cyan-700 font-bold text-cyan-800">Recruiter Hub & Postings</Link></li>
+              <li><Link href="/admin-login" className="hover:text-indigo-900 font-bold text-indigo-900">Institutional Admin Console</Link></li>
             </ul>
           </div>
 
@@ -69,6 +81,7 @@ export function PublicFooter() {
           <div className="flex items-center gap-4">
             <Link href="/privacy" className="hover:text-slate-900">Privacy</Link>
             <Link href="/terms" className="hover:text-slate-900">Terms</Link>
+            <Link href="/admin-login" className="hover:text-slate-900 font-bold">Admin</Link>
             <Link href="/help" className="hover:text-slate-900">Contact Support</Link>
           </div>
         </div>

@@ -9,6 +9,7 @@ export async function POST(request: Request) {
     const { email, password, portal, role } = body;
     const isMentorPortal = portal === "mentor" || role === "mentor";
     const isRecruiterPortal = portal === "recruiter" || role === "recruiter";
+    const isAdminPortal = portal === "admin" || role === "admin" || (body.email && body.email.toLowerCase().includes("admin@"));
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -34,6 +35,12 @@ export async function POST(request: Request) {
       if (isRecruiterPortal && user.role !== "recruiter") {
         // Upgrade or switch to recruiter role if logging in through recruiter portal
         db.prepare("UPDATE users SET role = 'recruiter' WHERE id = ?").run(user.id);
+        user = db.prepare("SELECT * FROM users WHERE id = ?").get(user.id);
+      }
+
+      // If logging in through Admin Portal
+      if (isAdminPortal && user.role !== "admin") {
+        db.prepare("UPDATE users SET role = 'admin' WHERE id = ?").run(user.id);
         user = db.prepare("SELECT * FROM users WHERE id = ?").get(user.id);
       }
 
@@ -109,6 +116,19 @@ export async function POST(request: Request) {
             { status: 404 }
           );
         }
+      } else if (isAdminPortal) {
+        // Auto-provision master administrator account
+        const newId = `usr_admin_${Date.now()}`;
+        db.prepare(`
+          INSERT INTO users (
+            id, email, password, full_name, role, headline, college, degree
+          ) VALUES (?, ?, ?, 'Master Administrator', 'admin', 'Institutional Governance & Audit Officer', 'Beacon Network', 'System Administration')
+        `).run(
+          newId,
+          cleanEmail,
+          password || "beacon-admin-2026"
+        );
+        user = db.prepare("SELECT * FROM users WHERE id = ?").get(newId);
       } else {
         // Auto-provision fresh student account for this specific email
         const newId = `usr_${Date.now()}`;
@@ -140,7 +160,9 @@ export async function POST(request: Request) {
     }
 
     const redirectUrl =
-      user.role === "mentor"
+      user.role === "admin"
+        ? "/app/admin"
+        : user.role === "mentor"
         ? "/app/mentors"
         : user.role === "recruiter"
         ? "/app/opportunities?recruiter=true"

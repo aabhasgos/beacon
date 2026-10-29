@@ -4,6 +4,7 @@ export interface CurrentUser {
   id: string;
   email: string;
   full_name: string;
+  role?: string;
   avatar_url?: string;
   college?: string;
   degree?: string;
@@ -12,6 +13,8 @@ export interface CurrentUser {
   headline?: string;
   bio?: string;
   location?: string;
+  experience_years?: number;
+  linkedin_url?: string;
 }
 
 export function getCurrentUserFromRequest(request?: Request): CurrentUser | null {
