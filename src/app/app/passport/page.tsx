@@ -33,13 +33,17 @@ export default function PassportPage() {
   const [expTitle, setExpTitle] = useState("");
   const [expCompany, setExpCompany] = useState("");
   const [expType, setExpType] = useState("Internship");
-  const [expLocation, setExpLocation] = useState("Hybrid");
+  const [expWorkMode, setExpWorkMode] = useState<"On-Site" | "Remote" | "Hybrid">("Hybrid");
+  const [expLocation, setExpLocation] = useState("Greater Noida");
   const [expIsRemote, setExpIsRemote] = useState(false);
   const [expIsCurrent, setExpIsCurrent] = useState(false);
-  const [expStartDate, setExpStartDate] = useState("");
-  const [expEndDate, setExpEndDate] = useState("");
+  const [expStartMonth, setExpStartMonth] = useState("Jan");
+  const [expStartYear, setExpStartYear] = useState("2026");
+  const [expEndMonth, setExpEndMonth] = useState("Apr");
+  const [expEndYear, setExpEndYear] = useState("2026");
   const [expDescription, setExpDescription] = useState("");
-  const [expSkills, setExpSkills] = useState("");
+  const [expSkillsList, setExpSkillsList] = useState<string[]>(["Python", "Machine Learning"]);
+  const [expSkillInput, setExpSkillInput] = useState("");
   const [expProofUrl, setExpProofUrl] = useState("");
   const [savingExp, setSavingExp] = useState(false);
 
@@ -189,29 +193,39 @@ export default function PassportPage() {
 
   const handleAddExperience = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!expTitle.trim() || !expCompany.trim() || !expStartDate.trim()) {
-      alert("Please enter the Role Title, Company/Lab, and Start Date.");
+    if (!expTitle.trim() || !expCompany.trim()) {
+      alert("Please enter the Role Title and Company / Organization.");
       return;
     }
 
     setSavingExp(true);
     try {
-      const skillsArray = expSkills.split(",").map((s) => s.trim()).filter(Boolean);
+      const skillsArray = Array.from(
+        new Set([
+          ...expSkillsList,
+          ...expSkillInput.split(",").map((s) => s.trim()).filter(Boolean),
+        ])
+      );
+
+      const startDateFormatted = `${expStartMonth} ${expStartYear}`;
+      const endDateFormatted = expIsCurrent ? "Present" : `${expEndMonth} ${expEndYear}`;
+      const locationFormatted = expWorkMode === "Remote" ? "Remote" : `${expLocation.trim() || "India"} (${expWorkMode})`;
+
       const res = await fetch("/api/experiences", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: expTitle,
-          company: expCompany,
+          title: expTitle.trim(),
+          company: expCompany.trim(),
           employment_type: expType,
-          location: expLocation,
-          is_remote: expIsRemote,
+          location: locationFormatted,
+          is_remote: expWorkMode === "Remote",
           is_current: expIsCurrent,
-          start_date: expStartDate,
-          end_date: expIsCurrent ? "Present" : expEndDate,
-          description: expDescription,
+          start_date: startDateFormatted,
+          end_date: endDateFormatted,
+          description: expDescription.trim(),
           skills_used: skillsArray,
-          proof_url: expProofUrl,
+          proof_url: expProofUrl.trim(),
         }),
       });
 
@@ -219,14 +233,13 @@ export default function PassportPage() {
         setShowExpModal(false);
         setExpTitle("");
         setExpCompany("");
-        setExpLocation("Hybrid");
+        setExpLocation("Greater Noida");
         setExpDescription("");
-        setExpSkills("");
+        setExpSkillsList(["Python", "Machine Learning"]);
+        setExpSkillInput("");
         setExpProofUrl("");
         setExpIsCurrent(false);
-        setExpIsRemote(false);
-        setExpStartDate("");
-        setExpEndDate("");
+        setExpWorkMode("Hybrid");
         loadPassport();
       } else {
         const d = await res.json();
@@ -1983,193 +1996,382 @@ export default function PassportPage() {
         </div>
       )}
 
-      {/* Modal: Add Work Experience / Internship */}
+      {/* Modal: Add Work Experience / Internship (Redesigned Executive UI) */}
       {showExpModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-4 my-8 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">💼</span>
-                <h3 className="font-black text-slate-950 dark:text-white text-base">
-                  Add Work Experience / Internship
-                </h3>
+        <div className="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 my-8 animate-in fade-in zoom-in-95 duration-150">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center text-2xl shrink-0 shadow-md shadow-indigo-500/20">
+                  💼
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-black text-slate-950 dark:text-white text-lg sm:text-xl">
+                      Add Work Experience or Internship
+                    </h3>
+                    <span className="text-[10px] font-black bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 px-2 py-0.5 rounded-full uppercase">
+                      Passport
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                    Highlight your engineering internships, campus leadership, and research accomplishments.
+                  </p>
+                </div>
               </div>
               <button
                 type="button"
                 onClick={() => setShowExpModal(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 text-sm font-bold cursor-pointer"
+                className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleAddExperience} className="space-y-3.5 text-xs">
-              <div>
-                <label className="block text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-1">
-                  Role Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Software Engineering Intern, ML Researcher"
-                  value={expTitle}
-                  onChange={(e) => setExpTitle(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-1">
-                  Company / Organization *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Swiggy, Bennett AI Lab, Infosys"
-                  value={expCompany}
-                  onChange={(e) => setExpCompany(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-1">
-                    Employment Type
+            <form onSubmit={handleAddExperience} className="space-y-5 text-xs">
+              {/* Row 1: Role Title & Organization */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
+                    <span>Role Title *</span>
+                    <span className="text-[10px] text-slate-400 font-normal">e.g. SDE Intern, ML Researcher</span>
                   </label>
-                  <select
-                    value={expType}
-                    onChange={(e) => setExpType(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none"
-                  >
-                    <option value="Internship">Internship</option>
-                    <option value="Full-time">Full-time</option>
-                    <option value="Part-time">Part-time</option>
-                    <option value="Research Fellow">Research Fellow</option>
-                    <option value="Leadership">Student Leadership</option>
-                    <option value="Contract">Contract / Freelance</option>
-                  </select>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Software Engineering Intern"
+                      value={expTitle}
+                      onChange={(e) => setExpTitle(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all shadow-2xs"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-1">
-                    Location
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Bengaluru, Greater Noida"
-                    value={expLocation}
-                    onChange={(e) => setExpLocation(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 py-1">
-                <label className="flex items-center gap-2 cursor-pointer text-slate-800 dark:text-slate-200 font-bold text-xs">
-                  <input
-                    type="checkbox"
-                    checked={expIsCurrent}
-                    onChange={(e) => setExpIsCurrent(e.target.checked)}
-                    className="w-4 h-4 rounded text-indigo-600"
-                  />
-                  <span>I am currently working in this role</span>
-                </label>
-
-                <label className="flex items-center gap-2 cursor-pointer text-slate-800 dark:text-slate-200 font-bold text-xs">
-                  <input
-                    type="checkbox"
-                    checked={expIsRemote}
-                    onChange={(e) => setExpIsRemote(e.target.checked)}
-                    className="w-4 h-4 rounded text-indigo-600"
-                  />
-                  <span>Remote Role</span>
-                </label>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-1">
-                    Start Date *
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
+                    <span>Company or Lab *</span>
+                    <span className="text-[10px] text-slate-400 font-normal">e.g. Swiggy, Bennett AI Lab</span>
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Jan 2026 or 2025-06"
-                    value={expStartDate}
-                    onChange={(e) => setExpStartDate(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none"
+                    placeholder="e.g. Bennett Computational Lab"
+                    value={expCompany}
+                    onChange={(e) => setExpCompany(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all shadow-2xs"
                   />
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-1">
-                    End Date
+              {/* Row 2: Employment Type Segment Pills */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-900 dark:text-slate-100 block">
+                  Employment Type
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { id: "Internship", label: "⚡ Internship" },
+                    { id: "Full-time", label: "💼 Full-Time" },
+                    { id: "Part-time", label: "⏳ Part-Time" },
+                    { id: "Research Fellow", label: "🔬 Research Fellow" },
+                    { id: "Leadership", label: "👥 Student Leadership" },
+                  ].map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => setExpType(t.id)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                        expType === t.id
+                          ? "bg-indigo-600 text-white border-indigo-600 shadow-xs scale-102"
+                          : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700"
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Row 3: Work Mode & Location */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-900 dark:text-slate-100 block">
+                    Work Mode
+                  </label>
+                  <div className="flex gap-2">
+                    {[
+                      { id: "In-Office", label: "🏢 In-Office" },
+                      { id: "Remote", label: "🌐 Remote" },
+                      { id: "Hybrid", label: "🔄 Hybrid" },
+                    ].map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => setExpWorkMode(m.id as any)}
+                        className={`flex-1 py-2 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer border text-center ${
+                          expWorkMode === m.id
+                            ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-indigo-300"
+                        }`}
+                      >
+                        {m.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-900 dark:text-slate-100 block">
+                    Location
                   </label>
                   <input
                     type="text"
-                    disabled={expIsCurrent}
-                    placeholder={expIsCurrent ? "Present" : "e.g. Apr 2026"}
-                    value={expIsCurrent ? "Present" : expEndDate}
-                    onChange={(e) => setExpEndDate(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none disabled:opacity-50"
+                    disabled={expWorkMode === "Remote"}
+                    placeholder={expWorkMode === "Remote" ? "100% Remote" : "e.g. Greater Noida, Bengaluru"}
+                    value={expWorkMode === "Remote" ? "100% Remote" : expLocation}
+                    onChange={(e) => setExpLocation(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all shadow-2xs disabled:opacity-50"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-1">
-                  Description & Key Contributions
-                </label>
+              {/* Row 4: Timeline & Current Position Toggle */}
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={expIsCurrent}
+                      onChange={(e) => setExpIsCurrent(e.target.checked)}
+                      className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500/20"
+                    />
+                    <span>I am currently working in this role</span>
+                  </label>
+
+                  {expIsCurrent && (
+                    <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      Ongoing Active Position
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1 border-t border-slate-200 dark:border-slate-700">
+                  {/* Start Date */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block">
+                      Start Date *
+                    </label>
+                    <div className="flex gap-2">
+                      <select
+                        value={expStartMonth}
+                        onChange={(e) => setExpStartMonth(e.target.value)}
+                        className="flex-1 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none"
+                      >
+                        {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map((m) => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
+                      <select
+                        value={expStartYear}
+                        onChange={(e) => setExpStartYear(e.target.value)}
+                        className="flex-1 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none"
+                      >
+                        {["2027", "2026", "2025", "2024", "2023", "2022", "2021", "2020"].map((y) => (
+                          <option key={y} value={y}>{y}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* End Date */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block">
+                      End Date
+                    </label>
+                    {expIsCurrent ? (
+                      <div className="px-3 py-2 rounded-xl border border-dashed border-emerald-300 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-bold text-center">
+                        Present
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <select
+                          value={expEndMonth}
+                          onChange={(e) => setExpEndMonth(e.target.value)}
+                          className="flex-1 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none"
+                        >
+                          {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map((m) => (
+                            <option key={m} value={m}>{m}</option>
+                          ))}
+                        </select>
+                        <select
+                          value={expEndYear}
+                          onChange={(e) => setExpEndYear(e.target.value)}
+                          className="flex-1 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none"
+                        >
+                          {["2027", "2026", "2025", "2024", "2023", "2022", "2021", "2020"].map((y) => (
+                            <option key={y} value={y}>{y}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 5: Description with Quick Bullet Starters */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                    Description & Key Contributions
+                  </label>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpDescription((prev) =>
+                          prev ? `${prev}\n• Designed and deployed ` : "• Designed and deployed "
+                        )
+                      }
+                      className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-md"
+                    >
+                      + Add Bullet
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpDescription(
+                          "• Architected real-time processing pipelines achieving sub-100ms latency.\n• Collaborated in cross-functional teams to deploy production features with 95%+ test coverage.\n• Optimized compute resource utilization and telemetry streaming."
+                        )
+                      }
+                      className="text-[10px] font-bold text-amber-700 dark:text-amber-400 hover:underline bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-md"
+                    >
+                      ✨ Engineering Template
+                    </button>
+                  </div>
+                </div>
                 <textarea
                   rows={3}
-                  placeholder="Describe your responsibilities, algorithms built, pipelines designed, or key metrics achieved..."
+                  placeholder="Describe your technical responsibilities, algorithms designed, systems built, or key metrics achieved..."
                   value={expDescription}
                   onChange={(e) => setExpDescription(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all shadow-2xs leading-relaxed"
                 />
               </div>
 
-              <div>
-                <label className="block text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-1">
-                  Skills & Tools Used (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Python, Computer Vision, Docker, PyTorch"
-                  value={expSkills}
-                  onChange={(e) => setExpSkills(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none"
-                />
+              {/* Row 6: Interactive Skills Tags */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                    Skills & Technologies Applied ({expSkillsList.length})
+                  </label>
+                  <span className="text-[10px] text-slate-400">Click suggestions below or type custom skill</span>
+                </div>
+
+                {/* Active Skill Chips */}
+                {expSkillsList.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+                    {expSkillsList.map((skill, idx) => (
+                      <span
+                        key={idx}
+                        className="text-[11px] font-bold bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 px-2.5 py-1 rounded-xl flex items-center gap-1 shadow-2xs"
+                      >
+                        <span>{skill}</span>
+                        <button
+                          type="button"
+                          onClick={() => setExpSkillsList((prev) => prev.filter((_, i) => i !== idx))}
+                          className="hover:text-rose-500 cursor-pointer ml-0.5 text-xs font-black"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Input for Custom Skill */}
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Type a skill (e.g. Next.js, Docker, PyTorch) and click Add"
+                    value={expSkillInput}
+                    onChange={(e) => setExpSkillInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === ",") {
+                        e.preventDefault();
+                        const s = expSkillInput.trim().replace(/,/g, "");
+                        if (s && !expSkillsList.includes(s)) {
+                          setExpSkillsList([...expSkillsList, s]);
+                          setExpSkillInput("");
+                        }
+                      }
+                    }}
+                    className="flex-1 px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const s = expSkillInput.trim();
+                      if (s && !expSkillsList.includes(s)) {
+                        setExpSkillsList([...expSkillsList, s]);
+                        setExpSkillInput("");
+                      }
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs cursor-pointer shrink-0"
+                  >
+                    + Add
+                  </button>
+                </div>
+
+                {/* Quick Add Suggestions */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                  <span className="text-[10px] text-slate-400 font-bold mr-1">Quick Add:</span>
+                  {["Python", "PyTorch", "Computer Vision", "Machine Learning", "React", "Next.js", "Docker", "Node.js", "SQL", "Git", "OpenCV"].map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      disabled={expSkillsList.includes(s)}
+                      onClick={() => setExpSkillsList([...expSkillsList, s])}
+                      className="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950 text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-300 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded-lg disabled:opacity-40 transition-colors cursor-pointer"
+                    >
+                      + {s}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              <div>
-                <label className="block text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-1">
-                  Verification Proof Link (Optional)
+              {/* Row 7: Verification Proof URL */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
+                  <span>Verification Proof Link (Optional)</span>
+                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">✓ Grants Verified Badge</span>
                 </label>
                 <input
                   type="url"
-                  placeholder="https://... (Offer letter, certificate, or GitHub repo)"
+                  placeholder="https://... (Offer letter, GitHub repository, or completion certificate URL)"
                   value={expProofUrl}
                   onChange={(e) => setExpProofUrl(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all shadow-2xs"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              {/* Modal Footer Actions */}
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setShowExpModal(false)}
-                  className="px-4 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold transition-colors cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={savingExp}
-                  className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-black text-xs transition-all shadow-md shadow-indigo-600/20 cursor-pointer disabled:opacity-50"
                 >
-                  {savingExp ? "Saving..." : "Save to Passport →"}
+                  {savingExp ? "Saving to Passport..." : "Save Experience to Passport →"}
                 </button>
               </div>
             </form>
