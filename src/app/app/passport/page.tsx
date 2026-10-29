@@ -17,6 +17,7 @@ import {
 } from "@/components/icons/Icons";
 import { getSupabase } from "@/lib/supabase/client";
 import { StudentAvatar } from "@/components/ui/StudentAvatar";
+import { AiResumeStudioModal } from "@/components/passport/AiResumeStudioModal";
 
 export default function PassportPage() {
   const [data, setData] = useState<any>(null);
@@ -2208,199 +2209,17 @@ export default function PassportPage() {
         </div>
       )}
 
-      {/* LinkedIn-Style CV Builder & ATS Export Modal */}
-      {showCvModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-slate-100 my-8 animate-in fade-in duration-150">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-indigo-600" />
-                  <h3 className="text-lg font-black text-slate-950">
-                    LinkedIn-Style Verified Student CV
-                  </h3>
-                </div>
-                <p className="text-xs text-slate-500">
-                  ATS-optimized resume generated live from your verified credentials and proof of work.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const text = `# ${user?.full_name || "Student"}\n${user?.headline || ""}\n${user?.email || ""} | ${user?.location || ""}\n\n## Education\n- ${user?.degree || "Undergraduate"}, ${user?.college || "University"}\n- CGPA: ${user?.cgpa || "N/A"}\n- Graduation: ${user?.graduation_year || "N/A"}\n\n## Verified Proof of Work\n${userProjects.map((p) => `- **${p.title}** (${p.category}): ${p.description} [Rubric: ${p.rubric_score || 85}/100]`).join("\n")}\n\n## Verified Skills\n${skills.map((s: any) => `- ${s.skill_name} [${s.provenance}]`).join("\n")}\n\n## Verified Credentials\n${certificates.map((c: any) => `- ${c.title} by ${c.issuer} (${c.credential_id || "Verified"})`).join("\n")}`;
-                    navigator.clipboard.writeText(text);
-                    setCopiedCvText(true);
-                    setTimeout(() => setCopiedCvText(false), 2000);
-                  }}
-                  className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
-                >
-                  {copiedCvText ? "Copied! ✓" : "📋 Copy Text"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => window.print()}
-                  className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black shadow-xs transition-colors cursor-pointer"
-                >
-                  🖨️ Print / Save PDF
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowCvModal(false)}
-                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold ml-1 cursor-pointer"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-
-            {/* Printable ATS CV Sheet */}
-            <div className="bg-slate-50/70 border border-slate-200 rounded-2xl p-6 sm:p-8 space-y-6 text-slate-900 font-sans shadow-inner">
-              {/* Header */}
-              <div className="border-b border-slate-300 pb-4 space-y-1">
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
-                  {user?.full_name || "Student Name"}
-                </h1>
-                <p className="text-xs sm:text-sm font-bold text-indigo-700">
-                  {user?.headline || "Software Engineer & Computer Science Student"}
-                </p>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600 pt-1 font-medium">
-                  {user?.email && <span>📧 {user.email}</span>}
-                  {user?.location && <span>📍 {user.location}</span>}
-                  {profile?.github_url && (
-                    <a href={profile.github_url} target="_blank" rel="noreferrer" className="text-indigo-600 font-bold underline">
-                      GitHub
-                    </a>
-                  )}
-                  {profile?.linkedin_url && (
-                    <a href={profile.linkedin_url} target="_blank" rel="noreferrer" className="text-indigo-600 font-bold underline">
-                      LinkedIn
-                    </a>
-                  )}
-                </div>
-              </div>
-
-              {/* Education */}
-              <div className="space-y-2">
-                <h2 className="text-xs font-black uppercase tracking-wider text-slate-500 border-b border-slate-200 pb-1">
-                  Education & Verification
-                </h2>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs sm:text-sm">
-                  <div>
-                    <strong className="text-slate-950 font-black block">
-                      {user?.college || "University Not Specified"}
-                    </strong>
-                    <span className="text-slate-600 font-medium">
-                      {user?.degree || "Major in Engineering"}
-                    </span>
-                  </div>
-                  <div className="text-left sm:text-right">
-                    <span className="text-xs font-black text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md inline-block">
-                      {user?.cgpa ? `Verified CGPA: ${user.cgpa} / 10` : "Academic Record"}
-                    </span>
-                    <span className="text-xs text-slate-500 block mt-0.5">
-                      Graduation: {user?.graduation_year || "2027"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Verified Proof of Work */}
-              <div className="space-y-3">
-                <h2 className="text-xs font-black uppercase tracking-wider text-slate-500 border-b border-slate-200 pb-1">
-                  Verifiable Proof of Work ({userProjects.length})
-                </h2>
-                {userProjects.length === 0 ? (
-                  <p className="text-xs text-slate-500 italic">
-                    No projects registered in Proof Vault yet. Add your GitHub repositories to display official Artifact-backed badges.
-                  </p>
-                ) : (
-                  <div className="space-y-3">
-                    {userProjects.map((p) => (
-                      <div key={p.id} className="text-xs space-y-1 bg-white p-3.5 rounded-xl border border-slate-200">
-                        <div className="flex items-center justify-between">
-                          <strong className="text-slate-950 font-black text-sm">{p.title}</strong>
-                          <span className="text-[10px] font-black text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-md">
-                            Rubric: {p.rubric_score || 85} / 100
-                          </span>
-                        </div>
-                        <p className="text-slate-600 font-normal leading-relaxed">{p.description}</p>
-                        {p.repository_url && (
-                          <a href={p.repository_url} target="_blank" rel="noreferrer" className="text-indigo-600 font-bold underline inline-block pt-1">
-                            Inspect Repository →
-                          </a>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Verified Skills Matrix */}
-              <div className="space-y-2">
-                <h2 className="text-xs font-black uppercase tracking-wider text-slate-500 border-b border-slate-200 pb-1">
-                  Verified Skills Matrix ({skills.length})
-                </h2>
-                {skills.length === 0 ? (
-                  <p className="text-xs text-slate-500 italic">No skills verified yet.</p>
-                ) : (
-                  <div className="flex flex-wrap gap-1.5">
-                    {skills.map((s: any) => (
-                      <span
-                        key={s.id}
-                        className="text-xs font-bold bg-white text-slate-900 border border-slate-200 px-2.5 py-1 rounded-lg flex items-center gap-1.5"
-                      >
-                        <span>{s.skill_name}</span>
-                        <span className="text-[9px] font-black uppercase tracking-wider text-indigo-600 bg-indigo-50 px-1.5 py-0.2 rounded">
-                          {s.provenance}
-                        </span>
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Verified Certificates */}
-              <div className="space-y-2">
-                <h2 className="text-xs font-black uppercase tracking-wider text-slate-500 border-b border-slate-200 pb-1">
-                  Verified Certifications & Credentials ({certificates.length})
-                </h2>
-                {certificates.length === 0 ? (
-                  <p className="text-xs text-slate-500 italic">No certificates uploaded to locker yet.</p>
-                ) : (
-                  <div className="space-y-1.5">
-                    {certificates.map((c: any) => (
-                      <div key={c.id} className="flex items-center justify-between text-xs py-1 border-b border-slate-100">
-                        <div>
-                          <strong className="text-slate-950 font-bold">{c.title}</strong>
-                          <span className="text-slate-500 ml-1.5">({c.issuer})</span>
-                        </div>
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
-                          Verified Credential
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* AI CV Optimizer Advice */}
-            <div className="p-4 bg-indigo-50/70 border border-indigo-200 rounded-2xl space-y-2 text-xs">
-              <div className="flex items-center gap-2 text-indigo-900 font-black">
-                <IconSparkles size={15} />
-                <span>Beacon AI CV Optimization Diagnostic</span>
-              </div>
-              <ul className="space-y-1 text-slate-700 font-medium">
-                <li>• <strong>Quantifiable Metrics:</strong> Include specific numbers in project descriptions (e.g. latency, throughput, test coverage) to pass ATS filters at top firms.</li>
-                <li>• <strong>Verified Proof:</strong> Upload course completion PDFs and GitHub repositories to upgrade claims from Self-reported to Artifact-backed.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Executive AI Resume Studio & ATS PDF Builder */}
+      <AiResumeStudioModal
+        isOpen={showCvModal}
+        onClose={() => setShowCvModal(false)}
+        user={user}
+        profile={profile}
+        skills={skills}
+        projects={userProjects}
+        certificates={certificates}
+        experiences={experiences}
+      />
 
       {/* Modal: Add Work Experience / Internship (Redesigned Executive UI) */}
       {showExpModal && (

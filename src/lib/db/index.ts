@@ -428,6 +428,13 @@ export function initDatabase(db: Database.Database) {
     try { db.exec("ALTER TABLE mentors ADD COLUMN career_start_year INTEGER DEFAULT 2014;"); } catch (e) {}
     try { db.exec("ALTER TABLE users ADD COLUMN experience_years INTEGER;"); } catch (e) {}
     try { db.exec("ALTER TABLE users ADD COLUMN linkedin_url TEXT;"); } catch (e) {}
+    try { db.exec("ALTER TABLE learning_tasks ADD COLUMN submission_code TEXT;"); } catch (e) {}
+    try { db.exec("ALTER TABLE learning_tasks ADD COLUMN focus_key TEXT;"); } catch (e) {}
+    try { db.exec("ALTER TABLE learning_tasks ADD COLUMN concepts_to_learn TEXT;"); } catch (e) {}
+    try { db.exec("ALTER TABLE learning_tasks ADD COLUMN starter_code TEXT;"); } catch (e) {}
+    try { db.exec("ALTER TABLE learning_tasks ADD COLUMN evaluation_score INTEGER;"); } catch (e) {}
+    try { db.exec("ALTER TABLE learning_tasks ADD COLUMN evaluation_feedback TEXT;"); } catch (e) {}
+    try { db.exec("ALTER TABLE learning_tasks ADD COLUMN task_type TEXT;"); } catch (e) {}
 
     seedInitialData(db);
   } catch (e) {
