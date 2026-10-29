@@ -135,7 +135,7 @@ Respond ONLY with a valid JSON object matching this schema:
       }
     }
 
-    const fullFeedback = `${feedback}${focusStrengths ? `\n\n🎯 Strengths: ${focusStrengths}` : ""}${areasToImprove ? `\n\n💡 Next Steps: ${areasToImprove}` : ""}`;
+    const fullFeedback = `${feedback}${focusStrengths ? `\n\nStrengths: ${focusStrengths}` : ""}${areasToImprove ? `\n\nNext Steps: ${areasToImprove}` : ""}`;
 
     // Update learning task in database
     db.prepare(`

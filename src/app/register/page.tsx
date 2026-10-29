@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { IconCheckCircle, IconShield, IconUsers } from "@/components/icons/Icons";
+import { IconCheckCircle, IconShield, IconUsers, IconBriefcase } from "@/components/icons/Icons";
 import { getSupabase } from "@/lib/supabase/client";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
@@ -186,7 +186,7 @@ export default function RegisterProfilePage() {
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white"
                 }`}
               >
-                <span>🎓</span>
+                <span className="w-2 h-2 rounded-full bg-indigo-500" />
                 <span>Student / Builder</span>
               </button>
               <button
@@ -198,7 +198,7 @@ export default function RegisterProfilePage() {
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white"
                 }`}
               >
-                <span>💼</span>
+                <IconBriefcase size={14} />
                 <span>Senior Mentor (10+ Yrs)</span>
               </button>
             </div>

@@ -139,7 +139,7 @@ export default function TelemetryIntelligencePage() {
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            📋 Candidate Applications ({applications.length})
+            Candidate Applications ({applications.length})
           </button>
           <button
             onClick={() => setActiveTab("ai")}
@@ -149,7 +149,7 @@ export default function TelemetryIntelligencePage() {
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            🤖 AI Queries & Prompts ({aiQueries.length})
+            AI Queries & Prompts ({aiQueries.length})
           </button>
         </div>
 
@@ -270,7 +270,7 @@ export default function TelemetryIntelligencePage() {
                         </strong>
                         <span className="text-xs text-slate-600 block">{app.applicant_email}</span>
                         {app.applicant_phone && (
-                          <span className="text-xs text-slate-500 block">📞 {app.applicant_phone}</span>
+                          <span className="text-xs text-slate-500 block">Phone: {app.applicant_phone}</span>
                         )}
                       </div>
                     </div>

@@ -10,6 +10,7 @@ import {
   IconChevronRight,
   IconExternalLink,
   IconSearch,
+  IconAward,
 } from "@/components/icons/Icons";
 
 interface QuizQuestion {
@@ -235,7 +236,7 @@ export default function AcademyAppPage() {
                   : "text-slate-300 hover:text-white"
               }`}
             >
-              📚 Course Catalog ({courses.length})
+              Course Catalog ({courses.length})
             </button>
             <button
               onClick={() => setActiveTab("diagnostic")}
@@ -245,7 +246,7 @@ export default function AcademyAppPage() {
                   : "text-slate-300 hover:text-white"
               }`}
             >
-              🎯 Skill Diagnostic
+              Skill Diagnostic
             </button>
           </div>
         </div>
@@ -402,7 +403,7 @@ export default function AcademyAppPage() {
                 <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-2 text-xs">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                      <span>💡</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
                       <span>Graduated Hints ({revealedHints}/{currentQ.hints.length})</span>
                     </span>
                     {!submitted && revealedHints < currentQ.hints.length && (
@@ -456,8 +457,8 @@ export default function AcademyAppPage() {
               </>
             ) : (
               <div className="text-center py-10 space-y-5 animate-in fade-in duration-200">
-                <div className="w-16 h-16 bg-emerald-50 border border-emerald-200 rounded-3xl flex items-center justify-center mx-auto text-3xl">
-                  🎉
+                <div className="w-16 h-16 bg-emerald-50 border border-emerald-200 rounded-3xl flex items-center justify-center mx-auto text-emerald-600 shadow-sm">
+                  <IconAward size={32} />
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-2xl font-black text-slate-950">Diagnostic Completed!</h3>

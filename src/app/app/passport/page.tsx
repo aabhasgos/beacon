@@ -14,6 +14,11 @@ import {
   IconShield,
   IconTarget,
   IconBriefcase,
+  IconBuilding,
+  IconMapPin,
+  IconGraph,
+  IconClock,
+  IconUsers,
 } from "@/components/icons/Icons";
 import { getSupabase } from "@/lib/supabase/client";
 import { StudentAvatar } from "@/components/ui/StudentAvatar";
@@ -557,7 +562,7 @@ export default function PassportPage() {
             </button>
             <div className="space-y-1 pr-6">
               <div className="inline-flex items-center gap-1.5 bg-indigo-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">
-                <span>🚀 Complete Your Passport</span>
+                <span>Complete Your Passport</span>
               </div>
               <h2 className="font-extrabold text-base sm:text-lg text-slate-950 dark:text-white">
                 Welcome to Beacon, {user?.full_name ? user.full_name.split(" ")[0] : "Student"}!
@@ -571,7 +576,7 @@ export default function PassportPage() {
                 onClick={handleOpenEditModal}
                 className="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-extrabold text-xs border border-slate-300 dark:border-slate-700 shadow-2xs transition-colors cursor-pointer"
               >
-                ✎ Add Academic Details
+                <span>Add Academic Details</span>
               </button>
               <button
                 onClick={() => setShowResumeModal(true)}
@@ -645,7 +650,7 @@ export default function PassportPage() {
                   onClick={handleOpenEditModal}
                   className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5 border border-transparent dark:border-slate-700"
                 >
-                  <span>✎ Edit Profile</span>
+                  <span>Edit Profile</span>
                 </button>
                 <button
                   onClick={handleRunProfileAudit}
@@ -660,7 +665,7 @@ export default function PassportPage() {
                   className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 font-bold text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <IconFileText size={14} />
-                  <span>📄 Build & Export CV</span>
+                  <span>Build & Export CV</span>
                 </button>
                 <button
                   onClick={() => setShowCertModal(true)}
@@ -715,7 +720,7 @@ export default function PassportPage() {
               <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-4 flex flex-col justify-between hover:border-indigo-300 dark:hover:border-indigo-500 transition-colors">
                 <div>
                   <div className="flex items-center gap-1.5 mb-1">
-                    <span className="text-sm">🏛️</span>
+                    <IconBuilding size={15} className="text-slate-500 dark:text-slate-400" />
                     <span className="text-[10px] uppercase font-black text-slate-500 dark:text-slate-400 tracking-wider">
                       Institution
                     </span>
@@ -738,7 +743,7 @@ export default function PassportPage() {
               <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-4 flex flex-col justify-between hover:border-indigo-300 dark:hover:border-indigo-500 transition-colors">
                 <div>
                   <div className="flex items-center gap-1.5 mb-1">
-                    <span className="text-sm">🎓</span>
+                    <IconAward size={15} className="text-slate-500 dark:text-slate-400" />
                     <span className="text-[10px] uppercase font-black text-slate-500 dark:text-slate-400 tracking-wider">
                       Degree & Major
                     </span>
@@ -765,7 +770,7 @@ export default function PassportPage() {
               <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-4 flex flex-col justify-between hover:border-indigo-300 dark:hover:border-indigo-500 transition-colors">
                 <div>
                   <div className="flex items-center gap-1.5 mb-1">
-                    <span className="text-sm">📊</span>
+                    <IconGraph size={15} className="text-slate-500 dark:text-slate-400" />
                     <span className="text-[10px] uppercase font-black text-slate-500 dark:text-slate-400 tracking-wider">
                       Verified CGPA
                     </span>
@@ -788,7 +793,7 @@ export default function PassportPage() {
               <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-4 flex flex-col justify-between hover:border-indigo-300 dark:hover:border-indigo-500 transition-colors">
                 <div>
                   <div className="flex items-center gap-1.5 mb-1">
-                    <span className="text-sm">📍</span>
+                    <IconMapPin size={15} className="text-slate-500 dark:text-slate-400" />
                     <span className="text-[10px] uppercase font-black text-slate-500 dark:text-slate-400 tracking-wider">
                       Location
                     </span>
@@ -881,21 +886,21 @@ export default function PassportPage() {
               href="#overview-section"
               className="px-3 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5"
             >
-              <span>👤</span>
+              <IconTarget size={14} />
               <span>Overview</span>
             </a>
             <a
               href="#resume-section"
               className="px-3 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5"
             >
-              <span>📄</span>
+              <IconFileText size={14} />
               <span>Resume NLP</span>
             </a>
             <a
               href="#experience-section"
               className="px-3 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5"
             >
-              <span>💼</span>
+              <IconBriefcase size={14} />
               <span>Experience</span>
               <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-mono">
                 {experiences.length}
@@ -915,7 +920,7 @@ export default function PassportPage() {
               href="#certs-section"
               className="px-3 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5"
             >
-              <span>📜</span>
+              <IconAward size={14} />
               <span>Credentials</span>
               <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-mono">
                 {certificates.length}
@@ -925,7 +930,7 @@ export default function PassportPage() {
               href="#skills-section"
               className="px-3 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5"
             >
-              <span>⚡</span>
+              <IconShield size={14} />
               <span>Skills Matrix</span>
             </a>
           </div>
@@ -975,7 +980,7 @@ export default function PassportPage() {
 
               <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-2">
                 <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">
-                  ⚠️ Critical Skill Gaps to Bridge
+                  Critical Skill Gaps to Bridge
                 </span>
                 <ul className="space-y-1.5 text-xs text-indigo-100">
                   {auditResult.skillGaps?.map((g: string, i: number) => (
@@ -994,7 +999,7 @@ export default function PassportPage() {
         <div id="resume-section" className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-4 scroll-mt-24">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div className="flex items-center gap-2.5">
-              <span className="text-lg">📄</span>
+              <IconFileText size={18} className="text-indigo-600 dark:text-indigo-400" />
               <div>
                 <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">Primary Application Resume</h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Pre-attached when you submit verified internship applications</p>
@@ -1048,7 +1053,7 @@ export default function PassportPage() {
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                     <span className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
-                      <span>🧠 Beacon NLP Extraction Pipeline</span>
+                      <span>Beacon NLP Extraction Pipeline</span>
                       <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2 py-0.2 rounded-full">
                         Full Text Ingested
                       </span>
@@ -1091,7 +1096,7 @@ export default function PassportPage() {
                               : "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700"
                           }`}
                         >
-                          <span>{isAi ? "🔬" : isLang ? "💻" : isLeader ? "👥" : "⚡"}</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
                           <span>{skill}</span>
                         </span>
                       );
@@ -1158,7 +1163,9 @@ export default function PassportPage() {
         <div id="experience-section" className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-5 scroll-mt-24">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 gap-3">
             <div className="flex items-center gap-2.5">
-              <span className="text-xl">💼</span>
+              <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/70 border border-indigo-200 dark:border-indigo-800 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
+                <IconBriefcase size={16} />
+              </div>
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
@@ -1218,8 +1225,9 @@ export default function PassportPage() {
                           {exp.location ? ` • ${exp.location}` : ""}
                           {exp.is_remote ? " (Remote)" : ""}
                         </p>
-                        <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
-                          📅 {exp.start_date} – {exp.is_current ? "Present" : exp.end_date || "Present"}
+                        <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
+                          <IconClock size={11} className="text-slate-400" />
+                          <span>{exp.start_date} – {exp.is_current ? "Present" : exp.end_date || "Present"}</span>
                         </p>
                       </div>
                     </div>
@@ -1271,7 +1279,9 @@ export default function PassportPage() {
             </div>
           ) : (
             <div className="text-center py-7 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
-              <span className="text-2xl block">🏢</span>
+              <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-slate-800 border border-indigo-100 dark:border-slate-700 flex items-center justify-center text-indigo-600 mx-auto">
+                <IconBuilding size={20} />
+              </div>
               <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
                 No internships or job experiences logged yet.
               </p>
@@ -1357,7 +1367,8 @@ export default function PassportPage() {
               </div>
             </div>
             <div className="shrink-0 flex items-center gap-1.5 text-[10px] font-bold text-emerald-300 bg-emerald-950/80 border border-emerald-700/60 px-3 py-1.5 rounded-xl">
-              <span>🔒 Zero Peer Visibility: Enforced</span>
+              <IconShield size={12} className="text-emerald-400" />
+              <span>Zero Peer Visibility: Enforced</span>
             </div>
           </div>
 
@@ -1511,7 +1522,7 @@ export default function PassportPage() {
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2.5">
                       <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-600 to-orange-700 text-white font-black text-xs flex items-center justify-center border border-amber-400/30 shadow-xs shrink-0">
-                        🚀 IS
+                        ISRO
                       </div>
                       <div>
                         <h4 className="font-bold text-xs text-white group-hover:text-cyan-300 transition-colors">
@@ -1666,38 +1677,22 @@ export default function PassportPage() {
                         </div>
                       )}
 
-                      {/* Curated Skill Badges with Domain Emojis */}
+                      {/* Curated Skill Badges */}
                       {skillsList.length > 0 && (
                         <div className="space-y-1.5 pt-1">
                           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
                             Verified Competencies:
                           </span>
                           <div className="flex flex-wrap gap-1.5">
-                            {skillsList.map((s: string, idx: number) => {
-                              const icon = s.toLowerCase().includes("intelligence") || s.toLowerCase().includes("ai")
-                                ? "🧠"
-                                : s.toLowerCase().includes("vision")
-                                ? "👁️"
-                                : s.toLowerCase().includes("deep") || s.toLowerCase().includes("learning")
-                                ? "🔬"
-                                : s.toLowerCase().includes("3d")
-                                ? "🖨️"
-                                : s.toLowerCase().includes("robot")
-                                ? "🤖"
-                                : s.toLowerCase().includes("team") || s.toLowerCase().includes("collab")
-                                ? "👥"
-                                : "⚡";
-
-                              return (
-                                <span
-                                  key={idx}
-                                  className="text-[11px] font-bold bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-xl flex items-center gap-1 shadow-2xs"
-                                >
-                                  <span>{icon}</span>
-                                  <span>{s}</span>
-                                </span>
-                              );
-                            })}
+                            {skillsList.map((s: string, idx: number) => (
+                              <span
+                                key={idx}
+                                className="text-[11px] font-bold bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-xl flex items-center gap-1.5 shadow-2xs"
+                              >
+                                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                                <span>{s}</span>
+                              </span>
+                            ))}
                           </div>
                         </div>
                       )}
@@ -1714,8 +1709,9 @@ export default function PassportPage() {
 
                     {/* Card Footer with Modal Inspection Trigger */}
                     <div className="pt-3 border-t border-slate-200 dark:border-slate-700/80 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-medium">
-                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
-                        📅 Issued: {cert.issue_date}
+                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                        <IconClock size={11} className="text-slate-400" />
+                        <span>Issued: {cert.issue_date}</span>
                       </span>
                       <div className="flex items-center gap-2">
                         <button
@@ -1745,7 +1741,9 @@ export default function PassportPage() {
             </div>
           ) : (
             <div className="text-center py-7 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
-              <span className="text-2xl block">📜</span>
+              <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-slate-800 border border-indigo-100 dark:border-slate-700 flex items-center justify-center text-indigo-600 mx-auto">
+                <IconAward size={20} />
+              </div>
               <p className="text-xs font-bold text-slate-700 dark:text-slate-300">No certificates stored yet.</p>
               <button
                 onClick={() => setShowCertModal(true)}
@@ -1766,7 +1764,7 @@ export default function PassportPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 gap-2">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-lg">⚡</span>
+                <div className="w-2 h-2 rounded-full bg-indigo-600" />
                 <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
                   Verified Skills Matrix
                 </h3>
@@ -1821,7 +1819,9 @@ export default function PassportPage() {
             </div>
           ) : (
             <div className="text-center py-7 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
-              <span className="text-2xl block">🔬</span>
+              <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-slate-800 border border-indigo-100 dark:border-slate-700 flex items-center justify-center text-indigo-600 mx-auto">
+                <IconTarget size={20} />
+              </div>
               <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
                 No verified skills recorded yet. Complete the AI Profile Diagnostic to automatically extract and verify your skills.
               </p>
@@ -2228,8 +2228,8 @@ export default function PassportPage() {
             {/* Modal Header */}
             <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center text-2xl shrink-0 shadow-md shadow-indigo-500/20">
-                  💼
+                <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-indigo-500/20">
+                  <IconBriefcase size={22} />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -2297,19 +2297,19 @@ export default function PassportPage() {
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { id: "Internship", label: "⚡ Internship" },
-                    { id: "Full-time", label: "💼 Full-Time" },
-                    { id: "Part-time", label: "⏳ Part-Time" },
-                    { id: "Research Fellow", label: "🔬 Research Fellow" },
-                    { id: "Leadership", label: "👥 Student Leadership" },
+                    { id: "Internship", label: "Internship" },
+                    { id: "Full-time", label: "Full-Time" },
+                    { id: "Part-time", label: "Part-Time" },
+                    { id: "Research Fellow", label: "Research Fellow" },
+                    { id: "Leadership", label: "Student Leadership" },
                   ].map((t) => (
                     <button
                       key={t.id}
                       type="button"
                       onClick={() => setExpType(t.id)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
                         expType === t.id
-                          ? "bg-indigo-600 text-white border-indigo-600 shadow-xs scale-102"
+                          ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
                           : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700"
                       }`}
                     >
@@ -2327,9 +2327,9 @@ export default function PassportPage() {
                   </label>
                   <div className="flex gap-2">
                     {[
-                      { id: "In-Office", label: "🏢 In-Office" },
-                      { id: "Remote", label: "🌐 Remote" },
-                      { id: "Hybrid", label: "🔄 Hybrid" },
+                      { id: "In-Office", label: "In-Office" },
+                      { id: "Remote", label: "Remote" },
+                      { id: "Hybrid", label: "Hybrid" },
                     ].map((m) => (
                       <button
                         key={m.id}
@@ -2681,7 +2681,10 @@ export default function PassportPage() {
 
             {/* Privacy Compliance Assurance */}
             <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
-              <span>🔒 Recruiter Discovery Audited & Logged under DPDP 2025</span>
+              <span className="flex items-center gap-1.5">
+                <IconShield size={12} className="text-cyan-400" />
+                <span>Recruiter Discovery Audited & Logged under DPDP 2025</span>
+              </span>
               <span className="font-mono text-cyan-400">#ENT-AUDIT-992</span>
             </div>
 
@@ -2725,7 +2728,8 @@ export default function PassportPage() {
             {/* Certificate Header Banner */}
             <div className="border-b border-indigo-500/20 pb-4 text-center space-y-1 relative">
               <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] font-black uppercase tracking-widest">
-                <span>🛡️ BEACON VERIFIED CREDENTIAL</span>
+                <IconShield size={11} className="text-indigo-400" />
+                <span>BEACON VERIFIED CREDENTIAL</span>
               </div>
               <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight pt-1">
                 {selectedCert.title}

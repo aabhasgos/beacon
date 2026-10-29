@@ -106,7 +106,7 @@ export default function HackathonsPage() {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2 max-w-2xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/30 text-xs font-bold uppercase tracking-wider shadow-2xs">
-                <span>🇮🇳 National Engineering Radar</span>
+                <span>National Engineering Radar</span>
                 <span>•</span>
                 <span className="flex items-center gap-1 text-emerald-300">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -128,7 +128,6 @@ export default function HackathonsPage() {
                 disabled={extracting}
                 className="px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-black text-xs shadow-lg shadow-cyan-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
-                <span className={extracting ? "animate-spin" : ""}>🔄</span>
                 <span>{extracting ? "Crawling India Portals..." : "Extract Latest Hackathons"}</span>
               </button>
               <Link
@@ -208,11 +207,11 @@ export default function HackathonsPage() {
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mr-1">Domain:</span>
               {[
                 { id: "all", label: "All Challenges" },
-                { id: "SIH", label: "🏆 SIH & Open Innovation" },
-                { id: "AI", label: "🧠 AI & ML" },
-                { id: "Web3", label: "⚡ Web3 & Systems" },
-                { id: "Cyber", label: "🛡️ Cyber Security" },
-                { id: "Corporate", label: "💼 Corporate PPO Track" },
+                { id: "SIH", label: "SIH & Open Innovation" },
+                { id: "AI", label: "AI & Machine Learning" },
+                { id: "Web3", label: "Web3 & Distributed Systems" },
+                { id: "Cyber", label: "Cyber Security & Defense" },
+                { id: "Corporate", label: "Corporate PPO Fast-Track" },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -258,7 +257,7 @@ export default function HackathonsPage() {
         {/* Hackathon Cards Grid */}
         {loading ? (
           <div className="text-center py-12 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
-            <span className="text-2xl animate-spin block mb-2">🔄</span>
+            <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
             <p className="text-xs font-bold text-slate-500">Extracting official Indian hackathons...</p>
           </div>
         ) : hackathons.length > 0 ? (
@@ -275,7 +274,7 @@ export default function HackathonsPage() {
                   {/* Featured Ribbon Accent */}
                   {h.isFeatured && (
                     <div className="absolute top-0 right-0 bg-gradient-to-l from-indigo-600 to-indigo-700 text-white text-[10px] font-black uppercase tracking-wider px-4 py-1 rounded-bl-2xl shadow-xs">
-                      ★ Featured National Challenge
+                      Featured National Challenge
                     </div>
                   )}
 
@@ -304,7 +303,7 @@ export default function HackathonsPage() {
                             </span>
                           </div>
                           <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                            📍 {h.location}
+                            {h.location}
                           </span>
                         </div>
                       </div>
@@ -336,14 +335,14 @@ export default function HackathonsPage() {
                       <div className="flex flex-wrap items-center gap-2">
                         {isPpo && (
                           <span className="text-[11px] font-black bg-indigo-600 text-white px-2.5 py-1 rounded-xl shadow-2xs">
-                            ⚡ Direct PPO Fast-Track
+                            Direct PPO Fast-Track
                           </span>
                         )}
                         <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-xl">
-                          👥 {h.teamSize}
+                          Team: {h.teamSize}
                         </span>
                         <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-xl">
-                          ⏳ Deadline: {h.deadline}
+                          Deadline: {h.deadline}
                         </span>
                       </div>
                     </div>
@@ -405,7 +404,7 @@ export default function HackathonsPage() {
           </div>
         ) : (
           <div className="text-center py-12 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3">
-            <span className="text-3xl block">🔍</span>
+            <IconTarget size={32} className="mx-auto text-slate-400" />
             <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
               No hackathons found matching your query.
             </p>
@@ -425,7 +424,7 @@ export default function HackathonsPage() {
         {/* National Hackathon Preparation Advisory */}
         <div className="bg-slate-50 dark:bg-slate-900/80 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-3">
           <div className="flex items-center gap-2">
-            <span className="text-lg">💡</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-indigo-600 inline-block" />
             <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white">
               Beacon Advisory for Smart India Hackathon (SIH 2026) & National Challenges
             </h3>

@@ -305,7 +305,7 @@ export default function GatewayPage() {
           {/* Header Banner */}
           <div className="text-center space-y-2">
             <div className="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-200 px-3.5 py-1.5 rounded-full text-xs font-black text-indigo-900 shadow-2xs">
-              <span>{authMode === "mentor" ? "🏛️" : "🎓"}</span>
+              <span className="w-2 h-2 rounded-full bg-indigo-600 inline-block" />
               <span>{authMode === "mentor" ? "Beacon Senior Mentor Council (10+ Years Verified)" : "All-in-One Student Operating System"}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight leading-tight">
@@ -368,7 +368,7 @@ export default function GatewayPage() {
                     : "text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white"
                 }`}
               >
-                🏛️ Mentor Sign In
+                3. Mentor Sign In
               </button>
             </div>
 
@@ -419,8 +419,9 @@ export default function GatewayPage() {
             )}
 
             {error && (
-              <div className="bg-rose-50 border border-rose-300 text-rose-900 text-xs font-bold p-3 rounded-xl">
-                ⚠️ {error}
+              <div className="bg-rose-50 border border-rose-300 text-rose-900 text-xs font-bold p-3 rounded-xl flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-rose-600 shrink-0 inline-block" />
+                <span>{error}</span>
               </div>
             )}
 
@@ -599,7 +600,7 @@ export default function GatewayPage() {
               <form onSubmit={handleMentorSignIn} className="space-y-4">
                 <div className="p-3.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-2xl space-y-1">
                   <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200 font-black text-xs">
-                    <span>🏛️</span>
+                    <span className="w-2 h-2 rounded-full bg-amber-600 shrink-0 inline-block" />
                     <span>Senior Mentor Council Access Only</span>
                   </div>
                   <p className="text-[11px] text-amber-800 dark:text-amber-300 font-medium leading-relaxed">

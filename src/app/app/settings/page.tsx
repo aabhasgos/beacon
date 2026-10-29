@@ -189,7 +189,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between border-b border-slate-200 pb-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-lg">🔐</span>
+                <IconLock size={18} className="text-indigo-600" />
                 <h2 className="font-extrabold text-base text-slate-950">Student Login & Security</h2>
               </div>
               <p className="text-xs text-slate-600 font-medium">
@@ -276,7 +276,7 @@ export default function SettingsPage() {
         <div className="bg-white rounded-3xl border border-slate-300 p-6 sm:p-7 shadow-xs space-y-5">
           <div className="border-b border-slate-200 pb-3">
             <div className="flex items-center gap-2">
-              <span className="text-lg">🛡️</span>
+              <IconShield size={18} className="text-indigo-600" />
               <h2 className="font-extrabold text-base text-slate-950">Passport Privacy & Recruiter Visibility</h2>
             </div>
             <p className="text-xs text-slate-600 font-medium">
@@ -326,7 +326,7 @@ export default function SettingsPage() {
         <div className="bg-white rounded-3xl border border-slate-300 p-6 sm:p-7 shadow-xs space-y-5">
           <div className="border-b border-slate-200 pb-3">
             <div className="flex items-center gap-2">
-              <span className="text-lg">🔔</span>
+              <div className="w-2 h-2 rounded-full bg-indigo-600" />
               <h2 className="font-extrabold text-base text-slate-950">Career Intelligence Alerts</h2>
             </div>
             <p className="text-xs text-slate-600 font-medium">
@@ -381,7 +381,7 @@ export default function SettingsPage() {
           <div className="border-b border-slate-200 pb-3 flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-lg">🧠</span>
+                <div className="w-2 h-2 rounded-full bg-indigo-600" />
                 <h2 className="font-extrabold text-base text-slate-950">Context Ledger: My AI Career Memories</h2>
               </div>
               <p className="text-xs text-slate-600 font-medium">
@@ -426,7 +426,7 @@ export default function SettingsPage() {
         <div className="bg-white rounded-3xl border border-slate-300 p-6 sm:p-7 shadow-xs space-y-4">
           <div className="border-b border-slate-200 pb-3">
             <div className="flex items-center gap-2">
-              <span className="text-lg">📥</span>
+              <IconDownload size={18} className="text-indigo-600" />
               <h2 className="font-extrabold text-base text-slate-950">Data Portability (DPDP 2025 Compliance)</h2>
             </div>
             <p className="text-xs text-slate-600 font-medium">

@@ -124,7 +124,7 @@ CRITICAL RAG DIRECTIVES:
 2. When asked about courses, recommend exact verified courses from the curriculum, explain why each fits their verified vault skills, and provide the direct URL.
 3. When asked about their vault or skills, list their actual verified capabilities from the skill matrix with their verified levels.
 4. When asked about companies (Razorpay, Google, ISRO) or hackathons (Smart India Hackathon), reference real screening standards and official portals.
-5. NEVER use raw hashtags (#, ##, ###) for headers. Clean bold headers with emojis are mandatory (e.g. 🚀 **Actionable Next Steps:**).
+5. NEVER use raw hashtags (#, ##, ###) for headers. Use clean bold headers (e.g. **Actionable Next Steps:**).
 6. NEVER output pipe markdown tables (|---|). Use clean bulleted lists.
 `;
 
@@ -291,7 +291,7 @@ ${vaultSkillsNote}
 
 ${courseListText}
 
-💡 **Actionable Pro-Tip:**
+**Actionable Recommendation:**
 Once you complete coursework or practical labs, save the completion certificate in your **Student Passport Locker**. Our AI Diagnostic will automatically verify it as an **Assessed / Course-backed** skill credential.`,
       source: "beacon_ai",
       suggestedCourses: matched,
@@ -317,28 +317,28 @@ Once you complete coursework or practical labs, save the completion certificate 
     return {
       text: `Here is a complete, real-time audit of your **Student Vault & Verified Passport**:
 
-🎓 **Academic Standing:**
+**Academic Standing:**
 - **Student Name:** ${ledger.fullName}
 - **Institution:** ${collegeName}
 - **Program:** ${degreeName}
 - **Graduation Class:** ${ledger.graduationYear || 2027}
 
-🛡️ **Verified Skills Matrix (${ledger.skills.length} competencies verified):**
+**Verified Skills Matrix (${ledger.skills.length} competencies verified):**
 ${advancedSkills.length > 0 ? `- **Advanced Capabilities:** ${advancedSkills.join(", ")}` : ""}
 ${proficientSkills.length > 0 ? `- **Proficient Foundations:** ${proficientSkills.join(", ")}` : ""}
 ${intermediateSkills.length > 0 ? `- **Practical Competencies:** ${intermediateSkills.join(", ")}` : ""}
 
-📄 **Primary Application Resume:**
+**Primary Application Resume:**
 - **Attached Document:** ${ledger.primaryResume?.fileName || "None attached"}
 - **Verified Status:** Active & Parsed
 - **Executive Summary:** "${ledger.primaryResume?.summary || "Full profile record active."}"
 
-🏆 **Credentials & Artifacts:**
+**Credentials & Artifacts:**
 - **Certificates in Locker:** ${ledger.certificates.length} verified credential(s)
 - **Proof of Work Vault:** ${ledger.projects.length} repository artifact(s)
 - **Active Applications:** ${ledger.applications.length} submitted application(s)
 
-🚀 **Next Step to Unlock 100% Strength:**
+**Recommended Next Step:**
 Attach a GitHub repository link in your **Proof Vault** (\`/app/projects\`) to earn the official **Artifact-backed** badge for recruiters.`,
       source: "beacon_ai",
     };
@@ -350,12 +350,12 @@ Attach a GitHub repository link in your **Proof Vault** (\`/app/projects\`) to e
     return {
       text: `**Razorpay Core Payments Platform Internship** (₹50,000/month stipend):
 
-🎯 **Screening Calibration Against Your Vault:**
+**Screening Calibration Against Your Vault:**
 - **Current Standing:** As a ${degreeName} student at ${collegeName}, ${hasPythonOrJava ? `your verified proficiency in **${userSkillNames.filter((s) => ["Python", "Java"].includes(s)).join(" & ")}** satisfies their primary language criteria.` : "you should highlight solid object-oriented fundamentals."}
 - **Key Screening Focus:** Concurrency, asynchronous queue handling (Redis / RabbitMQ), and relational database ACID transaction isolation (PostgreSQL).
 - **Target Project to Add:** Build a double-entry ledger REST API with idempotency keys and benchmark latency under load.
 
-💡 **How to Apply:** Submit your verified application directly on our **Opportunity Radar** using your attached primary resume (${ledger.primaryResume?.fileName || "Resume"}).`,
+**Application Procedure:** Submit your verified application directly on our **Opportunity Radar** using your attached primary resume (${ledger.primaryResume?.fileName || "Resume"}).`,
       source: "beacon_ai",
     };
   }
@@ -365,7 +365,7 @@ Attach a GitHub repository link in your **Proof Vault** (\`/app/projects\`) to e
     return {
       text: `**ISRO Space Applications Centre (SAC) Student Research Fellowship** (₹18,000/month):
 
-🛰️ **Screening Calibration Against Your Vault:**
+**Screening Calibration Against Your Vault:**
 - **Current Standing:** ${hasAIOrRobotics ? `Your verified skills in **${userSkillNames.filter((s) => ["Robotics", "Machine Learning", "Artificial Intelligence", "C", "Python"].includes(s)).join(", ")}** directly align with ISRO's automated data analytics and robotics telemetry teams!` : `ISRO evaluates strong fundamentals in C, Python, and mathematical algorithms.`}
 - **Focus Areas:** Satellite telemetry parsing, geospatial image processing (OpenCV), and real-time distributed data logging.
 - **Application Process:** Check the Opportunity Radar on Beacon, review the official eligibility criteria, and link your verified GitHub proof artifacts.`,
@@ -377,11 +377,11 @@ Attach a GitHub repository link in your **Proof Vault** (\`/app/projects\`) to e
     return {
       text: `**Smart India Hackathon (SIH 2026) & National Hackathons:**
 
-🏆 **Official Portal & Process Notice:**
+**Official Portal & Process Notice:**
 - National challenges like SIH are conducted directly by the Ministry of Education & AICTE and require formal registration on the government portal (\`sih.gov.in\`).
 - One-click submissions are not permitted for national competitions. On Beacon's **Opportunity Radar**, click **"View Hackathon & Register on Official Portal ↗"** to access the verified portal directly.
 
-💡 **Winning Strategy for ${ledger.fullName}:**
+**Preparation Strategy for ${ledger.fullName}:**
 1. Assemble a 6-member cross-functional team (Frontend, Backend, AI/Hardware).
 2. Leverage your verified skills in **${userSkillNames.slice(0, 3).join(", ") || "AI & Web"}** to build a working, deployed MVP rather than static slides.
 3. Track your preparation milestone tasks in **My Roadmap** (\`/app/roadmap\`).`,
@@ -394,23 +394,23 @@ Attach a GitHub repository link in your **Proof Vault** (\`/app/projects\`) to e
     return {
       text: `Here is an insider engineering review of your primary resume (**${ledger.primaryResume?.fileName || "Active Resume"}**):
 
-🔍 **Vault Diagnostic Findings:**
+**Vault Diagnostic Findings:**
 - **Current Summary:** "${ledger.primaryResume?.summary || "Engineering profile record active."}"
 - **Verified Skills Identified:** ${userSkillNames.join(", ")}
 
-🚀 **3 High-Impact Improvements to Convince Tech Recruiters:**
+**Key Improvements for Enterprise Tech Recruiters:**
 1. **Add Quantitative Throughput Figures:** Instead of "built an AI model", write *"Trained a PyTorch CNN model achieving 94.2% test accuracy, reducing inference latency by 35% using ONNX runtime."*
 2. **Anchor Project Repositories:** Link verified GitHub repositories directly into your **Proof of Work Vault** (\`/app/projects\`) to showcase clean commit history and automated test suites.
 3. **Highlight Core Tech Stack:** Prominently feature your verified proficiencies in **${userSkillNames.slice(0, 5).join(", ")}** in your resume header.
 
-📄 **Export CV Tool:** You can also use the **Build & Export CV** button in your Student Passport (\`/app/passport\`) to generate a clean, ATS-compliant single-page resume.`,
+**Export CV Tool:** You can also use the **Build & Export CV** button in your Student Passport (\`/app/passport\`) to generate a clean, ATS-compliant single-page resume.`,
       source: "beacon_ai",
     };
   }
 
   // CASE E: Default Personalized Overview
   return {
-    text: `Hey ${ledger.fullName}! I'm Beacon AI, your personal career intelligence advisor.
+    text: `Welcome ${ledger.fullName}. I'm Beacon AI, your personal career intelligence advisor.
 
 Here is a verified snapshot from your **Student Vault**:
 - **Academic Standing:** ${degreeName} @ ${collegeName}
@@ -418,7 +418,7 @@ Here is a verified snapshot from your **Student Vault**:
 - **Master Resume:** ${ledger.primaryResume ? `Active (${ledger.primaryResume.fileName})` : "Attach in Passport"}
 - **Locker Credentials:** ${ledger.certificates.length} certificate(s) on record
 
-💬 **How can I assist you right now? Ask me anything:**
+**How can I assist you right now? Ask me anything:**
 - *"Suggest top free Full-Stack Web Dev courses"*
 - *"What are the best free courses for Generative AI & LLMs?"*
 - *"Audit my student vault and verified skills"*

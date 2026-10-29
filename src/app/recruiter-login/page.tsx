@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { IconBriefcase, IconShield } from "@/components/icons/Icons";
 
 export default function RecruiterLoginPage() {
   const router = useRouter();
@@ -67,8 +68,8 @@ export default function RecruiterLoginPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center relative z-10">
         {/* Beacon Recruiter Emblem */}
         <Link href="/" className="inline-flex flex-col items-center gap-2 mb-4 group">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-700 flex items-center justify-center text-3xl shadow-xl shadow-cyan-500/20 border border-cyan-400/30 group-hover:scale-105 transition-transform">
-            🏢
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-xl shadow-cyan-500/20 border border-cyan-400/30 group-hover:scale-105 transition-transform">
+            <IconBriefcase size={28} />
           </div>
           <span className="font-black text-2xl tracking-tight text-white flex items-center gap-2">
             <span>Beacon Talent Console</span>
@@ -91,21 +92,18 @@ export default function RecruiterLoginPage() {
         <div className="mt-4 inline-flex p-1 rounded-2xl bg-slate-900 border border-slate-800 text-xs font-bold">
           <Link
             href="/login"
-            className="px-3 py-1.5 rounded-xl text-slate-400 hover:text-white transition-colors flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-xl text-slate-400 hover:text-white transition-colors"
           >
-            <span>🎓</span>
-            <span>Student Portal</span>
+            Student Portal
           </Link>
           <Link
             href="/mentor-login"
-            className="px-3 py-1.5 rounded-xl text-slate-400 hover:text-white transition-colors flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-xl text-slate-400 hover:text-white transition-colors"
           >
-            <span>🏛️</span>
-            <span>Mentor Council</span>
+            Mentor Council
           </Link>
-          <span className="px-3 py-1.5 rounded-xl bg-cyan-600 text-white shadow-xs flex items-center gap-1.5">
-            <span>🏢</span>
-            <span>Recruiter Hub</span>
+          <span className="px-3 py-1.5 rounded-xl bg-cyan-600 text-white shadow-xs">
+            Recruiter Hub
           </span>
         </div>
       </div>
@@ -115,7 +113,7 @@ export default function RecruiterLoginPage() {
           {/* Quality Floor Policy Banner */}
           <div className="p-3.5 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-200 text-xs font-medium space-y-1">
             <div className="flex items-center gap-2 font-bold text-cyan-300">
-              <span>🛡️</span>
+              <IconShield size={16} />
               <span>Beacon Professional Standard Enforced</span>
             </div>
             <p className="text-[11px] text-cyan-200/90 leading-relaxed">
@@ -124,8 +122,9 @@ export default function RecruiterLoginPage() {
           </div>
 
           {error && (
-            <div className="p-3.5 rounded-xl bg-rose-950/60 border border-rose-500/50 text-rose-200 text-xs sm:text-sm font-semibold">
-              ⚠️ {error}
+            <div className="p-3.5 rounded-xl bg-rose-950/60 border border-rose-500/50 text-rose-200 text-xs sm:text-sm font-semibold flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-rose-500" />
+              <span>{error}</span>
             </div>
           )}
 
@@ -193,7 +192,7 @@ export default function RecruiterLoginPage() {
                 onClick={() => handleRecruiterLogin(undefined, "recruiter@razorpay.com", "password123")}
                 className="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 hover:border-cyan-500/50 transition-all text-xs cursor-pointer group"
               >
-                <div className="font-bold text-white group-hover:text-cyan-300">⚡ Razorpay Core</div>
+                <div className="font-bold text-white group-hover:text-cyan-300">Razorpay Payments</div>
                 <div className="text-[10px] text-slate-400">recruiter@razorpay.com</div>
               </button>
 
@@ -202,7 +201,7 @@ export default function RecruiterLoginPage() {
                 onClick={() => handleRecruiterLogin(undefined, "talent@microsoft.com", "password123")}
                 className="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 hover:border-cyan-500/50 transition-all text-xs cursor-pointer group"
               >
-                <div className="font-bold text-white group-hover:text-cyan-300">🔷 Microsoft Campus</div>
+                <div className="font-bold text-white group-hover:text-cyan-300">Microsoft Campus</div>
                 <div className="text-[10px] text-slate-400">talent@microsoft.com</div>
               </button>
 
@@ -211,7 +210,7 @@ export default function RecruiterLoginPage() {
                 onClick={() => handleRecruiterLogin(undefined, "careers@isro.gov.in", "password123")}
                 className="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 hover:border-cyan-500/50 transition-all text-xs cursor-pointer group"
               >
-                <div className="font-bold text-white group-hover:text-cyan-300">🚀 ISRO SAC</div>
+                <div className="font-bold text-white group-hover:text-cyan-300">ISRO SAC</div>
                 <div className="text-[10px] text-slate-400">careers@isro.gov.in</div>
               </button>
 
@@ -220,7 +219,7 @@ export default function RecruiterLoginPage() {
                 onClick={() => handleRecruiterLogin(undefined, "recruiter@google.com", "password123")}
                 className="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 hover:border-cyan-500/50 transition-all text-xs cursor-pointer group"
               >
-                <div className="font-bold text-white group-hover:text-cyan-300">🔴 Google India</div>
+                <div className="font-bold text-white group-hover:text-cyan-300">Google India</div>
                 <div className="text-[10px] text-slate-400">recruiter@google.com</div>
               </button>
             </div>

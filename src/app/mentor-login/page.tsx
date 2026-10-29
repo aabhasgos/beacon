@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { IconShield, IconUsers } from "@/components/icons/Icons";
 
 export default function MentorLoginPage() {
   const router = useRouter();
@@ -62,8 +63,8 @@ export default function MentorLoginPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         {/* Beacon Council Seal */}
         <Link href="/" className="inline-flex flex-col items-center gap-2 mb-4 group">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center text-3xl shadow-lg shadow-amber-500/20 border border-amber-300 group-hover:scale-105 transition-transform">
-            🏛️
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center text-slate-950 shadow-lg shadow-amber-500/20 border border-amber-300 group-hover:scale-105 transition-transform">
+            <IconUsers size={28} />
           </div>
           <span className="font-black text-2xl tracking-tight text-white">
             Beacon Senior Mentor Council
@@ -85,7 +86,7 @@ export default function MentorLoginPage() {
           {/* Council Charter Notice */}
           <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs font-medium space-y-1">
             <div className="flex items-center gap-2 font-bold text-amber-300">
-              <span>⚖️</span>
+              <IconShield size={16} />
               <span>100% Pro-Bono Student Charter</span>
             </div>
             <p className="text-[11px] text-amber-200/90">
@@ -94,8 +95,9 @@ export default function MentorLoginPage() {
           </div>
 
           {error && (
-            <div className="p-3.5 rounded-xl bg-rose-950/60 border border-rose-500/50 text-rose-200 text-xs sm:text-sm font-semibold">
-              ⚠️ {error}
+            <div className="p-3.5 rounded-xl bg-rose-950/60 border border-rose-500/50 text-rose-200 text-xs sm:text-sm font-semibold flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-rose-500" />
+              <span>{error}</span>
             </div>
           )}
 

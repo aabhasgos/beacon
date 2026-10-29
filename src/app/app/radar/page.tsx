@@ -100,7 +100,7 @@ export default function RecruiterRadarPage() {
           <div className="space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[11px] font-black bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-3 py-1 rounded-full uppercase tracking-wider">
-                🎯 Recruiter Talent Radar • Audited Proof-of-Work
+                Recruiter Talent Radar • Audited Proof-of-Work
               </span>
               <span className="text-[11px] font-bold text-emerald-400 flex items-center gap-1 bg-emerald-950/40 border border-emerald-800/40 px-2.5 py-0.5 rounded-full">
                 <span>✓</span> Zero Placement Fees for Students
@@ -294,7 +294,9 @@ export default function RecruiterRadarPage() {
 
           {candidates.length === 0 && !loading && (
             <div className="text-center py-12 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-500 space-y-2">
-              <span className="text-2xl">🔍</span>
+              <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-slate-800 border border-indigo-100 dark:border-slate-700 flex items-center justify-center text-indigo-600 mx-auto mb-2">
+                <IconSearch size={20} />
+              </div>
               <p className="font-bold text-slate-700 dark:text-slate-300">No candidates match the specified proof-of-work filters.</p>
               <p className="text-xs">Try lowering minimum CGPA or selecting all verified skills.</p>
             </div>

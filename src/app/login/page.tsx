@@ -223,7 +223,7 @@ export default function LoginPage() {
                 href="/mentor-login"
                 className="font-bold text-amber-700 hover:text-amber-900 inline-flex items-center gap-1"
               >
-                <span>🏛️ Mentor Council</span>
+                <span>Mentor Council</span>
                 <span>→</span>
               </Link>
               <span className="hidden sm:inline text-slate-300">•</span>
@@ -231,7 +231,7 @@ export default function LoginPage() {
                 href="/recruiter-login"
                 className="font-bold text-cyan-700 hover:text-cyan-900 inline-flex items-center gap-1"
               >
-                <span>🏢 Recruiter Portal</span>
+                <span>Recruiter Portal</span>
                 <span>→</span>
               </Link>
             </div>

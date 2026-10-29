@@ -236,8 +236,8 @@ export default function MentorsPage() {
           <div className="bg-gradient-to-r from-amber-950/90 via-slate-900 to-amber-950/90 border-2 border-amber-500/60 rounded-3xl p-6 sm:p-7 text-white shadow-xl space-y-4 animate-in fade-in">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
               <div className="flex items-start gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-amber-500 text-slate-950 font-black flex items-center justify-center text-2xl shrink-0 shadow-lg shadow-amber-500/20 border border-amber-400">
-                  🏛️
+                <div className="w-14 h-14 rounded-2xl bg-amber-500 text-slate-950 font-black flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20 border border-amber-400">
+                  <IconShield size={24} />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -290,7 +290,7 @@ export default function MentorsPage() {
           <div className="space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[11px] font-black bg-amber-500/20 text-amber-300 border border-amber-400/30 px-3 py-1 rounded-full uppercase tracking-wider">
-                🏛️ Senior Mentor Council • 10+ Year Verified Practitioners
+                Senior Mentor Council • 10+ Year Verified Practitioners
               </span>
               <span className="text-[11px] font-bold text-emerald-400 flex items-center gap-1 bg-emerald-950/40 border border-emerald-800/40 px-2.5 py-0.5 rounded-full">
                 <span>✓</span> 100% Pro-Bono Pledge • Zero Student Fees
@@ -527,7 +527,8 @@ export default function MentorsPage() {
             <div className="bg-indigo-950 text-white p-6 rounded-3xl border border-indigo-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="inline-flex items-center gap-1.5 bg-indigo-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">
-                  <span>🔴 Live Virtual Stage</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-300 animate-pulse" />
+                  <span>Live Virtual Stage</span>
                 </div>
                 <h2 className="text-xl font-black">Interactive Engineering Masterclasses</h2>
                 <p className="text-xs text-indigo-200 max-w-xl">
@@ -580,8 +581,14 @@ export default function MentorsPage() {
 
                   <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
                     <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
-                      <span>📅 {mc.scheduled_at?.slice(0, 10)}</span>
-                      <span>👥 {mc.attendees_count} / {mc.max_capacity} Enrolled</span>
+                      <span className="flex items-center gap-1">
+                        <IconCalendar size={12} className="text-slate-400" />
+                        <span>{mc.scheduled_at?.slice(0, 10)}</span>
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <IconUsers size={12} className="text-slate-400" />
+                        <span>{mc.attendees_count} / {mc.max_capacity} Enrolled</span>
+                      </span>
                     </div>
 
                     <button
@@ -605,7 +612,8 @@ export default function MentorsPage() {
             <div className="bg-slate-900 text-white p-6 rounded-3xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="inline-flex items-center gap-1.5 bg-amber-500/20 text-amber-300 border border-amber-400/30 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">
-                  <span>🏛️ Decentralized Governance</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                  <span>Decentralized Governance</span>
                 </div>
                 <h2 className="text-xl font-black">Mentor Council Credential Verification Queue</h2>
                 <p className="text-xs text-slate-300 max-w-xl">

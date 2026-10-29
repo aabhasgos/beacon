@@ -106,11 +106,11 @@ export function AppLayout({ children }: AppLayoutProps) {
   };
 
   const navItems = [
-    { href: "/app", label: "Opportunity Feed", icon: IconSearch, badge: "Live" },
+    { href: "/app", label: "Opportunity Feed", icon: IconSearch, badge: "Pulse" },
     { href: "/app/guide", label: "Beacon AI Coach", icon: IconCompass, badge: "AI" },
     { href: "/app/passport", label: "Student Passport", icon: IconAward, badge: "Vault" },
     { href: "/app/opportunities", label: "Internships & Jobs", icon: IconBriefcase, badge: "Verified" },
-    { href: "/app/hackathons", label: "Hackathons Across India", icon: IconTarget, badge: "🇮🇳 India" },
+    { href: "/app/hackathons", label: "Hackathons Across India", icon: IconTarget, badge: "National" },
     { href: "/app/academy", label: "Courses & Academy", icon: IconBookOpen },
     { href: "/app/roadmap", label: "My Roadmap", icon: IconCalendar },
     { href: "/app/decision-studio", label: "Decision Studio", icon: IconGraph },
@@ -150,7 +150,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           </Link>
           {currentUser?.role === "mentor" ? (
             <span className="hidden sm:inline-block text-[11px] font-bold text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700 rounded-full px-2.5 py-0.5">
-              🏛️ Verified 10+ Yr Senior Mentor Council
+              Verified Senior Mentor Council (10+ Yr)
             </span>
           ) : (
             <span className="hidden sm:inline-block text-[11px] font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-2.5 py-0.5">

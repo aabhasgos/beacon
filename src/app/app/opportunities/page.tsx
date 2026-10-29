@@ -9,6 +9,8 @@ import {
   IconExternalLink,
   IconFileText,
   IconAward,
+  IconBriefcase,
+  IconBuilding,
 } from "@/components/icons/Icons";
 
 export default function OpportunitiesPage() {
@@ -279,7 +281,7 @@ export default function OpportunitiesPage() {
       {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed top-20 right-6 z-50 bg-slate-950 text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-xl border border-slate-700 animate-fade-in flex items-center gap-2">
-          <span>🚀</span>
+          <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
           <span>{toastMsg}</span>
         </div>
       )}
@@ -290,7 +292,7 @@ export default function OpportunitiesPage() {
           <div className="absolute -top-16 -right-16 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="space-y-1 relative z-10">
             <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/30 text-[10px] font-black uppercase tracking-wider">
-              <span>🇮🇳 National Competitions</span>
+              <span>National Competitions</span>
               <span>•</span>
               <span>Smart India Hackathon SIH 2026 & Devfolio</span>
             </div>
@@ -441,10 +443,10 @@ export default function OpportunitiesPage() {
                                 : "bg-emerald-50 text-emerald-900 border border-emerald-300"
                             }`}
                           >
-                            {isHackathon ? "🏆 National Challenge" : opp.type}
+                            {isHackathon ? "National Challenge" : opp.type}
                           </span>
                           <span className="text-[11px] font-bold bg-slate-100 text-slate-800 border border-slate-200 px-2.5 py-0.5 rounded-full">
-                            {opp.is_remote ? "🏠 Remote" : "📍 On-Site / Hybrid"}
+                            {opp.is_remote ? "Remote" : "On-Site / Hybrid"}
                           </span>
                           <span className="text-[11px] font-black bg-emerald-50 text-emerald-800 border border-emerald-300 px-2.5 py-0.5 rounded-full">
                             {opp.matchPercent}% Match
@@ -466,7 +468,7 @@ export default function OpportunitiesPage() {
                         </h2>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-xs sm:text-sm font-bold text-slate-800">
-                            🏢 {opp.organization}
+                            {opp.organization}
                           </span>
                           <span className="text-indigo-600 font-bold text-xs">✓ Verified Opportunity</span>
                         </div>
@@ -488,7 +490,7 @@ export default function OpportunitiesPage() {
 
                     {opp.explanation && (
                       <div className="p-3 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-800 text-[11px] text-indigo-900 dark:text-indigo-200 font-medium flex items-start gap-2">
-                        <span>💡</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 shrink-0 mt-1" />
                         <span>{opp.explanation}</span>
                       </div>
                     )}
@@ -567,14 +569,16 @@ export default function OpportunitiesPage() {
           <div className="space-y-4">
             {applications.length === 0 ? (
               <div className="bg-white rounded-3xl border border-slate-200/90 p-10 text-center space-y-3">
-                <span className="text-3xl">📭</span>
+                <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 mx-auto">
+                  <IconBriefcase size={22} />
+                </div>
                 <h3 className="font-bold text-base text-slate-900">No applications submitted yet</h3>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto font-medium">
                   Select any verified opening from the Opportunity Radar to complete the formal application process.
                 </p>
                 <button
                   onClick={() => setActiveTab("radar")}
-                  className="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold"
+                  className="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold cursor-pointer"
                 >
                   Browse Openings
                 </button>
@@ -594,7 +598,10 @@ export default function OpportunitiesPage() {
                         <span className="text-xs text-slate-400 font-medium">App ID: {app.id}</span>
                       </div>
                       <h3 className="font-black text-lg text-slate-950">{app.opp_title || app.title}</h3>
-                      <p className="text-xs font-bold text-slate-700 mt-0.5">🏢 {app.organization}</p>
+                      <p className="text-xs font-bold text-slate-700 mt-0.5 flex items-center gap-1.5">
+                        <IconBuilding size={13} className="text-slate-400" />
+                        <span>{app.organization}</span>
+                      </p>
                     </div>
 
                     <div className="text-left sm:text-right shrink-0">
@@ -854,7 +861,7 @@ export default function OpportunitiesPage() {
             {/* Header */}
             <div>
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-black uppercase tracking-wider mb-2">
-                <span>🏢 RECRUITER VERIFIED POSTING</span>
+                <span>RECRUITER VERIFIED POSTING</span>
               </div>
               <h3 className="text-xl font-black text-white">Post Verified Engineering Role</h3>
               <p className="text-xs text-slate-400 font-medium mt-0.5">
@@ -865,7 +872,7 @@ export default function OpportunitiesPage() {
             {/* Quality Floor Policy Banner */}
             <div className="p-3 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-200 text-xs font-medium space-y-1">
               <span className="font-bold text-cyan-300 flex items-center gap-1.5">
-                <span>🛡️</span>
+                <span className="w-2 h-2 rounded-full bg-cyan-400" />
                 <span>Minimum Stipend Floor Policy (₹15,000/mo)</span>
               </span>
               <p className="text-[11px] text-cyan-200/90 leading-relaxed">
@@ -907,9 +914,9 @@ export default function OpportunitiesPage() {
                     onChange={(e) => setPostJobType(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white font-bold"
                   >
-                    <option value="Internship">⚡ Engineering Internship</option>
-                    <option value="Full-Time">💼 Full-Time SDE</option>
-                    <option value="Fellowship">🔬 Research Fellowship</option>
+                    <option value="Internship">Engineering Internship</option>
+                    <option value="Full-Time">Full-Time SDE</option>
+                    <option value="Fellowship">Research Fellowship</option>
                   </select>
                 </div>
 

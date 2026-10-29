@@ -194,10 +194,7 @@ export function AiResumeStudioModal({
                   <span className="text-emerald-400">Copied to Clipboard!</span>
                 </>
               ) : (
-                <>
-                  <span>📋</span>
-                  <span>Copy ATS Text</span>
-                </>
+                <span>Copy ATS Text</span>
               )}
             </button>
 
@@ -206,7 +203,6 @@ export function AiResumeStudioModal({
               onClick={handlePrint}
               className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black shadow-md transition-all cursor-pointer flex items-center gap-1.5"
             >
-              <span>🖨️</span>
               <span>Export / Print Clean PDF</span>
             </button>
 
@@ -266,7 +262,7 @@ export function AiResumeStudioModal({
                   }
                   className="text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-md transition-colors cursor-pointer"
                 >
-                  ⚡ Elevate STAR Metrics
+                  Elevate STAR Metrics
                 </button>
                 <button
                   type="button"
@@ -277,7 +273,7 @@ export function AiResumeStudioModal({
                   }
                   className="text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-md transition-colors cursor-pointer"
                 >
-                  🏢 Vast Tier-1 Tech CV
+                  Vast Tier-1 Tech CV
                 </button>
                 <button
                   type="button"
@@ -288,7 +284,7 @@ export function AiResumeStudioModal({
                   }
                   className="text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-md transition-colors cursor-pointer"
                 >
-                  🧠 Deep AI / ML Focus
+                  Deep AI / ML Focus
                 </button>
               </div>
 
@@ -300,7 +296,7 @@ export function AiResumeStudioModal({
                 className="w-full mt-2 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <IconSparkles size={15} />
-                <span>{synthesizing ? "AI Synthesizing Vast Resume..." : "✨ AI Synthesize & Build Vast Resume"}</span>
+                <span>{synthesizing ? "AI Synthesizing Vast Resume..." : "AI Synthesize & Build Vast Resume"}</span>
               </button>
             </div>
 
@@ -430,8 +426,8 @@ export function AiResumeStudioModal({
                     {resumeData.headline}
                   </p>
                   <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-slate-600 pt-1 font-sans font-medium">
-                    {resumeData.contact?.email && <span>📧 {resumeData.contact.email}</span>}
-                    {resumeData.contact?.location && <span>• 📍 {resumeData.contact.location}</span>}
+                    {resumeData.contact?.email && <span>{resumeData.contact.email}</span>}
+                    {resumeData.contact?.location && <span>• {resumeData.contact.location}</span>}
                     {resumeData.contact?.linkedinUrl && (
                       <span>
                         •{" "}

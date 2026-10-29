@@ -60,11 +60,11 @@ export default function AcademyPublicPage() {
                   {crs.title}
                 </h3>
                 <p className="text-xs font-semibold text-slate-600 mb-2">
-                  🏛️ {crs.provider}
+                  {crs.provider}
                 </p>
 
                 <div className="text-xs text-slate-500 mb-3">
-                  ⏱️ {crs.duration} • {crs.level}
+                  {crs.duration} • {crs.level}
                 </div>
 
                 <p className="text-xs text-slate-600 leading-relaxed mb-4">

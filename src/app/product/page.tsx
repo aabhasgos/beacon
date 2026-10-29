@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
+import { IconAward, IconBriefcase, IconSparkles } from "@/components/icons/Icons";
 
 export default function ProductPage() {
   return (
@@ -24,7 +25,9 @@ export default function ProductPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-3">
-              <span className="text-2xl block">📜</span>
+              <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                <IconAward size={20} />
+              </div>
               <h3 className="font-bold text-lg text-slate-900">Student Passport & Locker</h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Upload your certificates and resumes. Showcase verified credentials from NPTEL, Meta, Coursera, and national challenges.
@@ -32,7 +35,9 @@ export default function ProductPage() {
             </div>
 
             <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-3">
-              <span className="text-2xl block">💼</span>
+              <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                <IconBriefcase size={20} />
+              </div>
               <h3 className="font-bold text-lg text-slate-900">Opportunity Radar</h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Internshala and Unstop-grade discovery. Curated official listings from ISRO, Razorpay, Google, and Flipkart with 1-click application attachment.
@@ -40,7 +45,9 @@ export default function ProductPage() {
             </div>
 
             <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-3">
-              <span className="text-2xl block">✨</span>
+              <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                <IconSparkles size={20} />
+              </div>
               <h3 className="font-bold text-lg text-slate-900">Beacon AI Career Coach</h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Smart, friendly guidance. Get course suggestions, project recommendations, and roadmap milestones tailored to your exact year and goals.

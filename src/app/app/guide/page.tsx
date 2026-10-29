@@ -173,7 +173,7 @@ export default function GuidePage() {
     {
       role: "assistant",
       content:
-        "Hey there! 👋 I'm Beacon AI, your personal career intelligence advisor.\n\nI have your verified Student Vault loaded with your university record and skills matrix. Ask me to suggest top courses, audit your vault, review your resume, or guide your internship applications!",
+        "Welcome to Beacon AI, your personal career intelligence advisor.\n\nI have your verified Student Vault loaded with your university record and skills matrix. Ask me to suggest top courses, audit your vault, review your resume, or guide your internship applications!",
       source: "beacon_ai",
       time: "Just now",
     },
@@ -200,14 +200,14 @@ export default function GuidePage() {
             setMessages([
               {
                 role: "assistant",
-                content: `Hey ${firstName}! 👋 I'm Beacon AI, your personal career intelligence advisor.
+                content: `Welcome, ${firstName}. I'm Beacon AI, your personal career intelligence advisor.
 
 Here is a verified snapshot of your active record:
 - **Academic Standing:** ${u.degree || "B.Tech Computer Science"}${college}
 - **Student Vault:** ${skillsSummary || "Profile loaded"} • Primary Resume Attached
 - **Platform Radar:** Live connections to Razorpay, ISRO, Google, and Smart India Hackathon
 
-🎯 **How can I assist you right now? Ask me anything:**
+**How can I assist you right now? Ask me anything:**
 - *"Suggest top free Full-Stack Web Dev courses"*
 - *"What are the best free courses for Generative AI & LLMs?"*
 - *"Audit my student vault and verified skills"*

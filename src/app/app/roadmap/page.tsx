@@ -262,7 +262,7 @@ export default function RoadmapPage() {
               <div className="space-y-3 max-w-3xl">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
-                    🧠 NLP Profile Diagnostics & Extraction
+                    NLP Profile Diagnostics & Extraction
                   </span>
                   <span className="text-xs font-semibold text-slate-400">
                     Source: {profileIntelligence.resumeFilename}
@@ -394,7 +394,7 @@ export default function RoadmapPage() {
                           </span>
                         )}
                         <span className="text-[11px] font-bold text-slate-500 bg-slate-50 border border-slate-200 px-2.5 py-0.5 rounded-md">
-                          ⏱ {task.estimated_minutes || 45} mins
+                          Est. {task.estimated_minutes || 45} mins
                         </span>
                       </div>
 
@@ -412,12 +412,12 @@ export default function RoadmapPage() {
                       {task.focus_key && (
                         <div className="bg-indigo-50/70 border border-indigo-200/80 rounded-2xl p-3 sm:p-4 space-y-1">
                           <div className="flex items-center gap-1.5 text-indigo-900 font-black text-xs uppercase tracking-wide">
-                            <span>🎯 Main Focus Key:</span>
+                            <span>Focus Invariant:</span>
                             <span className="text-indigo-800 font-bold normal-case">{task.focus_key}</span>
                           </div>
                           {task.concepts_to_learn && (
                             <p className="text-xs text-indigo-950/80 font-medium pt-0.5">
-                              <strong>📚 What you have to learn:</strong> {task.concepts_to_learn}
+                              <strong>Concepts to Master:</strong> {task.concepts_to_learn}
                             </p>
                           )}
                         </div>
@@ -438,7 +438,7 @@ export default function RoadmapPage() {
                         onClick={() => openTaskWorkbench(task)}
                         className="flex-1 lg:flex-none px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1.5"
                       >
-                        <span>⚡ Open Interactive Workbench</span>
+                        <span>Open Interactive Workbench</span>
                       </button>
 
                       <button
@@ -498,7 +498,7 @@ export default function RoadmapPage() {
               <div className="bg-slate-900 text-white rounded-2xl p-4 sm:p-5 space-y-2 border border-slate-800">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-black text-indigo-400 uppercase tracking-wider">
-                    🎯 Main Focus Key:
+                    Focus Invariant:
                   </span>
                   <span className="text-sm font-black text-white">
                     {activeTask.focus_key || "Core Problem Solving & Invariant Preservation"}
@@ -506,7 +506,7 @@ export default function RoadmapPage() {
                 </div>
 
                 <div className="text-xs text-slate-300 leading-relaxed space-y-1 pt-1 border-t border-slate-800">
-                  <strong className="text-indigo-300 block">📚 What You Have to Learn:</strong>
+                  <strong className="text-indigo-300 block">Concepts to Master:</strong>
                   <p>{activeTask.concepts_to_learn || "Review boundary invariants, race conditions, edge-case checks, and runtime complexity requirements."}</p>
                 </div>
               </div>
@@ -515,7 +515,7 @@ export default function RoadmapPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-black text-slate-800 flex items-center gap-2">
-                    <span>💻 Interactive Solution & Code Editor</span>
+                    <span>Interactive Solution & Code Editor</span>
                     <span className="text-[11px] font-normal text-slate-500">(Type or refine your code below)</span>
                   </label>
 
@@ -600,7 +600,7 @@ export default function RoadmapPage() {
                     className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black shadow-md transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
                   >
                     <IconSparkles size={15} />
-                    <span>{evaluating ? "Evaluating Solution..." : "🧪 Run & Evaluate Solution"}</span>
+                    <span>{evaluating ? "Evaluating Solution..." : "Run & Evaluate Solution"}</span>
                   </button>
                 </div>
               </div>
@@ -734,7 +734,7 @@ export default function RoadmapPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">🎯 Main Focus Key</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Focus Invariant</label>
                   <input
                     type="text"
                     placeholder="e.g. Leader election timeouts & atomic state machine commit"
@@ -745,7 +745,7 @@ export default function RoadmapPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">📚 What You Have to Learn</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Concepts to Master</label>
                   <textarea
                     rows={2}
                     placeholder="Key concepts, RFC specifications, or algorithms to master."
