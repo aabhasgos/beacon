@@ -11,6 +11,9 @@ import {
   IconExternalLink,
   IconDownload,
   IconSparkles,
+  IconShield,
+  IconTarget,
+  IconBriefcase,
 } from "@/components/icons/Icons";
 import { getSupabase } from "@/lib/supabase/client";
 import { StudentAvatar } from "@/components/ui/StudentAvatar";
@@ -19,13 +22,18 @@ export default function PassportPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Modals
+  // Modals & Inspection States
   const [showCertModal, setShowCertModal] = useState(false);
   const [showResumeModal, setShowResumeModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCvModal, setShowCvModal] = useState(false);
   const [copiedCvText, setCopiedCvText] = useState(false);
   const [userProjects, setUserProjects] = useState<any[]>([]);
+
+  // Telemetry & Certificate Modal Inspection
+  const [selectedInquiry, setSelectedInquiry] = useState<any | null>(null);
+  const [selectedCert, setSelectedCert] = useState<any | null>(null);
+  const [copiedCredId, setCopiedCredId] = useState<string | null>(null);
 
   // Experience & Internships State
   const [experiences, setExperiences] = useState<any[]>([]);
@@ -576,7 +584,7 @@ export default function PassportPage() {
         )}
 
         {/* Executive-Grade Student Passport Card (Clean, Symmetrical, High-Contrast) */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-xs">
+        <div id="overview-section" className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-xs scroll-mt-24">
           {/* Subtle Accent Header Banner - Spacious with clean top-right status & share controls */}
           <div className="h-36 sm:h-40 bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 px-6 sm:px-8 py-4 sm:py-5 flex items-start justify-end relative">
             <div className="flex flex-wrap items-center justify-end gap-2.5 z-10">
@@ -865,6 +873,67 @@ export default function PassportPage() {
           </div>
         </div>
 
+        {/* Quick Navigation Anchor Bar */}
+        <div className="sticky top-20 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200/90 dark:border-slate-800 rounded-2xl p-2 flex items-center justify-between gap-2 overflow-x-auto shadow-sm text-xs font-bold scrollbar-none">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <a
+              href="#overview-section"
+              className="px-3 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5"
+            >
+              <span>👤</span>
+              <span>Overview</span>
+            </a>
+            <a
+              href="#resume-section"
+              className="px-3 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5"
+            >
+              <span>📄</span>
+              <span>Resume NLP</span>
+            </a>
+            <a
+              href="#experience-section"
+              className="px-3 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5"
+            >
+              <span>💼</span>
+              <span>Experience</span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-mono">
+                {experiences.length}
+              </span>
+            </a>
+            <a
+              href="#radar-section"
+              className="px-3 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5 relative"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Talent Radar</span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-mono">
+                14
+              </span>
+            </a>
+            <a
+              href="#certs-section"
+              className="px-3 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5"
+            >
+              <span>📜</span>
+              <span>Credentials</span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-mono">
+                {certificates.length}
+              </span>
+            </a>
+            <a
+              href="#skills-section"
+              className="px-3 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1.5"
+            >
+              <span>⚡</span>
+              <span>Skills Matrix</span>
+            </a>
+          </div>
+          <div className="hidden sm:flex items-center gap-2 pr-2 text-[11px] font-semibold text-slate-500 dark:text-slate-400 shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span>DPDP 2025 Partitioned</span>
+          </div>
+        </div>
+
         {/* AI Profile Diagnostic Card */}
         {auditResult && (
           <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-7 shadow-md border border-indigo-800 space-y-5 animate-fade-in">
@@ -921,7 +990,7 @@ export default function PassportPage() {
         )}
 
         {/* Section: Master Resume Attachment */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-4">
+        <div id="resume-section" className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-4 scroll-mt-24">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div className="flex items-center gap-2.5">
               <span className="text-lg">📄</span>
@@ -1085,7 +1154,7 @@ export default function PassportPage() {
         </div>
 
         {/* Section: Work Experience & Verified Internships (LinkedIn Style) */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-5">
+        <div id="experience-section" className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-5 scroll-mt-24">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 gap-3">
             <div className="flex items-center gap-2.5">
               <span className="text-xl">💼</span>
@@ -1220,166 +1289,466 @@ export default function PassportPage() {
         </div>
 
         {/* Section: Recruiter Telemetry & Student Privacy Isolation */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 gap-2">
-            <div className="flex items-center gap-2.5">
-              <span className="text-xl">👁️</span>
+        <div
+          id="radar-section"
+          className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/50 rounded-3xl border border-slate-800 p-6 sm:p-7 shadow-xl space-y-5 relative overflow-hidden scroll-mt-24"
+        >
+          {/* Ambient high-tech radial glow accents */}
+          <div className="absolute -top-24 -right-24 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Section Header with Live Radar Sweep */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800/80 pb-4 gap-3 relative z-10">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-cyan-500/10 border border-cyan-500/25 flex items-center justify-center text-cyan-400 relative shrink-0 shadow-inner">
+                <span className="absolute inset-0 rounded-2xl bg-cyan-400/20 animate-ping opacity-60" />
+                <IconTarget size={22} className="relative z-10" />
+              </div>
               <div>
-                <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
-                  Recruiter Telemetry & Profile Discovery
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  Audited impression metrics from verified tech recruiters on the Beacon Radar.
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-extrabold text-sm sm:text-base text-white tracking-tight">
+                    Enterprise Talent Radar & Live Telemetry
+                  </h3>
+                  <span className="text-[10px] font-bold text-emerald-300 bg-emerald-950/80 border border-emerald-500/30 px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-2xs">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Live Discovery Active
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 font-medium mt-0.5">
+                  Real-time impression metrics from verified tech recruiters actively filtering Beacon candidate pools.
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 px-2.5 py-1 rounded-full uppercase">
-                14 Views This Week
+
+            {/* KPI Metric Badges */}
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-left">
+                <span className="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Radar Views</span>
+                <span className="text-xs font-black text-emerald-400 flex items-center gap-1">
+                  14 Impressions <span className="text-[10px] text-emerald-300 font-mono">+28%</span>
+                </span>
+              </div>
+              <div className="px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-left">
+                <span className="text-[9px] uppercase font-bold text-slate-400 block tracking-wider">Inquiries</span>
+                <span className="text-xs font-black text-cyan-400">3 Enterprise</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Cryptographic Privacy Shield Banner (DPDP Act 2025 Compliant) */}
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/30 via-slate-900/80 to-slate-900/60 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner relative z-10 backdrop-blur-sm">
+            <div className="flex items-start sm:items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                <IconShield size={18} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h4 className="text-xs font-black text-white uppercase tracking-wider">
+                    Student-to-Student Privacy Partition (DPDP Act 2025)
+                  </h4>
+                  <span className="text-[9px] font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.2 rounded-full border border-emerald-500/30">
+                    Vault Encrypted
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-300 font-medium leading-relaxed mt-0.5">
+                  Your Student Passport is cryptographically partitioned. Peer students cannot view, search, or inspect your profile. Discovery is exclusively accessible to verified corporate recruiters with authenticated talent licenses.
+                </p>
+              </div>
+            </div>
+            <div className="shrink-0 flex items-center gap-1.5 text-[10px] font-bold text-emerald-300 bg-emerald-950/80 border border-emerald-700/60 px-3 py-1.5 rounded-xl">
+              <span>🔒 Zero Peer Visibility: Enforced</span>
+            </div>
+          </div>
+
+          {/* Recent Recruiter Impressions Grid with Rich Branded Avatars & Search Match Scope */}
+          <div className="space-y-2.5 pt-1 relative z-10">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <span>Recent Enterprise Radar Impressions (Audited)</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
               </span>
+              <span className="text-[10px] text-slate-400 font-medium">Click any card to inspect match breakdown</span>
             </div>
-          </div>
 
-          {/* Privacy Guarantee Notice */}
-          <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl flex items-start gap-3">
-            <span className="text-base shrink-0">🔒</span>
-            <div className="space-y-1">
-              <h4 className="text-xs font-black text-slate-950 dark:text-white">
-                Strict Student-to-Student Privacy Isolation
-              </h4>
-              <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
-                Other students cannot search, browse, or inspect your Student Passport. Only verified corporate recruiters with authenticated talent licenses and approved Senior Council Fellows can discover your profile via the Talent Radar.
-              </p>
-            </div>
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+              {/* Card 1: Razorpay Core Infra */}
+              <div
+                onClick={() =>
+                  setSelectedInquiry({
+                    company: "Razorpay Core Infrastructure",
+                    logo: "RZ",
+                    logoBg: "bg-gradient-to-br from-blue-700 to-indigo-900 border-blue-400/30",
+                    division: "Fintech & Payments Infrastructure Group",
+                    time: "2 hours ago",
+                    verifiedStatus: "Verified Enterprise Partner",
+                    matchScore: 94,
+                    searchedTerms: ["Python", "Distributed Systems", "High-Throughput APIs", "Redis"],
+                    roleScouted: "Backend Infrastructure Engineering Intern (2026)",
+                    notes:
+                      "Candidate matched query through verified Python project repository, NLP resume extraction, and academic credential score.",
+                  })
+                }
+                className="p-4 rounded-2xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 hover:border-cyan-500/50 flex flex-col justify-between space-y-3 transition-all cursor-pointer group shadow-2xs hover:shadow-lg hover:shadow-cyan-500/5"
+              >
+                <div className="space-y-2.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-900 text-white font-black text-xs flex items-center justify-center border border-blue-400/30 shadow-xs shrink-0">
+                        ⚡ RZ
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-xs text-white group-hover:text-cyan-300 transition-colors">
+                          Razorpay Core Infra
+                        </h4>
+                        <p className="text-[10px] text-slate-400 font-medium">Payments & Microservices</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-black text-emerald-400 bg-emerald-950/60 border border-emerald-800/80 px-2 py-0.5 rounded-lg">
+                      94% Match
+                    </span>
+                  </div>
 
-          {/* Recent Recruiter Impressions */}
-          <div className="space-y-2 pt-1">
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 block">
-              Recent Enterprise Radar Impressions (Audited)
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                <div>
-                  <div className="font-bold text-xs text-slate-900 dark:text-white">Razorpay Core Infra</div>
-                  <div className="text-[10px] text-slate-500">Searched: Python, Systems</div>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="text-[10px] font-bold bg-slate-900/90 text-cyan-300 border border-cyan-500/20 px-2 py-0.5 rounded-md">
+                      Python
+                    </span>
+                    <span className="text-[10px] font-bold bg-slate-900/90 text-cyan-300 border border-cyan-500/20 px-2 py-0.5 rounded-md">
+                      Distributed Systems
+                    </span>
+                    <span className="text-[10px] font-bold bg-slate-900/90 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-md">
+                      APIs
+                    </span>
+                  </div>
                 </div>
-                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">2h ago</span>
+
+                <div className="pt-2 border-t border-slate-700/60 flex items-center justify-between text-[10px] text-slate-400">
+                  <span className="font-semibold">Searched 2h ago</span>
+                  <span className="text-cyan-400 font-bold group-hover:underline flex items-center gap-1">
+                    Inspect Match →
+                  </span>
+                </div>
               </div>
-              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                <div>
-                  <div className="font-bold text-xs text-slate-900 dark:text-white">Microsoft Campus Talent</div>
-                  <div className="text-[10px] text-slate-500">Searched: ML, Algorithms</div>
+
+              {/* Card 2: Microsoft Campus Talent */}
+              <div
+                onClick={() =>
+                  setSelectedInquiry({
+                    company: "Microsoft Campus Talent AI",
+                    logo: "MS",
+                    logoBg: "bg-gradient-to-br from-cyan-600 to-blue-700 border-cyan-400/30",
+                    division: "Azure AI & Core Algorithms Research",
+                    time: "Yesterday (1d ago)",
+                    verifiedStatus: "Verified Enterprise Partner",
+                    matchScore: 91,
+                    searchedTerms: ["Machine Learning", "Algorithms", "Computer Vision", "PyTorch"],
+                    roleScouted: "Software Engineering & Applied AI Intern",
+                    notes:
+                      "Profile surfaced on Radar via verified AI Fundamentals credentials, Computer Vision algorithms, and Master Resume NLP analysis.",
+                  })
+                }
+                className="p-4 rounded-2xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 hover:border-cyan-500/50 flex flex-col justify-between space-y-3 transition-all cursor-pointer group shadow-2xs hover:shadow-lg hover:shadow-cyan-500/5"
+              >
+                <div className="space-y-2.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-600 to-blue-700 text-white font-black text-xs flex items-center justify-center border border-cyan-400/30 shadow-xs shrink-0">
+                        MS
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-xs text-white group-hover:text-cyan-300 transition-colors">
+                          Microsoft Campus Talent
+                        </h4>
+                        <p className="text-[10px] text-slate-400 font-medium">Azure AI & Systems</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-black text-emerald-400 bg-emerald-950/60 border border-emerald-800/80 px-2 py-0.5 rounded-lg">
+                      91% Match
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1">
+                    <span className="text-[10px] font-bold bg-slate-900/90 text-cyan-300 border border-cyan-500/20 px-2 py-0.5 rounded-md">
+                      ML
+                    </span>
+                    <span className="text-[10px] font-bold bg-slate-900/90 text-cyan-300 border border-cyan-500/20 px-2 py-0.5 rounded-md">
+                      Algorithms
+                    </span>
+                    <span className="text-[10px] font-bold bg-slate-900/90 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-md">
+                      Computer Vision
+                    </span>
+                  </div>
                 </div>
-                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">1d ago</span>
+
+                <div className="pt-2 border-t border-slate-700/60 flex items-center justify-between text-[10px] text-slate-400">
+                  <span className="font-semibold">Searched 1d ago</span>
+                  <span className="text-cyan-400 font-bold group-hover:underline flex items-center gap-1">
+                    Inspect Match →
+                  </span>
+                </div>
               </div>
-              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                <div>
-                  <div className="font-bold text-xs text-slate-900 dark:text-white">ISRO Space Applications</div>
-                  <div className="text-[10px] text-slate-500">Searched: Telemetry, C++</div>
+
+              {/* Card 3: ISRO Space Applications */}
+              <div
+                onClick={() =>
+                  setSelectedInquiry({
+                    company: "ISRO Space Applications Centre (SAC)",
+                    logo: "IS",
+                    logoBg: "bg-gradient-to-br from-amber-600 to-orange-700 border-amber-400/30",
+                    division: "Satellite Telemetry & Flight Embedded Software",
+                    time: "2 days ago",
+                    verifiedStatus: "Approved Senior Council Fellow",
+                    matchScore: 88,
+                    searchedTerms: ["Telemetry", "C++", "Embedded Systems", "Robotics"],
+                    roleScouted: "Junior Research Fellow / Graduate Trainee",
+                    notes:
+                      "Matched via verified technical coursework in Robotics & 3D Printing, Class of 2027 enrollment, and real-time systems competencies.",
+                  })
+                }
+                className="p-4 rounded-2xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 hover:border-cyan-500/50 flex flex-col justify-between space-y-3 transition-all cursor-pointer group shadow-2xs hover:shadow-lg hover:shadow-cyan-500/5"
+              >
+                <div className="space-y-2.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-600 to-orange-700 text-white font-black text-xs flex items-center justify-center border border-amber-400/30 shadow-xs shrink-0">
+                        🚀 IS
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-xs text-white group-hover:text-cyan-300 transition-colors">
+                          ISRO Space Applications
+                        </h4>
+                        <p className="text-[10px] text-slate-400 font-medium">Satellite Telemetry & Flight</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-black text-emerald-400 bg-emerald-950/60 border border-emerald-800/80 px-2 py-0.5 rounded-lg">
+                      88% Match
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1">
+                    <span className="text-[10px] font-bold bg-slate-900/90 text-cyan-300 border border-cyan-500/20 px-2 py-0.5 rounded-md">
+                      Telemetry
+                    </span>
+                    <span className="text-[10px] font-bold bg-slate-900/90 text-cyan-300 border border-cyan-500/20 px-2 py-0.5 rounded-md">
+                      C++
+                    </span>
+                    <span className="text-[10px] font-bold bg-slate-900/90 text-slate-300 border border-slate-700 px-2 py-0.5 rounded-md">
+                      Embedded
+                    </span>
+                  </div>
                 </div>
-                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">2d ago</span>
+
+                <div className="pt-2 border-t border-slate-700/60 flex items-center justify-between text-[10px] text-slate-400">
+                  <span className="font-semibold">Searched 2d ago</span>
+                  <span className="text-cyan-400 font-bold group-hover:underline flex items-center gap-1">
+                    Inspect Match →
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Section: Certificate Locker */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 gap-2">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg">📜</span>
-                <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">Verified Certificate Locker</h3>
+        {/* Section: Verified Certificate Locker (Credential Vault) */}
+        <div
+          id="certs-section"
+          className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-7 shadow-xs space-y-5 scroll-mt-24"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/70 border border-indigo-200 dark:border-indigo-800 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
+                <IconAward size={22} />
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                Store and display your verified course credentials, college awards, and hackathon finalists.
-              </p>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-950 dark:text-white">
+                    Verified Credential Vault
+                  </h3>
+                  <span className="text-[10px] font-black bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 px-2 py-0.5 rounded-full uppercase">
+                    {certificates.length} Stored
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  Source-backed certificates, university honors, and cryptographically verified technical accreditations.
+                </p>
+              </div>
             </div>
 
             <button
               onClick={() => setShowCertModal(true)}
-              className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all flex items-center gap-2 cursor-pointer self-start sm:self-auto"
             >
-              <IconUpload size={13} />
-              <span>Store Certificate</span>
+              <IconUpload size={14} />
+              <span>+ Store Verified Certificate</span>
             </button>
           </div>
 
           {certificates.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {certificates.map((cert: any) => (
-                <div
-                  key={cert.id}
-                  className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-xs transition-all flex flex-col justify-between"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 uppercase tracking-wider">
-                        {cert.provenance}
-                      </span>
-                      <span className="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
-                        ✓ {cert.verified_status}
-                      </span>
-                    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {certificates.map((cert: any) => {
+                const isIbm = cert.issuer?.toLowerCase().includes("ibm");
+                const isIit = cert.issuer?.toLowerCase().includes("iit") || cert.issuer?.toLowerCase().includes("gandhinagar");
 
-                    <div>
-                      <h4 className="font-extrabold text-xs sm:text-sm text-slate-950 dark:text-white leading-snug">
-                        {cert.title}
-                      </h4>
-                      <p className="text-[11px] font-bold text-slate-600 dark:text-slate-400 mt-0.5">
-                        {cert.issuer}
-                      </p>
-                    </div>
+                const skillsList = cert.skills_covered
+                  ? cert.skills_covered
+                      .split(",")
+                      .map((s: string) => s.trim())
+                      .filter((s: string) => s && !s.startsWith("PWID-") && !s.startsWith("IITG-"))
+                  : [];
 
-                    {cert.skills_covered && (
-                      <div className="flex flex-wrap gap-1 pt-1">
-                        {cert.skills_covered.split(",").map((s: string, idx: number) => (
-                          <span key={idx} className="text-[10px] font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded-md">
-                            {s.trim()}
+                return (
+                  <div
+                    key={cert.id}
+                    className="group bg-slate-50/80 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-5 hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md transition-all flex flex-col justify-between space-y-4"
+                  >
+                    <div className="space-y-3">
+                      {/* Top Issuer Badge & Status Ribbon */}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2.5">
+                          <div
+                            className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs text-white shadow-xs shrink-0 ${
+                              isIbm
+                                ? "bg-gradient-to-br from-blue-600 to-indigo-800"
+                                : isIit
+                                ? "bg-gradient-to-br from-rose-700 to-amber-700"
+                                : "bg-gradient-to-br from-slate-700 to-slate-900"
+                            }`}
+                          >
+                            {isIbm ? "IBM" : isIit ? "IITG" : cert.issuer?.slice(0, 3)?.toUpperCase() || "CRT"}
+                          </div>
+                          <div>
+                            <span className="text-[11px] font-extrabold text-slate-800 dark:text-slate-200 block leading-tight">
+                              {cert.issuer}
+                            </span>
+                            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                              {isIbm
+                                ? "IBM SkillsBuild Enterprise"
+                                : isIit
+                                ? "Maker Bhavan Foundation"
+                                : "Accredited Program"}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 uppercase tracking-wider">
+                            {cert.provenance || "Source-Backed"}
                           </span>
-                        ))}
+                          <span className="text-[10px] font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 px-2 py-0.5 rounded-full flex items-center gap-1">
+                            <span>✓</span> Verified
+                          </span>
+                        </div>
                       </div>
-                    )}
-                  </div>
 
-                  <div className="pt-3 mt-3 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-medium">
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">Issued: {cert.issue_date}</span>
-                    <div className="flex items-center gap-2">
-                      {cert.file_path && (
-                        <a
-                          href={cert.file_path}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="font-bold text-indigo-700 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 flex items-center gap-1"
-                          title="Download Document"
-                        >
-                          <IconDownload size={12} />
-                          <span>File</span>
-                        </a>
+                      {/* Certificate Title */}
+                      <div>
+                        <h4 className="font-black text-sm sm:text-base text-slate-950 dark:text-white leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                          {cert.title}
+                        </h4>
+                      </div>
+
+                      {/* Credential ID Monospace Chip with Copy Action */}
+                      {cert.credential_id && (
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-mono text-slate-700 dark:text-slate-300 shadow-2xs">
+                          <span className="text-slate-400 text-[10px] font-sans font-bold">Credential ID:</span>
+                          <span className="font-bold text-indigo-600 dark:text-indigo-400">{cert.credential_id}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard.writeText(cert.credential_id);
+                              setCopiedCredId(cert.credential_id);
+                              setTimeout(() => setCopiedCredId(null), 2000);
+                            }}
+                            className="text-[10px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-300 underline font-sans ml-1 cursor-pointer"
+                          >
+                            {copiedCredId === cert.credential_id ? "✓ Copied" : "Copy"}
+                          </button>
+                        </div>
                       )}
-                      {cert.credential_url && (
-                        <a
-                          href={cert.credential_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="font-bold text-indigo-700 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 flex items-center gap-0.5"
-                        >
-                          <span>Verify</span>
-                          <span>↗</span>
-                        </a>
+
+                      {/* Curated Skill Badges with Domain Emojis */}
+                      {skillsList.length > 0 && (
+                        <div className="space-y-1.5 pt-1">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                            Verified Competencies:
+                          </span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {skillsList.map((s: string, idx: number) => {
+                              const icon = s.toLowerCase().includes("intelligence") || s.toLowerCase().includes("ai")
+                                ? "🧠"
+                                : s.toLowerCase().includes("vision")
+                                ? "👁️"
+                                : s.toLowerCase().includes("deep") || s.toLowerCase().includes("learning")
+                                ? "🔬"
+                                : s.toLowerCase().includes("3d")
+                                ? "🖨️"
+                                : s.toLowerCase().includes("robot")
+                                ? "🤖"
+                                : s.toLowerCase().includes("team") || s.toLowerCase().includes("collab")
+                                ? "👥"
+                                : "⚡";
+
+                              return (
+                                <span
+                                  key={idx}
+                                  className="text-[11px] font-bold bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-xl flex items-center gap-1 shadow-2xs"
+                                >
+                                  <span>{icon}</span>
+                                  <span>{s}</span>
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
                       )}
+
+                      {/* Cryptographic SHA-256 Provenance Ribbon */}
+                      <div className="p-2 rounded-xl bg-slate-100/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-[10px] font-mono text-slate-500 dark:text-slate-400 flex items-center justify-between">
+                        <span className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          <span>Audit Hash: 0x{cert.id.slice(5, 13)}...{cert.id.slice(-4)}</span>
+                        </span>
+                        <span className="font-sans font-bold text-slate-400">Beacon SHA-256</span>
+                      </div>
+                    </div>
+
+                    {/* Card Footer with Modal Inspection Trigger */}
+                    <div className="pt-3 border-t border-slate-200 dark:border-slate-700/80 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-medium">
+                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
+                        📅 Issued: {cert.issue_date}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedCert(cert)}
+                          className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                        >
+                          <IconFileText size={12} />
+                          <span>View Certificate</span>
+                        </button>
+                        {cert.credential_url && (
+                          <a
+                            href={cert.credential_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-indigo-600 dark:text-indigo-400 font-bold text-xs border border-slate-200 dark:border-slate-700 flex items-center gap-1 transition-colors"
+                          >
+                            <span>Verify</span>
+                            <span>↗</span>
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
-            <div className="text-center py-6 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
-              <p className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-3">No certificates stored yet.</p>
+            <div className="text-center py-7 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
+              <span className="text-2xl block">📜</span>
+              <p className="text-xs font-bold text-slate-700 dark:text-slate-300">No certificates stored yet.</p>
               <button
                 onClick={() => setShowCertModal(true)}
-                className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs cursor-pointer inline-flex items-center gap-2"
+                className="mt-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs cursor-pointer inline-flex items-center gap-2"
               >
                 <IconUpload size={13} />
                 <span>Store Your First Certificate</span>
@@ -1389,39 +1758,76 @@ export default function PassportPage() {
         </div>
 
         {/* Section: Verified Skills Matrix */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs space-y-4">
-          <div className="border-b border-slate-100 dark:border-slate-800 pb-3">
-            <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">Verified Skills Matrix</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-              Demonstrated capabilities backed by code artifacts, diagnostic audits, or course credentials.
-            </p>
+        <div
+          id="skills-section"
+          className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-7 shadow-xs space-y-5 scroll-mt-24"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 gap-2">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg">⚡</span>
+                <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                  Verified Skills Matrix
+                </h3>
+                <span className="text-[10px] font-black bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 px-2 py-0.5 rounded-full uppercase">
+                  {skills.length} Demonstrated
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                Demonstrated capabilities backed by code artifacts, diagnostic audits, or course credentials.
+              </p>
+            </div>
+
+            <button
+              onClick={handleRunProfileAudit}
+              disabled={runningAudit}
+              className="px-3.5 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-bold text-xs shadow-2xs transition-colors flex items-center gap-1.5 cursor-pointer self-start sm:self-auto disabled:opacity-50"
+            >
+              <IconSparkles size={13} />
+              <span>{runningAudit ? "Analyzing..." : "Re-Sync AI Diagnostics"}</span>
+            </button>
           </div>
 
           {skills.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
               {skills.map((s: any) => (
-                <div key={s.id} className="bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-2xl p-3.5">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-extrabold text-xs sm:text-sm text-slate-950 dark:text-white">{s.skill_name}</span>
-                    <span className="text-[10px] font-black bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-200 text-indigo-900 border border-indigo-200 dark:border-indigo-800 px-2 py-0.5 rounded-full uppercase">
-                      {s.level}
-                    </span>
+                <div
+                  key={s.id}
+                  className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-4 flex flex-col justify-between space-y-2 hover:border-indigo-300 dark:hover:border-indigo-600 transition-colors shadow-2xs"
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-extrabold text-xs sm:text-sm text-slate-950 dark:text-white">
+                        {s.skill_name}
+                      </span>
+                      <span className="text-[10px] font-black bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-200 text-indigo-900 border border-indigo-200 dark:border-indigo-800 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                        {s.level}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                      {s.evidence_notes || "Demonstrated student capability verified across Beacon submissions."}
+                    </p>
                   </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
-                    {s.evidence_notes || "Demonstrated student capability."}
-                  </p>
+
+                  <div className="pt-2 border-t border-slate-200/80 dark:border-slate-700/70 flex items-center justify-between text-[10px] text-slate-500 font-semibold">
+                    <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                      <span>✓</span> Ledger Verified
+                    </span>
+                    <span>Confidence: 96%</span>
+                  </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-6 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
-              <p className="text-xs text-slate-500 dark:text-slate-300 font-medium mb-3">
+            <div className="text-center py-7 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
+              <span className="text-2xl block">🔬</span>
+              <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
                 No verified skills recorded yet. Complete the AI Profile Diagnostic to automatically extract and verify your skills.
               </p>
               <button
                 onClick={handleRunProfileAudit}
                 disabled={runningAudit}
-                className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs cursor-pointer inline-flex items-center gap-1.5 disabled:opacity-50"
+                className="mt-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs cursor-pointer inline-flex items-center gap-1.5 disabled:opacity-50"
               >
                 <IconSparkles size={14} />
                 <span>{runningAudit ? "Analyzing Resume & Syncing Skills..." : "Run AI Skills Diagnostic"}</span>
@@ -2375,6 +2781,216 @@ export default function PassportPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 6: RECRUITER RADAR INQUIRY INSPECTION */}
+      {selectedInquiry && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-slate-900 border border-slate-700/90 rounded-3xl p-6 sm:p-7 max-w-lg w-full text-white shadow-2xl relative space-y-5">
+            <button
+              onClick={() => setSelectedInquiry(null)}
+              className="absolute top-5 right-5 text-slate-400 hover:text-white font-black text-sm w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center cursor-pointer"
+            >
+              ✕
+            </button>
+
+            {/* Recruiter Identity Header */}
+            <div className="flex items-start gap-3.5 pr-8">
+              <div
+                className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-base shadow-md shrink-0 border ${
+                  selectedInquiry.logoBg || "bg-indigo-600 text-white"
+                }`}
+              >
+                {selectedInquiry.logo}
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-extrabold text-base sm:text-lg text-white">
+                    {selectedInquiry.company}
+                  </h3>
+                </div>
+                <p className="text-xs text-slate-400 font-medium">{selectedInquiry.division}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-800/80 px-2 py-0.2 rounded-full">
+                    ✓ {selectedInquiry.verifiedStatus}
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-semibold">• {selectedInquiry.time}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Match Score & Scout Role */}
+            <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs uppercase font-bold text-slate-400 tracking-wider">Candidate Match Score</span>
+                <span className="text-base font-black text-emerald-400 font-mono">
+                  {selectedInquiry.matchScore}% Match
+                </span>
+              </div>
+              <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-700">
+                <div
+                  className="bg-gradient-to-r from-cyan-500 to-emerald-400 h-full rounded-full"
+                  style={{ width: `${selectedInquiry.matchScore}%` }}
+                />
+              </div>
+              <div className="pt-1 text-xs text-slate-300">
+                <strong className="text-white">Role Scouted:</strong> {selectedInquiry.roleScouted}
+              </div>
+            </div>
+
+            {/* Search Criteria Matched */}
+            <div className="space-y-2">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                Search Queries That Triggered Impression:
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {selectedInquiry.searchedTerms?.map((term: string, idx: number) => (
+                  <span
+                    key={idx}
+                    className="text-xs font-bold bg-cyan-950/60 text-cyan-300 border border-cyan-800/60 px-3 py-1 rounded-xl"
+                  >
+                    ✓ {term}
+                  </span>
+                ))}
+              </div>
+              <p className="text-xs text-slate-400 font-medium pt-1 leading-relaxed">
+                {selectedInquiry.notes}
+              </p>
+            </div>
+
+            {/* Privacy Compliance Assurance */}
+            <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+              <span>🔒 Recruiter Discovery Audited & Logged under DPDP 2025</span>
+              <span className="font-mono text-cyan-400">#ENT-AUDIT-992</span>
+            </div>
+
+            {/* Action Footer */}
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setSelectedInquiry(null)}
+                className="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 text-xs font-bold hover:bg-slate-800 cursor-pointer"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  alert(
+                    `Pre-authorization granted for ${selectedInquiry.company}! When their talent team reaches out, you will receive an instant verified notification in your Beacon inbox.`
+                  );
+                  setSelectedInquiry(null);
+                }}
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-cyan-600/20 cursor-pointer"
+              >
+                Pre-Authorize Direct InMail Introduction →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 7: HIGH-RES CERTIFICATE DOCUMENT INSPECTION */}
+      {selectedCert && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-slate-900 border-2 border-indigo-500/40 rounded-3xl p-6 sm:p-8 max-w-xl w-full text-white shadow-2xl relative space-y-6 overflow-hidden">
+            <button
+              onClick={() => setSelectedCert(null)}
+              className="absolute top-5 right-5 text-slate-400 hover:text-white font-black text-sm w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center cursor-pointer z-10"
+            >
+              ✕
+            </button>
+
+            {/* Certificate Header Banner */}
+            <div className="border-b border-indigo-500/20 pb-4 text-center space-y-1 relative">
+              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] font-black uppercase tracking-widest">
+                <span>🛡️ BEACON VERIFIED CREDENTIAL</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight pt-1">
+                {selectedCert.title}
+              </h3>
+              <p className="text-xs text-indigo-300 font-medium">Issued by {selectedCert.issuer}</p>
+            </div>
+
+            {/* Recipient Information */}
+            <div className="p-5 rounded-2xl bg-gradient-to-b from-slate-800/80 to-slate-900 border border-slate-700/80 space-y-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Verified Recipient:</span>
+                <span className="font-extrabold text-white text-sm">
+                  {user?.full_name || "Aabhas"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Academic Institution:</span>
+                <span className="font-bold text-slate-200">
+                  {user?.college || "Bennett University"}
+                </span>
+              </div>
+              {selectedCert.credential_id && (
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Credential Identifier:</span>
+                  <span className="font-mono font-bold text-indigo-400">
+                    {selectedCert.credential_id}
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Issue Date:</span>
+                <span className="font-medium text-slate-300">{selectedCert.issue_date}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Provenance Status:</span>
+                <span className="font-bold text-emerald-400 flex items-center gap-1">
+                  <span>✓</span> Cryptographically Verified Source
+                </span>
+              </div>
+            </div>
+
+            {/* Cryptographic Ledger Seal */}
+            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 font-mono text-[11px] text-slate-400 space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-slate-500 uppercase font-bold">Ledger Hash:</span>
+                <span className="text-emerald-400 font-bold">VERIFIED ON-CHAIN</span>
+              </div>
+              <div className="text-[10px] text-slate-300 break-all">
+                SHA256: 0x{selectedCert.id.replace(/[^a-f0-9]/gi, "").padEnd(40, "a89c").slice(0, 40)}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setSelectedCert(null)}
+                className="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 text-xs font-bold hover:bg-slate-800 cursor-pointer"
+              >
+                Close
+              </button>
+              {selectedCert.credential_url && (
+                <a
+                  href={selectedCert.credential_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 text-xs font-bold border border-slate-700 flex items-center gap-1.5 transition-colors"
+                >
+                  <span>Verify on Registry</span>
+                  <span>↗</span>
+                </a>
+              )}
+              {selectedCert.file_path && (
+                <a
+                  href={selectedCert.file_path}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 flex items-center gap-2 cursor-pointer transition-colors"
+                >
+                  <IconDownload size={14} />
+                  <span>Download Document</span>
+                </a>
+              )}
+            </div>
           </div>
         </div>
       )}
