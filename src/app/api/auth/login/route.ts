@@ -8,6 +8,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { email, password, portal, role } = body;
     const isMentorPortal = portal === "mentor" || role === "mentor";
+    const isRecruiterPortal = portal === "recruiter" || role === "recruiter";
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -29,18 +30,60 @@ export async function POST(request: Request) {
         );
       }
 
+      // If logging in through Recruiter Portal
+      if (isRecruiterPortal && user.role !== "recruiter") {
+        // Upgrade or switch to recruiter role if logging in through recruiter portal
+        db.prepare("UPDATE users SET role = 'recruiter' WHERE id = ?").run(user.id);
+        user = db.prepare("SELECT * FROM users WHERE id = ?").get(user.id);
+      }
+
       // Verify password if one was set during registration
       if (user.password && password && user.password !== "password123") {
         if (user.password !== password.trim()) {
           return NextResponse.json(
-            { error: `Incorrect password for this ${isMentorPortal ? "mentor" : "student"} account. Please check your credentials.` },
+            { error: `Incorrect password for this account. Please check your credentials.` },
             { status: 401 }
           );
         }
       }
     } else {
-      // If mentor portal and unknown email, reject or check known mentor list
-      if (isMentorPortal) {
+      // If recruiter portal and unknown email
+      if (isRecruiterPortal) {
+        const freeDomains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "rediffmail.com"];
+        const domain = cleanEmail.split("@")[1] || "";
+        const isFreeEmail = freeDomains.includes(domain);
+
+        const knownRecruiters: Record<string, { name: string; headline: string; company: string }> = {
+          "recruiter@razorpay.com": { name: "Aditya Sharma", headline: "Lead Technical Recruiter @ Razorpay", company: "Razorpay" },
+          "talent@microsoft.com": { name: "Ananya Iyer", headline: "University Talent Lead @ Microsoft", company: "Microsoft" },
+          "careers@isro.gov.in": { name: "Dr. K. S. Raman", headline: "Senior Scientific Officer & Recruitment Chair @ ISRO SAC", company: "ISRO SAC" },
+          "recruiter@google.com": { name: "Rohit Malhotra", headline: "Staff Tech Recruiter @ Google India", company: "Google India" },
+          "talent@cred.club": { name: "Pooja Hegde", headline: "Head of Campus Engineering Talent @ CRED", company: "CRED" },
+          "recruiter@flipkart.com": { name: "Vikram Nambiar", headline: "Campus Engineering Hiring Lead @ Flipkart", company: "Flipkart" },
+        };
+
+        const known = knownRecruiters[cleanEmail];
+        const newId = `usr_recruiter_${Date.now()}`;
+        const companyName = known?.company || domain.split(".")[0].toUpperCase();
+        const fullName = known?.name || `${cleanEmail.split("@")[0].replace(/[._-]/g, " ")} (Recruiter)`;
+        const headline = known?.headline || `Enterprise Talent Partner @ ${companyName}`;
+
+        db.prepare(`
+          INSERT INTO users (
+            id, email, password, full_name, role, headline, college, degree
+          ) VALUES (?, ?, ?, ?, 'recruiter', ?, ?, 'Enterprise Talent Partner')
+        `).run(
+          newId,
+          cleanEmail,
+          password || "password123",
+          fullName,
+          headline,
+          companyName
+        );
+
+        user = db.prepare("SELECT * FROM users WHERE id = ?").get(newId);
+      } else if (isMentorPortal) {
+        // If mentor portal and unknown email, reject or check known mentor list
         const knownMentors: Record<string, { name: string; headline: string; years: number }> = {
           "priya@uber.com": { name: "Priya Sen", headline: "Staff SRE @ Razorpay (Ex-Uber)", years: 11 },
           "priya@razorpay.com": { name: "Priya Sen", headline: "Staff SRE @ Razorpay (Ex-Uber)", years: 11 },
@@ -96,7 +139,12 @@ export async function POST(request: Request) {
       }
     }
 
-    const redirectUrl = user.role === "mentor" ? "/app/mentors" : "/app";
+    const redirectUrl =
+      user.role === "mentor"
+        ? "/app/mentors"
+        : user.role === "recruiter"
+        ? "/app/opportunities?recruiter=true"
+        : "/app";
 
     const res = NextResponse.json({
       success: true,

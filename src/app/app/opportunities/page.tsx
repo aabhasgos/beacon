@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { AppLayout } from "@/components/layout/AppLayout";
 import {
   IconSearch,
@@ -39,8 +40,27 @@ export default function OpportunitiesPage() {
   const [applySuccess, setApplySuccess] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
 
+  // Recruiter Job Posting State
+  const [showPostJobModal, setShowPostJobModal] = useState(false);
+  const [postJobTitle, setPostJobTitle] = useState("");
+  const [postJobOrg, setPostJobOrg] = useState("");
+  const [postJobType, setPostJobType] = useState("Internship");
+  const [postJobLocation, setPostJobLocation] = useState("Bengaluru, India (Hybrid)");
+  const [postJobIsRemote, setPostJobIsRemote] = useState(false);
+  const [postJobStipend, setPostJobStipend] = useState("₹50,000 / month + Housing");
+  const [postJobDeadline, setPostJobDeadline] = useState("2026-12-31");
+  const [postJobSkills, setPostJobSkills] = useState("Python, Distributed Systems, Cloud Architecture");
+  const [postJobDesc, setPostJobDesc] = useState("");
+  const [postJobUrl, setPostJobUrl] = useState("");
+  const [postingJob, setPostingJob] = useState(false);
+  const [isRecruiterUser, setIsRecruiterUser] = useState(false);
+
   async function loadOpportunities() {
     try {
+      if (typeof window !== "undefined" && window.location.search.includes("recruiter=true")) {
+        setIsRecruiterUser(true);
+      }
+
       const params = new URLSearchParams();
       if (typeFilter !== "all") params.append("type", typeFilter);
       if (remoteOnly) params.append("remote", "1");
@@ -54,7 +74,9 @@ export default function OpportunitiesPage() {
 
       if (oppRes.ok) {
         const d = await oppRes.json();
-        setOpportunities(d.opportunities || []);
+        // Strictly filter out generic Hackathons (they have their own dedicated national hub at /app/hackathons)
+        const professionalOnly = (d.opportunities || []).filter((o: any) => o.type !== "Hackathon");
+        setOpportunities(professionalOnly);
       }
       if (appRes.ok) {
         const d = await appRes.json();
@@ -64,6 +86,7 @@ export default function OpportunitiesPage() {
         const p = await profRes.json();
         const u = p.user;
         if (u) {
+          if (u.role === "recruiter") setIsRecruiterUser(true);
           setAppFullName(u.full_name || "");
           setAppEmail(u.email || "");
           setAppCollege(u.college || "");
@@ -77,6 +100,50 @@ export default function OpportunitiesPage() {
       setLoading(false);
     }
   }
+
+  const handlePostJob = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!postJobTitle.trim() || !postJobOrg.trim() || !postJobStipend.trim()) {
+      alert("Please enter the Role Title, Organization, and Verified Stipend.");
+      return;
+    }
+    setPostingJob(true);
+    try {
+      const res = await fetch("/api/opportunities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: postJobTitle.trim(),
+          organization: postJobOrg.trim(),
+          type: postJobType,
+          location: postJobLocation.trim(),
+          is_remote: postJobIsRemote,
+          stipend: postJobStipend.trim(),
+          deadline: postJobDeadline,
+          skills_required: postJobSkills.split(",").map((s) => s.trim()).filter(Boolean),
+          description: postJobDesc.trim(),
+          source_url: postJobUrl.trim() || "https://beacon.os/careers",
+        }),
+      });
+
+      if (res.ok) {
+        setShowPostJobModal(false);
+        setPostJobTitle("");
+        setPostJobOrg("");
+        setPostJobDesc("");
+        setToastMsg("Verified professional role published successfully! ✓");
+        setTimeout(() => setToastMsg(""), 4000);
+        await loadOpportunities();
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to publish role.");
+      }
+    } catch {
+      alert("Network error while publishing role.");
+    } finally {
+      setPostingJob(false);
+    }
+  };
 
   useEffect(() => {
     loadOpportunities();
@@ -218,61 +285,96 @@ export default function OpportunitiesPage() {
       )}
 
       <div className="space-y-6 max-w-6xl mx-auto">
+        {/* Dedicated National Hackathons Across India Hub Banner */}
+        <div className="bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 border border-indigo-700/80 rounded-3xl p-5 sm:p-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl relative overflow-hidden">
+          <div className="absolute -top-16 -right-16 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="space-y-1 relative z-10">
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/30 text-[10px] font-black uppercase tracking-wider">
+              <span>🇮🇳 National Competitions</span>
+              <span>•</span>
+              <span>Smart India Hackathon SIH 2026 & Devfolio</span>
+            </div>
+            <h3 className="font-black text-base sm:text-lg tracking-tight">
+              Looking for National Hackathons & Innovation Challenges?
+            </h3>
+            <p className="text-xs text-indigo-200 font-medium max-w-xl leading-relaxed">
+              We have created a dedicated National Hackathons Radar with live web extraction across Devfolio, Unstop, SIH portal, and direct official registrations.
+            </p>
+          </div>
+          <Link
+            href="/app/hackathons"
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-400 hover:to-amber-500 text-white font-black text-xs shadow-md shadow-orange-500/25 shrink-0 transition-all flex items-center justify-center gap-1.5 relative z-10"
+          >
+            <span>Explore Hackathons Across India</span>
+            <span>→</span>
+          </Link>
+        </div>
+
         {/* Header */}
-        <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-8 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <span className="text-[11px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200 px-3 py-0.5 rounded-full uppercase tracking-wider">
-                OPPORTUNITY RADAR
+              <span className="text-[11px] font-black bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 px-3 py-0.5 rounded-full uppercase tracking-wider">
+                PROFESSIONAL RADAR
               </span>
-              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
-                ✓ 100% Zero Application Fees
+              <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 rounded-full">
+                ✓ 100% Guaranteed Stipend
               </span>
-              <span className="text-xs font-bold text-slate-500">• Verified Tech Roles & National Challenges</span>
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400">• Zero Unpaid Roles Policy</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
-              Verified Opportunity Radar
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white tracking-tight">
+              Verified Engineering Careers & Fellowships
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 font-medium mt-1 max-w-2xl leading-relaxed">
-              Explore official engineering internships, national hackathons, and research fellowships. Submit verified applications with screening assessments.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium mt-1 max-w-2xl leading-relaxed">
+              Curated technical internships, graduate SDE roles, and research fellowships. Only verified enterprise employers with competitive stipends (₹15,000/mo floor) are admitted.
             </p>
           </div>
 
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 self-start sm:self-auto shrink-0">
+          <div className="flex flex-wrap items-center gap-2.5 self-start lg:self-auto shrink-0">
             <button
-              onClick={() => setActiveTab("radar")}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer ${
-                activeTab === "radar"
-                  ? "bg-white text-indigo-900 dark:bg-slate-900 dark:text-indigo-200 shadow-xs"
-                  : "text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white"
-              }`}
+              onClick={() => setShowPostJobModal(true)}
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white font-black text-xs shadow-md shadow-cyan-600/20 transition-all flex items-center gap-1.5 cursor-pointer"
             >
-              All Openings ({opportunities.length})
+              <span>+ Post Verified Role</span>
+              <span className="text-[10px] bg-white/20 px-1.5 py-0.2 rounded-full uppercase">Recruiters</span>
             </button>
-            <button
-              onClick={() => setActiveTab("applied")}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer ${
-                activeTab === "applied"
-                  ? "bg-white text-indigo-900 dark:bg-slate-900 dark:text-indigo-200 shadow-xs"
-                  : "text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white"
-              }`}
-            >
-              My Applications ({applications.length})
-            </button>
+
+            <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <button
+                onClick={() => setActiveTab("radar")}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer ${
+                  activeTab === "radar"
+                    ? "bg-white text-indigo-900 dark:bg-slate-900 dark:text-indigo-200 shadow-xs"
+                    : "text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white"
+                }`}
+              >
+                All Openings ({opportunities.length})
+              </button>
+              <button
+                onClick={() => setActiveTab("applied")}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer ${
+                  activeTab === "applied"
+                    ? "bg-white text-indigo-900 dark:bg-slate-900 dark:text-indigo-200 shadow-xs"
+                    : "text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white"
+                }`}
+              >
+                My Applications ({applications.length})
+              </button>
+            </div>
           </div>
         </div>
 
         {activeTab === "radar" ? (
           <>
             {/* Filter Bar */}
-            <div className="bg-white rounded-3xl border border-slate-200/90 p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs sm:text-sm">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs sm:text-sm">
               <form onSubmit={handleSearchSubmit} className="flex-1 flex gap-2">
                 <input
                   type="text"
-                  placeholder="Search by role, company, or skills (e.g. Razorpay, ISRO, Python, React, SIH)..."
+                  placeholder="Search by role, company, or skills (e.g. Razorpay, ISRO, Python, C++, Distributed Systems)..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 bg-slate-50 text-xs sm:text-sm"
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm"
                 />
                 <button
                   type="submit"
@@ -288,10 +390,9 @@ export default function OpportunitiesPage() {
                   onChange={(e) => setTypeFilter(e.target.value)}
                   className="px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-bold bg-white dark:bg-slate-800 text-xs focus:outline-none"
                 >
-                  <option value="all">All Categories</option>
-                  <option value="Internship">Internships Only</option>
-                  <option value="Hackathon">Hackathons & Challenges</option>
-                  <option value="Fellowship">Fellowships</option>
+                  <option value="all">All Professional Roles</option>
+                  <option value="Internship">Engineering Internships</option>
+                  <option value="Fellowship">Research Fellowships</option>
                 </select>
 
                 <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs">
@@ -732,6 +833,192 @@ export default function OpportunitiesPage() {
                   className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black shadow-xs cursor-pointer disabled:opacity-50"
                 >
                   {applying ? "Packaging & Delivering..." : "Submit Candidate Application →"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: POST VERIFIED ROLE (ENTERPRISE RECRUITER CONSOLE) */}
+      {showPostJobModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 max-w-xl w-full text-white shadow-2xl relative max-h-[92vh] overflow-y-auto space-y-5">
+            <button
+              onClick={() => setShowPostJobModal(false)}
+              className="absolute top-5 right-5 text-slate-400 hover:text-white font-black text-sm w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center cursor-pointer"
+            >
+              ✕
+            </button>
+
+            {/* Header */}
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-black uppercase tracking-wider mb-2">
+                <span>🏢 RECRUITER VERIFIED POSTING</span>
+              </div>
+              <h3 className="text-xl font-black text-white">Post Verified Engineering Role</h3>
+              <p className="text-xs text-slate-400 font-medium mt-0.5">
+                Target verified engineering talent with cryptographic student passport ledgers.
+              </p>
+            </div>
+
+            {/* Quality Floor Policy Banner */}
+            <div className="p-3 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-200 text-xs font-medium space-y-1">
+              <span className="font-bold text-cyan-300 flex items-center gap-1.5">
+                <span>🛡️</span>
+                <span>Minimum Stipend Floor Policy (₹15,000/mo)</span>
+              </span>
+              <p className="text-[11px] text-cyan-200/90 leading-relaxed">
+                Beacon strictly bans unpaid internships, unpaid commission marketing, and generic telecalling. Only technical roles with audited compensation are approved.
+              </p>
+            </div>
+
+            <form onSubmit={handlePostJob} className="space-y-4 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Role Title *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Backend SDE Intern, ML Systems Engineer"
+                    value={postJobTitle}
+                    onChange={(e) => setPostJobTitle(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Company / Organization *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Razorpay, Microsoft, ISRO SAC, CRED"
+                    value={postJobOrg}
+                    onChange={(e) => setPostJobOrg(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 font-medium"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Opportunity Type</label>
+                  <select
+                    value={postJobType}
+                    onChange={(e) => setPostJobType(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white font-bold"
+                  >
+                    <option value="Internship">⚡ Engineering Internship</option>
+                    <option value="Full-Time">💼 Full-Time SDE</option>
+                    <option value="Fellowship">🔬 Research Fellowship</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Location</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Bengaluru, Hyderabad, Delhi NCR"
+                    value={postJobLocation}
+                    onChange={(e) => setPostJobLocation(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Work Mode</label>
+                  <div className="flex items-center gap-2 pt-1">
+                    <label className="flex items-center gap-1.5 cursor-pointer text-slate-300 font-medium text-xs">
+                      <input
+                        type="checkbox"
+                        checked={postJobIsRemote}
+                        onChange={(e) => setPostJobIsRemote(e.target.checked)}
+                        className="w-4 h-4 accent-cyan-500"
+                      />
+                      <span>Remote Eligible</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">
+                    Verified Monthly Stipend / Annual CTC *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. ₹50,000 / month + Housing or ₹18–24 LPA"
+                    value={postJobStipend}
+                    onChange={(e) => setPostJobStipend(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Application Deadline</label>
+                  <input
+                    type="date"
+                    value={postJobDeadline}
+                    onChange={(e) => setPostJobDeadline(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-medium"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 mb-1">
+                  Required Technical Competencies (comma separated)
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Python, Distributed Systems, PyTorch, SQL, Docker"
+                  value={postJobSkills}
+                  onChange={(e) => setPostJobSkills(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 mb-1">
+                  Role Description & Engineering Deliverables *
+                </label>
+                <textarea
+                  rows={3}
+                  required
+                  placeholder="Describe key engineering projects, team structure, and mentorship provided to the candidate..."
+                  value={postJobDesc}
+                  onChange={(e) => setPostJobDesc(e.target.value)}
+                  className="w-full p-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 mb-1">
+                  Official Application / Careers Portal URL (Optional)
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://company.com/careers/jobs/..."
+                  value={postJobUrl}
+                  onChange={(e) => setPostJobUrl(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 font-medium"
+                />
+              </div>
+
+              <div className="pt-3 border-t border-slate-800 flex justify-end gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setShowPostJobModal(false)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-400 hover:text-white text-xs font-bold cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={postingJob}
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-black shadow-md shadow-cyan-600/25 cursor-pointer disabled:opacity-50"
+                >
+                  {postingJob ? "Validating & Publishing..." : "Publish Verified Role on Radar →"}
                 </button>
               </div>
             </form>

@@ -100,3 +100,57 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { title, organization, type, location, is_remote, stipend, deadline, skills_required, description, source_url } = body;
+
+    if (!title?.trim() || !organization?.trim() || !stipend?.trim()) {
+      return NextResponse.json(
+        { error: "Role Title, Organization, and Verified Stipend / Salary are required." },
+        { status: 400 }
+      );
+    }
+
+    // Professional quality filter: Reject unpaid or spam descriptions
+    const descLower = (description || "").toLowerCase();
+    const stipendLower = (stipend || "").toLowerCase();
+    if (stipendLower.includes("unpaid") || stipendLower.includes("0 /") || descLower.includes("commission only")) {
+      return NextResponse.json(
+        { error: "Beacon Professional Policy: Unpaid internships or pure commission roles are strictly prohibited." },
+        { status: 422 }
+      );
+    }
+
+    const newId = `opp_${organization.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 8)}_${Date.now()}`;
+    const skillsArray = Array.isArray(skills_required) ? skills_required : (skills_required || "").split(",").map((s: string) => s.trim()).filter(Boolean);
+
+    db.prepare(`
+      INSERT INTO opportunities (
+        id, title, organization, type, location, is_remote, stipend, deadline, source_url,
+        verified_status, last_checked, eligibility_criteria, skills_required, description, featured
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Recruiter Audited', datetime('now'), 'All verified engineering undergraduates', ?, ?, 1)
+    `).run(
+      newId,
+      title.trim(),
+      organization.trim(),
+      type || "Internship",
+      location?.trim() || "India (Hybrid)",
+      is_remote ? 1 : 0,
+      stipend.trim(),
+      deadline || "2026-12-31",
+      source_url?.trim() || "https://beacon.os/careers",
+      JSON.stringify(skillsArray),
+      description?.trim() || "High-impact engineering role with verified mentorship and deliverables."
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: `Verified role '${title}' published on the Beacon Enterprise Opportunity Radar.`,
+      opportunityId: newId,
+    });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message || "Failed to post opportunity" }, { status: 500 });
+  }
+}

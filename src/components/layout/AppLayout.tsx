@@ -110,6 +110,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     { href: "/app/guide", label: "Beacon AI Coach", icon: IconCompass, badge: "AI" },
     { href: "/app/passport", label: "Student Passport", icon: IconAward, badge: "Vault" },
     { href: "/app/opportunities", label: "Internships & Jobs", icon: IconBriefcase, badge: "Verified" },
+    { href: "/app/hackathons", label: "Hackathons Across India", icon: IconTarget, badge: "🇮🇳 India" },
     { href: "/app/academy", label: "Courses & Academy", icon: IconBookOpen },
     { href: "/app/roadmap", label: "My Roadmap", icon: IconCalendar },
     { href: "/app/decision-studio", label: "Decision Studio", icon: IconGraph },

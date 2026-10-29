@@ -176,8 +176,12 @@ export default function MentorLoginPage() {
           <div className="text-center pt-2 space-y-2">
             <p className="text-xs text-slate-400 font-medium">
               Are you a student looking for guidance?{" "}
-              <Link href="/" className="font-bold text-indigo-400 hover:text-indigo-300">
-                Switch to Student Sign In
+              <Link href="/login" className="font-bold text-indigo-400 hover:text-indigo-300">
+                Student Sign In
+              </Link>
+              <span className="mx-2">•</span>
+              <Link href="/recruiter-login" className="font-bold text-cyan-400 hover:text-cyan-300">
+                Recruiter Portal
               </Link>
             </p>
           </div>
