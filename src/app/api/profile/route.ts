@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import db from "@/lib/db";
 import { getCurrentUserFromRequest } from "@/lib/auth/session";
+import { extractResumeText } from "@/lib/parser/resumeExtractor";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,17 @@ export async function GET(request: Request) {
 
     const skills = db.prepare("SELECT * FROM skill_claims WHERE user_id = ? ORDER BY verified_at DESC").all(userId) as any[];
     const certificates = db.prepare("SELECT * FROM certificates WHERE user_id = ? ORDER BY issue_date DESC").all(userId) as any[];
-    const primaryResume = db.prepare("SELECT * FROM resumes WHERE user_id = ? AND is_primary = 1").get(userId) as any;
+    let primaryResume = db.prepare("SELECT * FROM resumes WHERE user_id = ? AND is_primary = 1").get(userId) as any;
+
+    if (primaryResume && !primaryResume.raw_text && primaryResume.file_path) {
+      const text = extractResumeText(primaryResume.file_path);
+      if (text) {
+        try {
+          db.prepare("UPDATE resumes SET raw_text = ? WHERE id = ?").run(text, primaryResume.id);
+          primaryResume.raw_text = text;
+        } catch (e) {}
+      }
+    }
 
     let parsedInterests: string[] = [];
     let parsedConstraints: string[] = [];

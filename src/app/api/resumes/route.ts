@@ -7,6 +7,7 @@ import {
   extractSkillsFromText,
   syncExtractedSkillsToDb,
   generateResumeSummary,
+  categorizeSkill,
 } from "@/lib/parser/resumeExtractor";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +16,21 @@ export async function GET(request: Request) {
   try {
     const user = getCurrentUserFromRequest(request);
     const userId = user?.id || "usr_student_01";
-    const resumes = db.prepare("SELECT * FROM resumes WHERE user_id = ? ORDER BY uploaded_at DESC").all(userId);
+    const resumes = db.prepare("SELECT * FROM resumes WHERE user_id = ? ORDER BY uploaded_at DESC").all(userId) as any[];
+
+    // Ensure raw_text is populated for complete NLP pipeline visibility
+    for (const r of resumes) {
+      if (!r.raw_text && r.file_path) {
+        const text = extractResumeText(r.file_path);
+        if (text) {
+          try {
+            db.prepare("UPDATE resumes SET raw_text = ? WHERE id = ?").run(text, r.id);
+            r.raw_text = text;
+          } catch (e) {}
+        }
+      }
+    }
+
     return NextResponse.json({ resumes });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
@@ -49,6 +64,7 @@ export async function POST(request: Request) {
         if (!extractedSkills.some((es) => es.name.toLowerCase() === ms.toLowerCase())) {
           extractedSkills.push({
             name: ms,
+            category: categorizeSkill(ms),
             level: "Proficient",
             evidence: `Student-declared skill supported by uploaded resume (${file.name}).`,
           });
@@ -72,8 +88,8 @@ export async function POST(request: Request) {
 
     db.prepare(`
       INSERT INTO resumes (
-        id, user_id, file_name, file_path, file_size, file_type, parsed_skills, parsed_summary, is_primary
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
+        id, user_id, file_name, file_path, file_size, file_type, parsed_skills, parsed_summary, raw_text, is_primary
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
     `).run(
       resumeId,
       userId,
@@ -82,7 +98,8 @@ export async function POST(request: Request) {
       stored.size,
       stored.mimeType,
       parsedSkillsJson,
-      computedSummary
+      computedSummary,
+      resumeText
     );
 
     // Update student profile primary resume link

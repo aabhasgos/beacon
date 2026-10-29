@@ -134,8 +134,28 @@ export function initDatabase(db: Database.Database) {
         file_type TEXT NOT NULL,
         parsed_skills TEXT,
         parsed_summary TEXT,
+        raw_text TEXT,
         is_primary INTEGER DEFAULT 0,
         uploaded_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS student_experiences (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        title TEXT NOT NULL,
+        company TEXT NOT NULL,
+        employment_type TEXT NOT NULL DEFAULT 'Internship',
+        location TEXT,
+        is_remote INTEGER DEFAULT 0,
+        is_current INTEGER DEFAULT 0,
+        start_date TEXT NOT NULL,
+        end_date TEXT,
+        description TEXT,
+        skills_used TEXT,
+        proof_url TEXT,
+        verified_status TEXT DEFAULT 'Self-Declared',
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
       );
 
@@ -402,6 +422,7 @@ export function initDatabase(db: Database.Database) {
     `);
 
     // Safe dynamic column migrations
+    try { db.exec("ALTER TABLE resumes ADD COLUMN raw_text TEXT;"); } catch (e) {}
     try { db.exec("ALTER TABLE mentors ADD COLUMN experience_years INTEGER DEFAULT 10;"); } catch (e) {}
     try { db.exec("ALTER TABLE mentors ADD COLUMN linkedin_url TEXT;"); } catch (e) {}
     try { db.exec("ALTER TABLE mentors ADD COLUMN career_start_year INTEGER DEFAULT 2014;"); } catch (e) {}
@@ -966,6 +987,74 @@ function seedInitialData(db: Database.Database) {
           'Beacon Proof-of-Work Protocol (SHA-256 HMAC Verified)', '2026-10-26T09:15:00Z'
         )
       `).run();
+    }
+
+    // 9. Seed Student Work Experiences & Verified Internships
+    try {
+      const expCheck = db.prepare("SELECT COUNT(*) as count FROM student_experiences").get() as { count: number };
+      if (expCheck.count === 0) {
+        const studentUser = db.prepare("SELECT id FROM users WHERE role = 'student' LIMIT 1").get() as any;
+        const targetUserId = studentUser?.id || "usr_student_01";
+
+        const insertExp = db.prepare(`
+          INSERT INTO student_experiences (
+            id, user_id, title, company, employment_type, location, is_remote, is_current, start_date, end_date, description, skills_used, proof_url, verified_status
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+
+        insertExp.run(
+          "exp_01",
+          targetUserId,
+          "Undergraduate AI & Computer Vision Research Intern",
+          "Bennett University Computational Intelligence Lab",
+          "Internship",
+          "Greater Noida (Hybrid)",
+          0,
+          1,
+          "Jan 2026",
+          "Present",
+          "Developing real-time computer vision inference pipelines, neural network model quantization, and 3D point cloud generation for autonomous systems.",
+          JSON.stringify(["Python", "Computer Vision", "Machine Learning", "Neural Networks", "OpenCV"]),
+          "https://bennett.edu.in/research",
+          "Verified Lab Affiliation"
+        );
+
+        insertExp.run(
+          "exp_02",
+          targetUserId,
+          "Social Work Intern",
+          "Social Empowerment & Research Organisation (SERO)",
+          "Internship",
+          "On-Site",
+          0,
+          0,
+          "Mar 2026",
+          "Apr 2026",
+          "Completed an on-site social work internship focused on community engagement, grassroots outreach, communication, and team coordination in public-interest initiatives.",
+          JSON.stringify(["Communication", "Teamwork", "Community Outreach", "Event Coordination"]),
+          "https://sero.org.in",
+          "Source-Backed Proof"
+        );
+
+        insertExp.run(
+          "exp_03",
+          targetUserId,
+          "Vice Head Boy & Student Council Leader",
+          "Shanti Asiatic School Council",
+          "Leadership",
+          "Ahmedabad, India",
+          0,
+          0,
+          "May 2024",
+          "May 2026",
+          "Led and coordinated the school council, managing student delegations and executing large-scale campus events, demonstrating ownership and public communication.",
+          JSON.stringify(["Leadership", "Team Leadership", "Project Management", "Communication"]),
+          "https://shantiasiatic.com",
+          "Verified School Record"
+        );
+      }
+    } catch (expErr) {
+      console.warn("Experience seed notice:", expErr);
     }
   } catch (e) {
     // ignore

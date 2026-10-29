@@ -138,39 +138,152 @@ export function matchSkill(text: string, skill: string): boolean {
 }
 
 /**
- * Curated dictionary of tech and industry skills for deterministic extraction.
+ * Curated dictionary of tech and industry skills with structured categorization for NLP analysis.
  */
-export const KNOWN_SKILLS = [
-  "Python", "Java", "C++", "C", "JavaScript", "TypeScript", "HTML", "CSS", "React", "Next.js",
-  "Node.js", "Express", "SQL", "PostgreSQL", "MySQL", "MongoDB", "Redis", "Docker", "Kubernetes",
-  "AWS", "Git", "GitHub", "Linux", "Machine Learning", "Deep Learning", "Artificial Intelligence",
-  "Robotics", "Computer Vision", "NLP", "Data Structures", "Algorithms", "Object-Oriented Programming",
-  "REST APIs", "GraphQL", "Tailwind CSS", "Systems Engineering", "Distributed Systems", "Go", "Rust",
-  "Leadership", "Project Management", "Team Leadership", "Communication"
-];
+export const SKILL_CATEGORIES: Record<string, "Languages" | "Frameworks" | "Tools & Cloud" | "AI & Specializations" | "Leadership & Core"> = {
+  // Languages
+  "Python": "Languages",
+  "Java": "Languages",
+  "C++": "Languages",
+  "C": "Languages",
+  "JavaScript": "Languages",
+  "TypeScript": "Languages",
+  "HTML": "Languages",
+  "CSS": "Languages",
+  "SQL": "Languages",
+  "Go": "Languages",
+  "Rust": "Languages",
+  "Bash": "Languages",
 
-export function extractSkillsFromText(text: string): Array<{ name: string; level: string; evidence: string }> {
+  // Frameworks & Libraries
+  "React": "Frameworks",
+  "Next.js": "Frameworks",
+  "Node.js": "Frameworks",
+  "Express": "Frameworks",
+  "Tailwind CSS": "Frameworks",
+  "PyTorch": "Frameworks",
+  "TensorFlow": "Frameworks",
+  "OpenCV": "Frameworks",
+  "Django": "Frameworks",
+  "FastAPI": "Frameworks",
+
+  // Tools & Cloud
+  "Git": "Tools & Cloud",
+  "GitHub": "Tools & Cloud",
+  "Linux": "Tools & Cloud",
+  "Docker": "Tools & Cloud",
+  "Kubernetes": "Tools & Cloud",
+  "AWS": "Tools & Cloud",
+  "PostgreSQL": "Tools & Cloud",
+  "MySQL": "Tools & Cloud",
+  "MongoDB": "Tools & Cloud",
+  "Redis": "Tools & Cloud",
+  "REST APIs": "Tools & Cloud",
+  "GraphQL": "Tools & Cloud",
+
+  // AI & Specializations
+  "Machine Learning": "AI & Specializations",
+  "Deep Learning": "AI & Specializations",
+  "Artificial Intelligence": "AI & Specializations",
+  "Neural Networks": "AI & Specializations",
+  "Computer Vision": "AI & Specializations",
+  "NLP": "AI & Specializations",
+  "Robotics": "AI & Specializations",
+  "3D Printing": "AI & Specializations",
+  "Computational Intelligence": "AI & Specializations",
+  "Data Structures": "AI & Specializations",
+  "Algorithms": "AI & Specializations",
+  "Object-Oriented Programming": "AI & Specializations",
+  "Systems Engineering": "AI & Specializations",
+  "Distributed Systems": "AI & Specializations",
+
+  // Leadership & Core
+  "Leadership": "Leadership & Core",
+  "Team Leadership": "Leadership & Core",
+  "Project Management": "Leadership & Core",
+  "Communication": "Leadership & Core",
+  "Problem Solving": "Leadership & Core",
+  "Community Outreach": "Leadership & Core",
+  "Event Coordination": "Leadership & Core",
+};
+
+export const KNOWN_SKILLS = Object.keys(SKILL_CATEGORIES);
+
+export function categorizeSkill(skill: string): "Languages" | "Frameworks" | "Tools & Cloud" | "AI & Specializations" | "Leadership & Core" {
+  if (SKILL_CATEGORIES[skill]) return SKILL_CATEGORIES[skill];
+  const lower = skill.toLowerCase();
+  if (["python", "java", "c", "c++", "javascript", "typescript", "html", "css", "sql", "rust", "go"].includes(lower)) return "Languages";
+  if (["react", "next.js", "node.js", "tailwind", "express", "pytorch", "tensorflow", "opencv"].includes(lower)) return "Frameworks";
+  if (["git", "github", "linux", "docker", "aws", "mongo", "postgres", "mysql", "redis", "api"].some((k) => lower.includes(k))) return "Tools & Cloud";
+  if (["ai", "ml", "machine learning", "deep learning", "neural", "vision", "robotics", "nlp", "intelligence", "3d printing"].some((k) => lower.includes(k))) return "AI & Specializations";
+  return "Leadership & Core";
+}
+
+export function extractSkillsFromText(text: string): Array<{ name: string; category: string; level: string; evidence: string }> {
   if (!text) return [];
-  const matched: Array<{ name: string; level: string; evidence: string }> = [];
+  const matched: Array<{ name: string; category: string; level: string; evidence: string }> = [];
 
   for (const skill of KNOWN_SKILLS) {
     if (matchSkill(text, skill)) {
       let level = "Intermediate";
-      if (["Machine Learning", "Artificial Intelligence", "Python", "Java", "Data Structures", "Robotics"].includes(skill)) {
+      if (["Machine Learning", "Artificial Intelligence", "Neural Networks", "Python", "Java", "Data Structures", "Robotics"].includes(skill)) {
         level = "Advanced";
-      } else if (["C", "C++", "HTML", "CSS", "Git", "Linux", "Algorithms"].includes(skill)) {
+      } else if (["C", "C++", "HTML", "CSS", "Git", "Linux", "Algorithms", "Computer Vision"].includes(skill)) {
         level = "Proficient";
       }
 
       matched.push({
         name: skill,
+        category: SKILL_CATEGORIES[skill],
         level,
-        evidence: `Extracted and verified from primary resume (${skill}).`,
+        evidence: `Extracted and verified from primary resume text (${skill}).`,
       });
     }
   }
 
   return matched;
+}
+
+/**
+ * Extracts structured work experiences and internships detected in resume text.
+ */
+export function extractExperiencesFromText(text: string): Array<{
+  title: string;
+  company: string;
+  employment_type: string;
+  duration?: string;
+  description: string;
+}> {
+  if (!text) return [];
+  const experiences: Array<{
+    title: string;
+    company: string;
+    employment_type: string;
+    duration?: string;
+    description: string;
+  }> = [];
+
+  // Pattern detection for roles like "Social Work Intern — Social Empowerment & Research Organisation"
+  const patterns = [
+    /(Social Work Intern)\s*[-—]\s*([^|•\n]+)(?:\|\s*([^•\n]+))?/i,
+    /(Vice Head Boy|Head Boy|Sports Captain|President|Lead)\s*[-—]\s*([^|•\n]+)(?:\|\s*([^•\n]+))?/i,
+    /(Software Engineering Intern|Research Intern|Developer Intern|SDE Intern)\s*[-—]\s*([^|•\n]+)(?:\|\s*([^•\n]+))?/i,
+  ];
+
+  for (const p of patterns) {
+    const match = text.match(p);
+    if (match) {
+      experiences.push({
+        title: match[1].trim(),
+        company: match[2].trim(),
+        employment_type: match[1].toLowerCase().includes("intern") ? "Internship" : "Leadership",
+        duration: match[3]?.trim() || "Verified in Resume",
+        description: `Verified role extracted from document: ${match[1]} at ${match[2]}.`,
+      });
+    }
+  }
+
+  return experiences;
 }
 
 /**
