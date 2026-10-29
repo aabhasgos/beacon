@@ -98,12 +98,12 @@ export default function RecruiterRadarPage() {
         {/* Header Hero Banner */}
         <div className="bg-slate-950 text-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[11px] font-black bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-3 py-1 rounded-full uppercase tracking-wider">
-                Phase 5 Live • Cryptographic Talent Radar
+                🎯 Recruiter Talent Radar • Audited Proof-of-Work
               </span>
-              <span className="text-[11px] font-bold text-emerald-400 flex items-center gap-1">
-                <span>✓</span> Non-Tampered Verification
+              <span className="text-[11px] font-bold text-emerald-400 flex items-center gap-1 bg-emerald-950/40 border border-emerald-800/40 px-2.5 py-0.5 rounded-full">
+                <span>✓</span> Zero Placement Fees for Students
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
@@ -114,11 +114,12 @@ export default function RecruiterRadarPage() {
             </p>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 text-center shrink-0">
+          <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 text-center shrink-0 min-w-44">
             <span className="block text-2xl font-black text-indigo-400 font-mono">
               {candidates.length} Audited
             </span>
-            <span className="text-xs text-slate-300">Candidates Matched</span>
+            <span className="text-xs text-slate-300 block">Candidates Matched</span>
+            <span className="text-[10px] text-emerald-400 font-bold block mt-0.5">Direct Recruiter Outreach</span>
           </div>
         </div>
 

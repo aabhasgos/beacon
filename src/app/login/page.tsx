@@ -211,12 +211,23 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="text-center text-xs text-slate-600 font-medium pt-2">
-            New to Beacon?{" "}
-            <Link href="/register" className="font-bold text-indigo-700 hover:text-indigo-900">
-              Create your free student profile
-            </Link>
-          </p>
+          <div className="text-center text-xs text-slate-600 font-medium pt-2 space-y-2">
+            <p>
+              New to Beacon?{" "}
+              <Link href="/register" className="font-bold text-indigo-700 hover:text-indigo-900">
+                Create your free student profile
+              </Link>
+            </p>
+            <div className="pt-2 border-t border-slate-200">
+              <Link
+                href="/mentor-login"
+                className="font-bold text-amber-700 hover:text-amber-900 inline-flex items-center gap-1.5"
+              >
+                <span>🏛️ Senior Mentor Council (10+ Yrs Exp) Sign In</span>
+                <span>→</span>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>

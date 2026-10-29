@@ -221,9 +221,12 @@ export default function OpportunitiesPage() {
         {/* Header */}
         <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
               <span className="text-[11px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200 px-3 py-0.5 rounded-full uppercase tracking-wider">
                 OPPORTUNITY RADAR
+              </span>
+              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                ✓ 100% Zero Application Fees
               </span>
               <span className="text-xs font-bold text-slate-500">• Verified Tech Roles & National Challenges</span>
             </div>
@@ -390,7 +393,7 @@ export default function OpportunitiesPage() {
                     )}
 
                     {/* Metadata strip: Internshala & LinkedIn style */}
-                    <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
                       <div>
                         <span className="text-slate-500 font-bold block text-[10px] uppercase">Duration</span>
                         <span className="font-extrabold text-slate-900">{opp.duration || "3-6 Months"}</span>
@@ -406,6 +409,10 @@ export default function OpportunitiesPage() {
                       <div>
                         <span className="text-slate-500 font-bold block text-[10px] uppercase">Work Mode</span>
                         <span className="font-extrabold text-slate-900">{opp.is_remote ? "Remote" : "In-Office"}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 font-bold block text-[10px] uppercase">Application Fee</span>
+                        <span className="font-extrabold text-emerald-700">₹0 (Free Portal)</span>
                       </div>
                     </div>
 

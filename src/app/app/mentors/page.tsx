@@ -24,6 +24,7 @@ export default function MentorsPage() {
   const [councilApplications, setCouncilApplications] = useState<any[]>([]);
   const [bookings, setBookings] = useState<any[]>([]);
   const [userProjects, setUserProjects] = useState<any[]>([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   // Modal 1: Project Review Brief Modal
@@ -82,6 +83,12 @@ export default function MentorsPage() {
   }
 
   useEffect(() => {
+    try {
+      const stored = localStorage.getItem("beacon_user");
+      if (stored) {
+        setCurrentUser(JSON.parse(stored));
+      }
+    } catch (e) {}
     loadData();
   }, []);
 
@@ -224,15 +231,69 @@ export default function MentorsPage() {
   return (
     <AppLayout>
       <div className="space-y-6 max-w-6xl mx-auto">
+        {/* Mentor Role Console Banner (Active when logged in as Council Mentor) */}
+        {currentUser?.role === "mentor" && (
+          <div className="bg-gradient-to-r from-amber-950/90 via-slate-900 to-amber-950/90 border-2 border-amber-500/60 rounded-3xl p-6 sm:p-7 text-white shadow-xl space-y-4 animate-in fade-in">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+              <div className="flex items-start gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-amber-500 text-slate-950 font-black flex items-center justify-center text-2xl shrink-0 shadow-lg shadow-amber-500/20 border border-amber-400">
+                  🏛️
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[11px] font-black bg-amber-500/20 text-amber-300 border border-amber-400/50 px-3 py-0.5 rounded-full uppercase tracking-wider">
+                      Senior Council Console Active
+                    </span>
+                    <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      Verified Practitioner (≥10 Yrs Experience)
+                    </span>
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-black text-white mt-1.5">
+                    Welcome back, {currentUser.full_name || "Senior Mentor"}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-300 font-medium">
+                    {currentUser.headline || "Staff Practitioner • Beacon Senior Mentor Council"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("mentors")}
+                  className="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black transition-all cursor-pointer shadow-md"
+                >
+                  Review Student Briefs ({requests.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("masterclasses")}
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-200 text-xs font-bold border border-amber-500/30 transition-all cursor-pointer"
+                >
+                  Host Live Masterclass
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("council")}
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-all cursor-pointer"
+                >
+                  Vote on Peers ({councilApplications.length})
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header Hero Banner */}
         <div className="bg-slate-950 text-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-black bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-3 py-1 rounded-full uppercase tracking-wider">
-                Phase 3 Live • 10+ Year Verified Mentorship
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[11px] font-black bg-amber-500/20 text-amber-300 border border-amber-400/30 px-3 py-1 rounded-full uppercase tracking-wider">
+                🏛️ Senior Mentor Council • 10+ Year Verified Practitioners
               </span>
-              <span className="text-[11px] font-bold text-emerald-400 flex items-center gap-1">
-                <span>✓</span> Pro-Bono Pledge
+              <span className="text-[11px] font-bold text-emerald-400 flex items-center gap-1 bg-emerald-950/40 border border-emerald-800/40 px-2.5 py-0.5 rounded-full">
+                <span>✓</span> 100% Pro-Bono Pledge • Zero Student Fees
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
@@ -243,13 +304,14 @@ export default function MentorsPage() {
             </p>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 text-center shrink-0">
+          <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 text-center shrink-0 min-w-44">
             <span className="block text-2xl font-black text-emerald-400">Zero Paywall</span>
-            <span className="text-xs text-indigo-200">100% Free for Students</span>
+            <span className="text-xs text-emerald-200/90 font-bold block">100% Free for Students</span>
+            <span className="text-[10px] text-slate-400 block mt-0.5">Pro-Bono Student Charter</span>
           </div>
         </div>
 
-        {/* Phase 3: 4-Tab Executive Navigation */}
+        {/* 4-Tab Executive Navigation */}
         <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3 overflow-x-auto whitespace-nowrap">
           <button
             onClick={() => setActiveTab("mentors")}

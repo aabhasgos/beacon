@@ -11,11 +11,15 @@ import { PublicFooter } from "@/components/layout/PublicFooter";
 
 export default function GatewayPage() {
   const router = useRouter();
-  const [authMode, setAuthMode] = useState<"signin" | "signup">("signup");
+  const [authMode, setAuthMode] = useState<"signin" | "signup" | "mentor">("signup");
 
   // Sign In fields
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+
+  // Mentor Sign In fields
+  const [mentorEmail, setMentorEmail] = useState("");
+  const [mentorPassword, setMentorPassword] = useState("");
 
   // Sign Up fields
   const [fullName, setFullName] = useState("");
@@ -73,6 +77,48 @@ export default function GatewayPage() {
       }
     } catch (err) {
       setError("Unable to connect to the authentication service. Please retry.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Senior Mentor Sign In Handler (Strict 10+ Year Requirement)
+  const handleMentorSignIn = async (e?: React.FormEvent, directEmail?: string, directPassword?: string) => {
+    if (e) e.preventDefault();
+    const emailToUse = (directEmail || mentorEmail).trim().toLowerCase();
+    const passwordToUse = directPassword || mentorPassword || "password123";
+
+    if (!emailToUse) {
+      setError("Please provide your verified Senior Mentor email.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: emailToUse,
+          password: passwordToUse,
+          portal: "mentor",
+          role: "mentor",
+        }),
+      });
+
+      const d = await res.json();
+      if (res.ok) {
+        if (d.user) {
+          localStorage.setItem("beacon_user", JSON.stringify(d.user));
+        }
+        window.location.href = d.redirectUrl || "/app/mentors";
+      } else {
+        setError(d.error || "Mentor authentication failed. Please verify your credentials.");
+      }
+    } catch {
+      setError("Unable to connect to the Mentor Council service. Please retry.");
     } finally {
       setLoading(false);
     }
@@ -259,36 +305,42 @@ export default function GatewayPage() {
           {/* Header Banner */}
           <div className="text-center space-y-2">
             <div className="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-200 px-3.5 py-1.5 rounded-full text-xs font-black text-indigo-900 shadow-2xs">
-              <span>🎓</span>
-              <span>All-in-One Student Operating System</span>
+              <span>{authMode === "mentor" ? "🏛️" : "🎓"}</span>
+              <span>{authMode === "mentor" ? "Beacon Senior Mentor Council (10+ Years Verified)" : "All-in-One Student Operating System"}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight leading-tight">
-              {authMode === "signup" ? "Create Your Student Profile" : "Welcome Back to Beacon"}
+              {authMode === "signup"
+                ? "Create Your Student Profile"
+                : authMode === "signin"
+                ? "Welcome Back to Beacon"
+                : "Senior Mentor Sign In"}
             </h1>
             <p className="text-xs sm:text-sm text-slate-700 font-medium max-w-md mx-auto leading-relaxed">
               {authMode === "signup"
                 ? "Sign up to store your certificates, build your verified passport, and unlock 1-click applications to ISRO, Google, and Razorpay."
-                : "Sign in to access your opportunity radar, certificate locker, and Beacon AI Career Coach."}
+                : authMode === "signin"
+                ? "Sign in to access your opportunity radar, certificate locker, and Beacon AI Career Coach."
+                : "Dedicated access for verified senior practitioners (≥10 years industry tenure) offering pro-bono guidance."}
             </p>
           </div>
 
           {/* Gateway Card with Crisp Modern Borders */}
           <div className="bg-white rounded-3xl border border-slate-300 shadow-sm p-6 sm:p-8 space-y-6">
             {/* Tab Switcher */}
-            <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 gap-1">
               <button
                 type="button"
                 onClick={() => {
                   setAuthMode("signup");
                   setError("");
                 }}
-                className={`flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer ${
+                className={`flex-1 py-2.5 px-1 sm:px-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer text-center ${
                   authMode === "signup"
-                    ? "bg-white text-indigo-900 dark:bg-slate-900 dark:text-indigo-200 shadow-xs border border-slate-200 dark:border-slate-700"
+                    ? "bg-white text-indigo-950 dark:bg-slate-900 dark:text-indigo-200 shadow-xs border border-slate-200 dark:border-slate-700"
                     : "text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white"
                 }`}
               >
-                1. Create Student Account
+                1. Student Sign Up
               </button>
               <button
                 type="button"
@@ -296,57 +348,75 @@ export default function GatewayPage() {
                   setAuthMode("signin");
                   setError("");
                 }}
-                className={`flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer ${
+                className={`flex-1 py-2.5 px-1 sm:px-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer text-center ${
                   authMode === "signin"
-                    ? "bg-white text-indigo-900 dark:bg-slate-900 dark:text-indigo-200 shadow-xs border border-slate-200 dark:border-slate-700"
+                    ? "bg-white text-indigo-950 dark:bg-slate-900 dark:text-indigo-200 shadow-xs border border-slate-200 dark:border-slate-700"
                     : "text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white"
                 }`}
               >
-                2. Sign In
+                2. Student Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthMode("mentor");
+                  setError("");
+                }}
+                className={`flex-1 py-2.5 px-1 sm:px-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer text-center ${
+                  authMode === "mentor"
+                    ? "bg-amber-400 text-slate-950 shadow-xs border border-amber-500 font-black"
+                    : "text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white"
+                }`}
+              >
+                🏛️ Mentor Sign In
               </button>
             </div>
 
-            {/* Google Authentication Button */}
-            <button
-              type="button"
-              onClick={handleGoogleAuth}
-              disabled={googleLoading}
-              className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-900 font-bold text-xs sm:text-sm shadow-2xs transition-all cursor-pointer disabled:opacity-50"
-            >
-              <svg
-                width={20}
-                height={20}
-                style={{ width: 20, height: 20, flexShrink: 0 }}
-                className="w-5 h-5 shrink-0 google-icon"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="#4285F4"
-                  d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
-                />
-                <path
-                  fill="#EA4335"
-                  d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
-                />
-              </svg>
-              <span>{googleLoading ? "Connecting with Google..." : "Continue with Google"}</span>
-            </button>
+            {/* Google Authentication Button (Only for Student Auth) */}
+            {authMode !== "mentor" && (
+              <>
+                <button
+                  type="button"
+                  onClick={handleGoogleAuth}
+                  disabled={googleLoading}
+                  className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-900 font-bold text-xs sm:text-sm shadow-2xs transition-all cursor-pointer disabled:opacity-50"
+                >
+                  <svg
+                    width={20}
+                    height={20}
+                    style={{ width: 20, height: 20, flexShrink: 0 }}
+                    className="w-5 h-5 shrink-0 google-icon"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      fill="#4285F4"
+                      d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+                    />
+                  </svg>
+                  <span>{googleLoading ? "Connecting with Google..." : "Continue with Google"}</span>
+                </button>
 
-            {/* Divider */}
-            <div className="relative flex items-center justify-center">
-              <div className="border-t border-slate-300 w-full" />
-              <span className="bg-white px-3 text-[10px] font-black uppercase tracking-wider text-slate-600 shrink-0">
-                Or Continue With Student Email
-              </span>
-            </div>
+                {/* Divider */}
+                <div className="relative flex items-center justify-center">
+                  <div className="border-t border-slate-300 w-full" />
+                  <span className="bg-white px-3 text-[10px] font-black uppercase tracking-wider text-slate-600 shrink-0">
+                    Or Continue With Student Email
+                  </span>
+                </div>
+              </>
+            )}
 
             {error && (
               <div className="bg-rose-50 border border-rose-300 text-rose-900 text-xs font-bold p-3 rounded-xl">
@@ -523,36 +593,103 @@ export default function GatewayPage() {
                 </button>
               </form>
             )}
-          </div>
 
-          {/* Verified Official Portals Strip (100% Real) */}
-          <div className="bg-white rounded-3xl border border-slate-300 p-5 space-y-3 shadow-2xs">
-            <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 block text-center">
-              Direct Verified Radar Feeds
-            </span>
-            <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-bold text-slate-800">
-              <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
-                🚀 ISRO SAC
-              </span>
-              <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
-                🌐 Google India
-              </span>
-              <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
-                💳 Razorpay
-              </span>
-              <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
-                💻 Microsoft
-              </span>
-              <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
-                🏆 Flipkart GRiD 7.0 (Unstop)
-              </span>
-              <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
-                🇮🇳 SIH 2026
-              </span>
-              <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
-                ⛓️ ETHIndia
-              </span>
-            </div>
+            {/* Tab: SENIOR MENTOR SIGN IN */}
+            {authMode === "mentor" && (
+              <form onSubmit={handleMentorSignIn} className="space-y-4">
+                <div className="p-3.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-2xl space-y-1">
+                  <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200 font-black text-xs">
+                    <span>🏛️</span>
+                    <span>Senior Mentor Council Access Only</span>
+                  </div>
+                  <p className="text-[11px] text-amber-800 dark:text-amber-300 font-medium leading-relaxed">
+                    Strict experience floor: Only verified practitioners with ≥10 years of industry tenure can sign in. Student accounts cannot authenticate here.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-1">
+                    Verified Mentor Work Email
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="e.g. priya@uber.com or karan@microsoft.com"
+                    value={mentorEmail}
+                    onChange={(e) => setMentorEmail(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 text-xs sm:text-sm text-slate-950 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 bg-slate-50 dark:bg-slate-800"
+                  />
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
+                      Password
+                    </label>
+                    <span className="text-[10px] text-slate-500 font-bold">Default: password123</span>
+                  </div>
+                  <input
+                    type="password"
+                    required
+                    placeholder="••••••••"
+                    value={mentorPassword}
+                    onChange={(e) => setMentorPassword(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 text-xs sm:text-sm text-slate-950 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 bg-slate-50 dark:bg-slate-800"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm shadow-md transition-all cursor-pointer disabled:opacity-50"
+                >
+                  {loading ? "Authenticating Mentor Council..." : "Sign In as Senior Mentor →"}
+                </button>
+
+                {/* 1-Click Fast Verification for Reviewers */}
+                <div className="pt-2 border-t border-slate-200 dark:border-slate-700 space-y-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 block text-center">
+                    Quick-Access Verified Council Mentors (Click to Test)
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleMentorSignIn(undefined, "priya@uber.com", "password123")}
+                      className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 hover:border-amber-400 text-left cursor-pointer transition-all"
+                    >
+                      <div className="font-bold text-xs text-slate-900 dark:text-white truncate">Priya Sen</div>
+                      <div className="text-[10px] text-amber-700 dark:text-amber-400 font-semibold truncate">Staff SRE • 11 Yrs</div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleMentorSignIn(undefined, "karan@microsoft.com", "password123")}
+                      className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 hover:border-amber-400 text-left cursor-pointer transition-all"
+                    >
+                      <div className="font-bold text-xs text-slate-900 dark:text-white truncate">Karan Verma</div>
+                      <div className="text-[10px] text-amber-700 dark:text-amber-400 font-semibold truncate">Senior ML • 12 Yrs</div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleMentorSignIn(undefined, "sneha@cred.club", "password123")}
+                      className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 hover:border-amber-400 text-left cursor-pointer transition-all"
+                    >
+                      <div className="font-bold text-xs text-slate-900 dark:text-white truncate">Sneha Mukherjee</div>
+                      <div className="text-[10px] text-amber-700 dark:text-amber-400 font-semibold truncate">Principal Des • 10 Yrs</div>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="text-center pt-2">
+                  <Link
+                    href="/mentor-login"
+                    className="text-xs font-bold text-amber-700 dark:text-amber-400 hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>Open Standalone Mentor Council Portal</span>
+                    <span>→</span>
+                  </Link>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       </main>

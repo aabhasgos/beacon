@@ -737,7 +737,65 @@ function seedInitialData(db: Database.Database) {
             ELSE 'https://linkedin.com'
           END
       `).run();
-    } catch (e) {}
+
+      // Seed verified mentor user accounts into users table
+      const mentorUsers = [
+        {
+          id: "usr_mentor_priya",
+          email: "priya@uber.com",
+          name: "Priya Sen",
+          role: "mentor",
+          headline: "Staff SRE & Distributed Architect @ Razorpay (Ex-Uber)",
+          years: 11,
+          start: 2015,
+          linkedin: "https://linkedin.com/in/priya-sen-sre",
+          avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80",
+          bio: "11+ years architecting high-throughput payment systems, Kafka queues, and Linux kernel performance tuning."
+        },
+        {
+          id: "usr_mentor_karan",
+          email: "karan@microsoft.com",
+          name: "Karan Verma",
+          role: "mentor",
+          headline: "Senior Machine Learning Engineer @ Microsoft IDC",
+          years: 12,
+          start: 2014,
+          linkedin: "https://linkedin.com/in/karan-verma-ml",
+          avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80",
+          bio: "12+ years in LLM inference acceleration, ONNX runtime compilation, and large-scale distributed training."
+        },
+        {
+          id: "usr_mentor_sneha",
+          email: "sneha@cred.club",
+          name: "Sneha Mukherjee",
+          role: "mentor",
+          headline: "Principal Product Designer @ Cred (Ex-Swiggy)",
+          years: 10,
+          start: 2016,
+          linkedin: "https://linkedin.com/in/sneha-mukherjee-design",
+          avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=300&q=80",
+          bio: "10+ years shaping high-velocity fintech design systems and high-converting micro-interactions."
+        }
+      ];
+
+      for (const m of mentorUsers) {
+        const existing = db.prepare("SELECT id FROM users WHERE LOWER(email) = ?").get(m.email.toLowerCase());
+        if (!existing) {
+          db.prepare(`
+            INSERT INTO users (
+              id, email, password, full_name, role, avatar_url, headline, bio, experience_years, career_start_year, linkedin_url
+            ) VALUES (?, ?, 'password123', ?, 'mentor', ?, ?, ?, ?, ?, ?)
+          `).run(m.id, m.email, m.name, m.avatar, m.headline, m.bio, m.years, m.start, m.linkedin);
+        } else {
+          db.prepare(`
+            UPDATE users SET role = 'mentor', experience_years = ?, career_start_year = ?, linkedin_url = ?
+            WHERE LOWER(email) = ?
+          `).run(m.years, m.start, m.linkedin, m.email.toLowerCase());
+        }
+      }
+    } catch (e) {
+      console.warn("Mentor users seed notice:", e);
+    }
 
     // 5. Seed Live Virtual Masterclasses (Phase 3)
     const mcCheck = db.prepare("SELECT COUNT(*) as count FROM mentor_masterclasses").get() as { count: number };
