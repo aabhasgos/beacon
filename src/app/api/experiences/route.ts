@@ -107,6 +107,102 @@ export async function POST(request: Request) {
   }
 }
 
+export async function PUT(request: Request) {
+  try {
+    const user = getCurrentUserFromRequest(request);
+    const userId = user?.id || "usr_student_01";
+    const body = await request.json();
+
+    const {
+      id,
+      title,
+      company,
+      employment_type = "Internship",
+      location = "Hybrid",
+      is_remote = false,
+      is_current = false,
+      start_date,
+      end_date,
+      description = "",
+      skills_used = [],
+      proof_url = "",
+    } = body;
+
+    if (!id || !title || !company || !start_date) {
+      return NextResponse.json(
+        { error: "Experience ID, Title, Company name, and Start Date are required fields." },
+        { status: 400 }
+      );
+    }
+
+    const existing = db.prepare("SELECT * FROM student_experiences WHERE id = ? AND user_id = ?").get(id, userId) as any;
+    if (!existing) {
+      return NextResponse.json({ error: "Experience record not found or unauthorized." }, { status: 404 });
+    }
+
+    const skillsJson = Array.isArray(skills_used) ? JSON.stringify(skills_used) : JSON.stringify([]);
+    const verifiedStatus = proof_url ? "Source-Backed Proof" : "Self-Declared";
+
+    db.prepare(`
+      UPDATE student_experiences SET
+        title = ?,
+        company = ?,
+        employment_type = ?,
+        location = ?,
+        is_remote = ?,
+        is_current = ?,
+        start_date = ?,
+        end_date = ?,
+        description = ?,
+        skills_used = ?,
+        proof_url = ?,
+        verified_status = ?
+      WHERE id = ? AND user_id = ?
+    `).run(
+      title.trim(),
+      company.trim(),
+      employment_type,
+      location.trim(),
+      is_remote ? 1 : 0,
+      is_current ? 1 : 0,
+      start_date.trim(),
+      is_current ? "Present" : (end_date || "").trim(),
+      description.trim(),
+      skillsJson,
+      proof_url.trim(),
+      verifiedStatus,
+      id,
+      userId
+    );
+
+    // Record activity event
+    db.prepare(`
+      INSERT INTO activity_events (id, user_id, event_type, title, description)
+      VALUES (?, ?, ?, ?, ?)
+    `).run(
+      `act_${Date.now()}`,
+      userId,
+      "experience_updated",
+      `Experience Updated: ${title}`,
+      `Updated ${employment_type} at ${company} (${start_date} – ${is_current ? "Present" : end_date || ""}).`
+    );
+
+    const updated = db.prepare("SELECT * FROM student_experiences WHERE id = ?").get(id) as any;
+    return NextResponse.json({
+      success: true,
+      experience: {
+        ...updated,
+        is_current: Boolean(updated.is_current),
+        is_remote: Boolean(updated.is_remote),
+        skills_used: updated.skills_used ? JSON.parse(updated.skills_used) : [],
+      },
+      message: "Experience updated successfully.",
+    });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+
 export async function DELETE(request: Request) {
   try {
     const user = getCurrentUserFromRequest(request);

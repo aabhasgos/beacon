@@ -5,7 +5,11 @@ import { getCurrentUserFromRequest } from "@/lib/auth/session";
 import {
   extractResumeText,
   extractSkillsFromText,
+  extractEducationFromText,
+  extractExperiencesFromText,
   syncExtractedSkillsToDb,
+  syncExtractedEducationToDb,
+  syncExtractedExperiencesToDb,
   generateResumeSummary,
   categorizeSkill,
 } from "@/lib/parser/resumeExtractor";
@@ -75,8 +79,18 @@ export async function POST(request: Request) {
     // Automatically sync extracted skills into the student's skill_claims table
     syncExtractedSkillsToDb(db, userId, extractedSkills);
 
-    // Fetch user details to generate an accurate, customized summary
+    // Fetch user details
     const userRecord = db.prepare("SELECT * FROM users WHERE id = ?").get(userId) as any;
+
+    // Extract education credentials (strictly differentiating from employment)
+    const extractedEducation = extractEducationFromText(resumeText);
+    syncExtractedEducationToDb(db, userId, extractedEducation);
+
+    // Extract genuine work experiences & internships (with anti-conflation filter)
+    const enrolledCollege = userRecord?.college || (extractedEducation[0]?.institution || "");
+    const extractedExperiences = extractExperiencesFromText(resumeText, enrolledCollege);
+    syncExtractedExperiencesToDb(db, userId, extractedExperiences);
+
     const skillNames = extractedSkills.map((s) => s.name);
     const computedSummary = manualSummary || generateResumeSummary(resumeText, userRecord, skillNames);
 
@@ -130,8 +144,10 @@ export async function POST(request: Request) {
       fileName: stored.originalName,
       extractedSkillsCount: extractedSkills.length,
       skills: skillNames,
+      extractedEducation,
+      extractedExperiences,
       summary: computedSummary,
-      message: `Resume parsed successfully: ${extractedSkills.length} skills extracted and verified.`,
+      message: `Resume parsed successfully: ${extractedSkills.length} skills, ${extractedEducation.length} academic credentials, and ${extractedExperiences.length} work experiences extracted and synchronized.`,
     });
   } catch (err: any) {
     console.error("Resume upload error:", err);

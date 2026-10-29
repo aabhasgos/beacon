@@ -19,6 +19,7 @@ import {
   IconGraph,
   IconClock,
   IconUsers,
+  IconEdit,
 } from "@/components/icons/Icons";
 import { getSupabase } from "@/lib/supabase/client";
 import { StudentAvatar } from "@/components/ui/StudentAvatar";
@@ -60,6 +61,25 @@ export default function PassportPage() {
   const [expSkillInput, setExpSkillInput] = useState("");
   const [expProofUrl, setExpProofUrl] = useState("");
   const [savingExp, setSavingExp] = useState(false);
+
+  // Edit Experience Modal State
+  const [editingExp, setEditingExp] = useState<any | null>(null);
+  const [editExpTitle, setEditExpTitle] = useState("");
+  const [editExpCompany, setEditExpCompany] = useState("");
+  const [editExpType, setEditExpType] = useState("Internship");
+  const [editExpWorkMode, setEditExpWorkMode] = useState<"On-Site" | "Remote" | "Hybrid">("Hybrid");
+  const [editExpLocation, setEditExpLocation] = useState("Greater Noida");
+  const [editExpIsRemote, setEditExpIsRemote] = useState(false);
+  const [editExpIsCurrent, setEditExpIsCurrent] = useState(false);
+  const [editExpStartMonth, setEditExpStartMonth] = useState("Jan");
+  const [editExpStartYear, setEditExpStartYear] = useState("2026");
+  const [editExpEndMonth, setEditExpEndMonth] = useState("Apr");
+  const [editExpEndYear, setEditExpEndYear] = useState("2026");
+  const [editExpDescription, setEditExpDescription] = useState("");
+  const [editExpSkillsList, setEditExpSkillsList] = useState<string[]>([]);
+  const [editExpSkillInput, setEditExpSkillInput] = useState("");
+  const [editExpProofUrl, setEditExpProofUrl] = useState("");
+  const [updatingExp, setUpdatingExp] = useState(false);
 
   // Resume NLP Full Text Preview State
   const [showResumeRawText, setShowResumeRawText] = useState(false);
@@ -274,6 +294,113 @@ export default function PassportPage() {
         setExperiences((prev) => prev.filter((x) => x.id !== id));
       }
     } catch (err) {}
+  };
+
+  const handleOpenEditExp = (exp: any) => {
+    setEditingExp(exp);
+    setEditExpTitle(exp.title || "");
+    setEditExpCompany(exp.company || "");
+    setEditExpType(exp.employment_type || "Internship");
+
+    const loc = exp.location || "";
+    if (exp.is_remote || loc.toLowerCase().includes("remote")) {
+      setEditExpWorkMode("Remote");
+      setEditExpIsRemote(true);
+      setEditExpLocation(loc.replace(/\(Remote\)/i, "").trim() || "Remote");
+    } else if (loc.toLowerCase().includes("hybrid")) {
+      setEditExpWorkMode("Hybrid");
+      setEditExpIsRemote(false);
+      setEditExpLocation(loc.replace(/\(Hybrid\)/i, "").trim() || "Greater Noida");
+    } else {
+      setEditExpWorkMode("On-Site");
+      setEditExpIsRemote(false);
+      setEditExpLocation(loc.replace(/\(On-Site\)/i, "").trim() || "India");
+    }
+
+    setEditExpIsCurrent(Boolean(exp.is_current));
+
+    const sDate = (exp.start_date || "Jan 2026").trim();
+    const sParts = sDate.split(" ");
+    if (sParts.length >= 2) {
+      setEditExpStartMonth(sParts[0]);
+      setEditExpStartYear(sParts[1]);
+    } else if (sParts.length === 1 && sParts[0].length === 4) {
+      setEditExpStartYear(sParts[0]);
+    }
+
+    const eDate = (exp.end_date || "Apr 2026").trim();
+    if (eDate === "Present" || exp.is_current) {
+      setEditExpIsCurrent(true);
+    } else {
+      const eParts = eDate.split(" ");
+      if (eParts.length >= 2) {
+        setEditExpEndMonth(eParts[0]);
+        setEditExpEndYear(eParts[1]);
+      } else if (eParts.length === 1 && eParts[0].length === 4) {
+        setEditExpEndYear(eParts[0]);
+      }
+    }
+
+    setEditExpDescription(exp.description || "");
+    setEditExpSkillsList(Array.isArray(exp.skills_used) ? exp.skills_used : []);
+    setEditExpSkillInput("");
+    setEditExpProofUrl(exp.proof_url || "");
+  };
+
+  const handleUpdateExperience = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingExp) return;
+    if (!editExpTitle.trim() || !editExpCompany.trim()) {
+      alert("Please provide both Role Title and Organization / Company.");
+      return;
+    }
+
+    setUpdatingExp(true);
+    try {
+      const skillsArray = Array.from(
+        new Set([
+          ...editExpSkillsList,
+          ...editExpSkillInput.split(",").map((s) => s.trim()).filter(Boolean),
+        ])
+      );
+
+      const startDateFormatted = `${editExpStartMonth} ${editExpStartYear}`;
+      const endDateFormatted = editExpIsCurrent ? "Present" : `${editExpEndMonth} ${editExpEndYear}`;
+      const locationFormatted = editExpWorkMode === "Remote" ? "Remote" : `${editExpLocation.trim() || "India"} (${editExpWorkMode})`;
+
+      const res = await fetch("/api/experiences", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: editingExp.id,
+          title: editExpTitle.trim(),
+          company: editExpCompany.trim(),
+          employment_type: editExpType,
+          location: locationFormatted,
+          is_remote: editExpWorkMode === "Remote",
+          is_current: editExpIsCurrent,
+          start_date: startDateFormatted,
+          end_date: endDateFormatted,
+          description: editExpDescription.trim(),
+          skills_used: skillsArray,
+          proof_url: editExpProofUrl.trim(),
+        }),
+      });
+
+      const resJson = await res.json();
+      if (res.ok && resJson.experience) {
+        setExperiences((prev) =>
+          prev.map((x) => (x.id === editingExp.id ? resJson.experience : x))
+        );
+        setEditingExp(null);
+      } else {
+        alert(resJson.error || "Failed to update experience.");
+      }
+    } catch (err) {
+      alert("Network error while updating experience.");
+    } finally {
+      setUpdatingExp(false);
+    }
   };
 
   useEffect(() => {
@@ -1244,6 +1371,15 @@ export default function PassportPage() {
                           <span>↗</span>
                         </a>
                       )}
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEditExp(exp)}
+                        className="text-[11px] font-bold text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700 px-2.5 py-1 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+                        title="Edit this experience"
+                      >
+                        <IconEdit size={12} />
+                        <span>Edit</span>
+                      </button>
                       <button
                         type="button"
                         onClick={() => handleDeleteExperience(exp.id)}
@@ -2597,6 +2733,340 @@ export default function PassportPage() {
                   className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-black text-xs transition-all shadow-md shadow-indigo-600/20 cursor-pointer disabled:opacity-50"
                 >
                   {savingExp ? "Saving to Passport..." : "Save Experience to Passport →"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Edit Work Experience / Internship */}
+      {editingExp && (
+        <div className="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 my-8 animate-in fade-in zoom-in-95 duration-150">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-indigo-500/20">
+                  <IconEdit size={22} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-black text-slate-950 dark:text-white text-lg sm:text-xl">
+                      Edit Work Experience
+                    </h3>
+                    <span className="text-[10px] font-black bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 px-2 py-0.5 rounded-full uppercase">
+                      Passport
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                    Update role details, dates, key contributions, and verification links.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingExp(null)}
+                className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Institutional Differentiation Notice Banner */}
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 flex items-start gap-3">
+              <div className="w-6 h-6 rounded-lg bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 text-xs font-black">
+                ℹ
+              </div>
+              <div className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
+                <span className="font-bold text-slate-900 dark:text-white">Institution Differentiator:</span>{" "}
+                Your enrolled college degree curriculum is managed in your <span className="font-semibold text-indigo-600 dark:text-indigo-400">Academic Profile</span>. Keep this section reserved for verified corporate internships, research appointments, or student employment roles.
+              </div>
+            </div>
+
+            <form onSubmit={handleUpdateExperience} className="space-y-5 text-xs">
+              {/* Row 1: Role Title & Organization */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
+                    <span>Role Title *</span>
+                    <span className="text-[10px] text-slate-400 font-normal">e.g. SDE Intern, ML Researcher</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Software Engineering Intern"
+                    value={editExpTitle}
+                    onChange={(e) => setEditExpTitle(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all shadow-2xs"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
+                    <span>Company or Organization *</span>
+                    <span className="text-[10px] text-slate-400 font-normal">e.g. SERO, Swiggy, Google</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Social Empowerment & Research Organisation"
+                    value={editExpCompany}
+                    onChange={(e) => setEditExpCompany(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all shadow-2xs"
+                  />
+                </div>
+              </div>
+
+              {/* Row 2: Employment Type Segment Pills */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-900 dark:text-slate-100 block">
+                  Employment Type
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { id: "Internship", label: "Internship" },
+                    { id: "Full-Time", label: "Full-Time" },
+                    { id: "Part-Time", label: "Part-Time" },
+                    { id: "Research Appointment", label: "Research Appointment" },
+                    { id: "Leadership & Responsibility", label: "Leadership & Responsibility" },
+                    { id: "Contract", label: "Contract" },
+                  ].map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => setEditExpType(t.id)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                        editExpType === t.id
+                          ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
+                          : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700"
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Row 3: Work Mode & Location */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-900 dark:text-slate-100 block">
+                    Work Mode
+                  </label>
+                  <div className="flex gap-2">
+                    {[
+                      { id: "In-Office", label: "In-Office" },
+                      { id: "Remote", label: "Remote" },
+                      { id: "Hybrid", label: "Hybrid" },
+                    ].map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => {
+                          setEditExpWorkMode(m.id as any);
+                          setEditExpIsRemote(m.id === "Remote");
+                        }}
+                        className={`flex-1 py-2 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer border text-center ${
+                          editExpWorkMode === m.id
+                            ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-indigo-300"
+                        }`}
+                      >
+                        {m.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-900 dark:text-slate-100 block">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    disabled={editExpWorkMode === "Remote"}
+                    placeholder={editExpWorkMode === "Remote" ? "100% Remote" : "e.g. Greater Noida, Bengaluru"}
+                    value={editExpWorkMode === "Remote" ? "100% Remote" : editExpLocation}
+                    onChange={(e) => setEditExpLocation(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all shadow-2xs disabled:opacity-50"
+                  />
+                </div>
+              </div>
+
+              {/* Row 4: Timeline & Current Position Toggle */}
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={editExpIsCurrent}
+                      onChange={(e) => setEditExpIsCurrent(e.target.checked)}
+                      className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500/20"
+                    />
+                    <span>I am currently working in this role</span>
+                  </label>
+
+                  {editExpIsCurrent && (
+                    <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      Ongoing Active Position
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1 border-t border-slate-200 dark:border-slate-700">
+                  {/* Start Date */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block">
+                      Start Date *
+                    </label>
+                    <div className="flex gap-2">
+                      <select
+                        value={editExpStartMonth}
+                        onChange={(e) => setEditExpStartMonth(e.target.value)}
+                        className="flex-1 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none"
+                      >
+                        {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map((m) => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
+                      <select
+                        value={editExpStartYear}
+                        onChange={(e) => setEditExpStartYear(e.target.value)}
+                        className="flex-1 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none"
+                      >
+                        {["2027", "2026", "2025", "2024", "2023", "2022", "2021", "2020"].map((y) => (
+                          <option key={y} value={y}>{y}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* End Date */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block">
+                      End Date
+                    </label>
+                    {editExpIsCurrent ? (
+                      <div className="px-3 py-2 rounded-xl border border-dashed border-emerald-300 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-bold text-center">
+                        Present
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <select
+                          value={editExpEndMonth}
+                          onChange={(e) => setEditExpEndMonth(e.target.value)}
+                          className="flex-1 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none"
+                        >
+                          {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map((m) => (
+                            <option key={m} value={m}>{m}</option>
+                          ))}
+                        </select>
+                        <select
+                          value={editExpEndYear}
+                          onChange={(e) => setEditExpEndYear(e.target.value)}
+                          className="flex-1 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none"
+                        >
+                          {["2027", "2026", "2025", "2024", "2023", "2022", "2021", "2020"].map((y) => (
+                            <option key={y} value={y}>{y}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 5: Description */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
+                  <span>Key Responsibilities & Impact</span>
+                  <span className="text-[10px] text-slate-400 font-normal">Mention key achievements, metrics, or technologies</span>
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Describe your core contributions, system designs, metrics improved, or leadership impact..."
+                  value={editExpDescription}
+                  onChange={(e) => setEditExpDescription(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all shadow-2xs resize-none leading-relaxed"
+                />
+              </div>
+
+              {/* Row 6: Skills Used */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
+                  <span>Skills & Competencies Applied</span>
+                  <span className="text-[10px] text-slate-400 font-normal">Press Enter or comma to add</span>
+                </label>
+                <div className="p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 space-y-2">
+                  <div className="flex flex-wrap gap-1.5">
+                    {editExpSkillsList.map((skill, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold"
+                      >
+                        <span>{skill}</span>
+                        <button
+                          type="button"
+                          onClick={() => setEditExpSkillsList((prev) => prev.filter((_, i) => i !== idx))}
+                          className="hover:text-rose-500 ml-0.5 cursor-pointer"
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Type skill and press enter (e.g. PyTorch, TypeScript, FastAPI)..."
+                    value={editExpSkillInput}
+                    onChange={(e) => setEditExpSkillInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === ",") {
+                        e.preventDefault();
+                        const val = editExpSkillInput.replace(",", "").trim();
+                        if (val && !editExpSkillsList.includes(val)) {
+                          setEditExpSkillsList([...editExpSkillsList, val]);
+                          setEditExpSkillInput("");
+                        }
+                      }
+                    }}
+                    className="w-full text-xs font-medium bg-transparent border-0 focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
+                  />
+                </div>
+              </div>
+
+              {/* Row 7: Proof URL */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between">
+                  <span>Source-Backed Verification Link</span>
+                  <span className="text-[10px] text-slate-400 font-normal">GitHub, LoR, certificate, or publication link</span>
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://github.com/... or https://drive.google.com/..."
+                  value={editExpProofUrl}
+                  onChange={(e) => setEditExpProofUrl(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all shadow-2xs"
+                />
+              </div>
+
+              {/* Modal Actions */}
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setEditingExp(null)}
+                  className="px-4 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={updatingExp}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-black text-xs transition-all shadow-md shadow-indigo-600/20 cursor-pointer disabled:opacity-50"
+                >
+                  {updatingExp ? "Updating Experience..." : "Save Changes →"}
                 </button>
               </div>
             </form>
