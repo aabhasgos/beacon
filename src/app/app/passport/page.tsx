@@ -124,6 +124,8 @@ export default function PassportPage() {
   const [editLinkedin, setEditLinkedin] = useState("");
   const [editPortfolio, setEditPortfolio] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
+  const [profileEditError, setProfileEditError] = useState<string | null>(null);
+  const [profileEditSuccess, setProfileEditSuccess] = useState<string | null>(null);
 
   // Avatar Direct Upload
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -426,6 +428,8 @@ export default function PassportPage() {
   }, []);
 
   const handleOpenEditModal = () => {
+    setProfileEditError(null);
+    setProfileEditSuccess(null);
     const u = data?.user;
     const p = data?.profile;
     if (u) {
@@ -433,7 +437,7 @@ export default function PassportPage() {
       setEditCollege(u.college || "");
       setEditDegree(u.degree || "");
       setEditGradYear(u.graduation_year ? String(u.graduation_year) : "");
-      setEditCgpa(u.cgpa ? String(u.cgpa) : "");
+      setEditCgpa(u.cgpa !== undefined && u.cgpa !== null ? String(u.cgpa) : "");
       setEditLocation(u.location || "");
       setEditHeadline(u.headline || "");
       setEditBio(u.bio || "");
@@ -448,34 +452,36 @@ export default function PassportPage() {
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    setProfileEditError(null);
+    setProfileEditSuccess(null);
 
     // Enforce compulsory fields (every field required except CGPA)
     if (!editFullName.trim()) {
-      alert("Full Name is compulsory.");
+      setProfileEditError("Full Name is compulsory.");
       return;
     }
     if (!editCollege.trim()) {
-      alert("College / University is compulsory.");
+      setProfileEditError("College / University is compulsory.");
       return;
     }
     if (!editDegree.trim()) {
-      alert("Degree & Major is compulsory.");
+      setProfileEditError("Degree & Major is compulsory.");
       return;
     }
     if (!editGradYear || !String(editGradYear).trim()) {
-      alert("Graduation Year is compulsory.");
+      setProfileEditError("Graduation Year is compulsory.");
       return;
     }
     if (!editLocation.trim()) {
-      alert("Location / City is compulsory.");
+      setProfileEditError("Location / City is compulsory.");
       return;
     }
     if (!editHeadline.trim()) {
-      alert("Professional Headline is compulsory.");
+      setProfileEditError("Professional Headline is compulsory.");
       return;
     }
     if (!editBio.trim()) {
-      alert("Bio / About You is compulsory.");
+      setProfileEditError("Bio / About You is compulsory.");
       return;
     }
 
@@ -499,8 +505,9 @@ export default function PassportPage() {
         }),
       });
 
-      if (res.ok) {
-        setShowEditModal(false);
+      const resJson = await res.json();
+      if (res.ok && resJson.success) {
+        setProfileEditSuccess("Passport details updated and verified successfully!");
         await loadPassport();
         try {
           const stored = localStorage.getItem("beacon_user");
@@ -513,12 +520,17 @@ export default function PassportPage() {
             localStorage.setItem("beacon_user", JSON.stringify(parsed));
           }
         } catch (e) {}
+
+        setTimeout(() => {
+          setShowEditModal(false);
+          setProfileEditSuccess(null);
+        }, 1200);
       } else {
-        const err = await res.json();
-        alert(err.error || "Failed to save profile changes.");
+        setProfileEditError(resJson.error || "Failed to save profile changes.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setProfileEditError(err.message || "Network error occurred while saving profile.");
     } finally {
       setSavingProfile(false);
     }
@@ -2013,21 +2025,34 @@ export default function PassportPage() {
       {/* MODAL 1: EDIT PROFILE DETAILS (Full Control for Student) */}
       {showEditModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-6 sm:p-7 relative max-h-[92vh] overflow-y-auto border border-slate-200 animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-xl w-full p-6 sm:p-7 relative max-h-[92vh] overflow-y-auto border border-slate-200 dark:border-slate-800 animate-fade-in">
             <button
               onClick={() => setShowEditModal(false)}
-              className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 font-black text-sm w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center cursor-pointer"
+              className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-black text-sm w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center cursor-pointer"
             >
               ✕
             </button>
-            <h3 className="font-black text-xl text-slate-950 mb-1">Edit Student Passport Details</h3>
-            <p className="text-xs text-slate-500 font-medium mb-4">
+            <h3 className="font-black text-xl text-slate-950 dark:text-white mb-1">Edit Student Passport Details</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-4">
               Enter your actual university, major, and career goals.
             </p>
 
-            <div className="bg-amber-50/90 border border-amber-200 text-amber-900 text-xs px-3.5 py-2 rounded-xl mb-4 font-semibold flex items-center gap-2">
-              <span>⚠️</span>
-              <span>All fields marked with <strong className="text-rose-600">*</strong> are compulsory for student passport verification (CGPA is optional).</span>
+            {profileEditError && (
+              <div className="mb-4 p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-start gap-2.5">
+                <span className="w-4 h-4 rounded-full bg-rose-600 text-white shrink-0 flex items-center justify-center font-bold text-[10px] mt-0.5">!</span>
+                <span className="leading-relaxed">{profileEditError}</span>
+              </div>
+            )}
+            {profileEditSuccess && (
+              <div className="mb-4 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-semibold flex items-start gap-2.5">
+                <IconCheckCircle size={16} className="text-emerald-600 shrink-0 mt-0.5" />
+                <span className="leading-relaxed">{profileEditSuccess}</span>
+              </div>
+            )}
+
+            <div className="bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs px-3.5 py-2 rounded-xl mb-4 font-semibold flex items-center gap-2">
+              <IconShield size={16} className="text-amber-600 dark:text-amber-400 shrink-0" />
+              <span>All fields marked with <strong className="text-rose-600 dark:text-rose-400">*</strong> are compulsory for student passport verification (CGPA is optional).</span>
             </div>
 
             <form onSubmit={handleSaveProfile} className="space-y-4 text-xs sm:text-sm">

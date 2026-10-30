@@ -113,6 +113,7 @@ export async function PUT(request: Request) {
   try {
     const user = getCurrentUserFromRequest(request);
     const userId = user?.id || "usr_student_01";
+    ensureUserExists(db, userId, user?.full_name, user?.email);
     const body = await request.json();
 
     const {
@@ -209,6 +210,7 @@ export async function DELETE(request: Request) {
   try {
     const user = getCurrentUserFromRequest(request);
     const userId = user?.id || "usr_student_01";
+    ensureUserExists(db, userId, user?.full_name, user?.email);
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
