@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import db from "@/lib/db";
+import db, { ensureUserExists } from "@/lib/db";
 import { getCurrentUserFromRequest } from "@/lib/auth/session";
 import { getGroqApiKey } from "@/lib/agent/groq";
 
@@ -9,6 +9,7 @@ export async function POST(request: Request) {
   try {
     const user = getCurrentUserFromRequest(request);
     const userId = user?.id || "usr_student_01";
+    ensureUserExists(db, userId, user?.full_name, user?.email);
 
     const body = await request.json().catch(() => ({}));
     const { targetRole = "Software Engineer", customPrompt = "", style = "executive" } = body;

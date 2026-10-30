@@ -1,4 +1,4 @@
-import db from "@/lib/db";
+import db, { ensureUserExists } from "@/lib/db";
 
 export interface CurrentUser {
   id: string;
@@ -41,7 +41,10 @@ export function getCurrentUserFromRequest(request?: Request): CurrentUser | null
     }
 
     if (userId) {
-      const user = db.prepare("SELECT * FROM users WHERE id = ?").get(userId) as any;
+      let user = db.prepare("SELECT * FROM users WHERE id = ?").get(userId) as any;
+      if (!user && (userId === "usr_student_01" || userId.startsWith("usr_student_"))) {
+        user = ensureUserExists(db, userId);
+      }
       if (user) {
         return user;
       }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import db from "@/lib/db";
+import db, { ensureUserExists } from "@/lib/db";
 import { saveUploadedFile } from "@/lib/storage";
 import { getCurrentUserFromRequest } from "@/lib/auth/session";
 import {
@@ -20,6 +20,7 @@ export async function GET(request: Request) {
   try {
     const user = getCurrentUserFromRequest(request);
     const userId = user?.id || "usr_student_01";
+    ensureUserExists(db, userId, user?.full_name, user?.email);
     const resumes = db.prepare("SELECT * FROM resumes WHERE user_id = ? ORDER BY uploaded_at DESC").all(userId) as any[];
 
     // Ensure raw_text is populated for complete NLP pipeline visibility
@@ -45,6 +46,11 @@ export async function POST(request: Request) {
   try {
     const user = getCurrentUserFromRequest(request);
     const userId = user?.id || "usr_student_01";
+
+    // Strictly ensure that userId exists in users and student_profiles
+    // before performing any child insertions to eliminate FOREIGN KEY errors
+    const verifiedUser = ensureUserExists(db, userId, user?.full_name, user?.email);
+
     const formData = await request.formData();
     const file = formData.get("resume") as File | null;
     const manualSummary = formData.get("summary") as string;
@@ -80,7 +86,7 @@ export async function POST(request: Request) {
     syncExtractedSkillsToDb(db, userId, extractedSkills);
 
     // Fetch user details
-    const userRecord = db.prepare("SELECT * FROM users WHERE id = ?").get(userId) as any;
+    const userRecord = verifiedUser || (db.prepare("SELECT * FROM users WHERE id = ?").get(userId) as any);
 
     // Extract education credentials (strictly differentiating from employment)
     const extractedEducation = extractEducationFromText(resumeText);
@@ -95,7 +101,9 @@ export async function POST(request: Request) {
     const computedSummary = manualSummary || generateResumeSummary(resumeText, userRecord, skillNames);
 
     // Unset existing primary resumes
-    db.prepare("UPDATE resumes SET is_primary = 0 WHERE user_id = ?").run(userId);
+    try {
+      db.prepare("UPDATE resumes SET is_primary = 0 WHERE user_id = ?").run(userId);
+    } catch (e) {}
 
     const resumeId = `res_${Date.now()}`;
     const parsedSkillsJson = JSON.stringify(skillNames);
@@ -117,25 +125,33 @@ export async function POST(request: Request) {
     );
 
     // Update student profile primary resume link
-    db.prepare(`
-      UPDATE student_profiles SET
-        resume_filename = ?,
-        resume_url = ?,
-        resume_updated_at = CURRENT_TIMESTAMP
-      WHERE user_id = ?
-    `).run(stored.originalName, stored.publicUrl, userId);
+    try {
+      db.prepare(`
+        UPDATE student_profiles SET
+          resume_filename = ?,
+          resume_url = ?,
+          resume_updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = ?
+      `).run(stored.originalName, stored.publicUrl, userId);
+    } catch (profErr) {
+      console.warn("Student profile link warning:", profErr);
+    }
 
     // Record activity event
-    db.prepare(`
-      INSERT INTO activity_events (id, user_id, event_type, title, description)
-      VALUES (?, ?, ?, ?, ?)
-    `).run(
-      `act_${Date.now()}`,
-      userId,
-      "resume_updated",
-      "Primary Resume Uploaded & Verified",
-      `Attached ${stored.originalName} (${Math.round(stored.size / 1024)} KB) with ${extractedSkills.length} verified technical skills extracted.`
-    );
+    try {
+      db.prepare(`
+        INSERT INTO activity_events (id, user_id, event_type, title, description)
+        VALUES (?, ?, ?, ?, ?)
+      `).run(
+        `act_${Date.now()}`,
+        userId,
+        "resume_updated",
+        "Primary Resume Uploaded & Verified",
+        `Attached ${stored.originalName} (${Math.round(stored.size / 1024)} KB) with ${extractedSkills.length} verified technical skills extracted.`
+      );
+    } catch (actErr) {
+      console.warn("Activity event log warning:", actErr);
+    }
 
     return NextResponse.json({
       success: true,

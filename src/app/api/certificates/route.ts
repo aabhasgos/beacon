@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import db from "@/lib/db";
+import db, { ensureUserExists } from "@/lib/db";
 import { saveUploadedFile } from "@/lib/storage";
 import { getCurrentUserFromRequest } from "@/lib/auth/session";
 
@@ -9,6 +9,7 @@ export async function GET(request: Request) {
   try {
     const user = getCurrentUserFromRequest(request);
     const userId = user?.id || "usr_student_01";
+    ensureUserExists(db, userId, user?.full_name, user?.email);
     const certs = db.prepare("SELECT * FROM certificates WHERE user_id = ? ORDER BY issue_date DESC").all(userId);
     return NextResponse.json({ certificates: certs });
   } catch (err: any) {
@@ -20,6 +21,7 @@ export async function POST(request: Request) {
   try {
     const user = getCurrentUserFromRequest(request);
     const userId = user?.id || "usr_student_01";
+    ensureUserExists(db, userId, user?.full_name, user?.email);
     const formData = await request.formData();
     const title = formData.get("title") as string;
     const issuer = formData.get("issuer") as string;

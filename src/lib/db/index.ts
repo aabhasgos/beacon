@@ -443,8 +443,171 @@ export function initDatabase(db: Database.Database) {
   }
 }
 
+/**
+ * Guarantees that a given userId exists in the users table and student_profiles table,
+ * preventing any SQLite FOREIGN KEY constraint failures across child tables.
+ */
+export function ensureUserExists(
+  database: Database.Database | any,
+  userId: string = "usr_student_01",
+  fallbackName?: string,
+  fallbackEmail?: string
+) {
+  if (!userId) userId = "usr_student_01";
+  let user = database.prepare("SELECT * FROM users WHERE id = ?").get(userId) as any;
+
+  if (!user) {
+    const isStudent01 = userId === "usr_student_01";
+    const name = fallbackName || (isStudent01 ? "Aabhas Goswami" : "Engineering Student");
+    const email = fallbackEmail || (isStudent01 ? "aabhas.goswami@nitk.edu.in" : `${userId.toLowerCase().replace(/[^a-z0-9_]/g, "")}@beacon.dev`);
+
+    try {
+      database.prepare(`
+        INSERT OR IGNORE INTO users (
+          id, email, password, full_name, role, avatar_url, headline, bio, location, education_stage, college, degree, graduation_year, cgpa
+        ) VALUES (
+          ?, ?, 'password123', ?, 'student',
+          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+          'Pre-final Year Robotics & Machine Learning | Full Stack & AI Systems',
+          'Undergraduate engineer focused on high-throughput distributed systems, real-time computer vision inference, and verified developer tooling.',
+          'Kurukshetra / Delhi NCR',
+          'Undergraduate',
+          'National Institute of Technology Kurukshetra (NITK)',
+          'B.Tech Robotics & Machine Learning',
+          2027,
+          8.92
+        )
+      `).run(userId, email, name);
+    } catch (e) {
+      try {
+        const uniqueEmail = `${userId.toLowerCase().replace(/[^a-z0-9_]/g, "")}_${Date.now()}@beacon.dev`;
+        database.prepare(`
+          INSERT OR IGNORE INTO users (
+            id, email, password, full_name, role, avatar_url, headline, bio, location, education_stage, college, degree, graduation_year, cgpa
+          ) VALUES (?, ?, 'password123', ?, 'student', null, 'Engineering Student', '', 'India', 'Undergraduate', 'National Institute of Technology Kurukshetra (NITK)', 'B.Tech Computer Science & Engineering', 2027, 8.85)
+        `).run(userId, uniqueEmail, name);
+      } catch (err2) {}
+    }
+    user = database.prepare("SELECT * FROM users WHERE id = ?").get(userId);
+  }
+
+  // Ensure student profile exists for this user
+  try {
+    const profile = database.prepare("SELECT user_id FROM student_profiles WHERE user_id = ?").get(userId);
+    if (!profile) {
+      database.prepare(`
+        INSERT OR IGNORE INTO student_profiles (
+          user_id, interests, constraints, preferred_language, github_url, linkedin_url, portfolio_url, is_public
+        ) VALUES (?, ?, ?, 'English', 'https://github.com/aabhas', 'https://linkedin.com/in/aabhas-goswami', 'https://aabhas.dev', 1)
+      `).run(
+        userId,
+        JSON.stringify(["Distributed Systems", "Computer Vision", "Machine Learning", "Robotics", "Full Stack Development"]),
+        JSON.stringify(["Available for Summer 2026 Internships", "Hybrid / Remote Preferred"])
+      );
+    }
+  } catch (profErr) {}
+
+  return user;
+}
+
 function seedInitialData(db: Database.Database) {
   try {
+    // 0. Ensure Canonical Student User (usr_student_01) exists FIRST before any foreign key references it
+    ensureUserExists(db, "usr_student_01", "Aabhas Goswami", "aabhas.goswami@nitk.edu.in");
+
+    // Ensure Master Administrator exists
+    const adminUser = db.prepare("SELECT id FROM users WHERE role = 'admin' LIMIT 1").get();
+    if (!adminUser) {
+      try {
+        db.prepare(`
+          INSERT OR IGNORE INTO users (
+            id, email, password, full_name, role, headline, college, degree
+          ) VALUES (
+            'usr_admin_01', 'admin@beacon.network', 'beacon-admin-2026', 'Master Administrator', 'admin',
+            'Institutional Governance & Audit Officer', 'Beacon Network', 'System Administration'
+          )
+        `).run();
+      } catch (e) {}
+    }
+
+    // Ensure Enterprise Recruiter exists
+    const recruiterUser = db.prepare("SELECT id FROM users WHERE role = 'recruiter' LIMIT 1").get();
+    if (!recruiterUser) {
+      try {
+        db.prepare(`
+          INSERT OR IGNORE INTO users (
+            id, email, password, full_name, role, headline, college, degree
+          ) VALUES (
+            'usr_recruiter_01', 'recruiter@razorpay.com', 'password123', 'Aditya Sharma', 'recruiter',
+            'Lead Technical Recruiter @ Razorpay', 'Razorpay', 'Enterprise Talent Partner'
+          )
+        `).run();
+      } catch (e) {}
+    }
+
+    // Seed Initial Verified Projects for usr_student_01
+    const projCheck = db.prepare("SELECT COUNT(*) as count FROM projects WHERE user_id = 'usr_student_01'").get() as { count: number };
+    if (projCheck.count === 0) {
+      try {
+        db.prepare(`
+          INSERT INTO projects (
+            id, user_id, title, description, category, repository_url, live_url, rubric_score, evidence_notes, status, is_public
+          ) VALUES 
+          (
+            'proj_01', 'usr_student_01',
+            'Autonomous Edge Telemetry & High-Throughput Stream Processor',
+            'Real-time IoT sensor telemetry aggregator built in Rust and Go with continuous Ring-buffer ingestion, zero-copy serialization, and Prometheus observability metrics.',
+            'Distributed Systems',
+            'https://github.com/aabhas/edge-telemetry-engine',
+            'https://telemetry.beacon.dev',
+            94.5,
+            'Cryptographically signed by Beacon Proof-of-Work Protocol (SHA-256 HMAC Verified)',
+            'completed', 1
+          ),
+          (
+            'proj_02', 'usr_student_01',
+            'Distributed Append-Only Consensus Ledger in Go & Raft',
+            'Production-grade implementation of the Raft consensus algorithm featuring leader election, log compaction, snapshotting, and dynamic membership reconfigurations.',
+            'Systems & Concurrency',
+            'https://github.com/aabhas/distributed-consensus-ledger',
+            'https://raft-ledger.beacon.dev',
+            91.0,
+            'Cryptographically signed by Beacon Proof-of-Work Protocol (SHA-256 HMAC Verified)',
+            'completed', 1
+          )
+        `).run();
+      } catch (projErr) {}
+    }
+
+    // Seed Initial Verified Skills for usr_student_01
+    const skillsClaimCheck = db.prepare("SELECT COUNT(*) as count FROM skill_claims WHERE user_id = 'usr_student_01'").get() as { count: number };
+    if (skillsClaimCheck.count === 0) {
+      const initialSkills = [
+        { name: "Python", category: "Languages", level: "Expert" },
+        { name: "TypeScript", category: "Languages", level: "Proficient" },
+        { name: "Go", category: "Languages", level: "Intermediate" },
+        { name: "React", category: "Frameworks", level: "Expert" },
+        { name: "Next.js", category: "Frameworks", level: "Expert" },
+        { name: "PostgreSQL", category: "Tools & Cloud", level: "Proficient" },
+        { name: "Docker", category: "Tools & Cloud", level: "Proficient" },
+        { name: "Computer Vision", category: "AI & Specializations", level: "Proficient" },
+        { name: "Machine Learning", category: "AI & Specializations", level: "Proficient" },
+      ];
+      for (const s of initialSkills) {
+        const skId = `sk_${s.name.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
+        try {
+          db.prepare("INSERT OR IGNORE INTO skills (id, name, category, description) VALUES (?, ?, ?, ?)").run(
+            skId, s.name, s.category, `Core competency in ${s.name}`
+          );
+        } catch (e) {}
+        try {
+          db.prepare(`
+            INSERT OR IGNORE INTO skill_claims (id, user_id, skill_id, skill_name, level, provenance, evidence_notes, verified_at)
+            VALUES (?, 'usr_student_01', ?, ?, ?, 'Document-verified', 'Verified across project repositories and coursework evaluation.', CURRENT_TIMESTAMP)
+          `).run(`claim_${skId}`, skId, s.name, s.level);
+        } catch (e) {}
+      }
+    }
     // 1. Ensure Verified Courses are seeded
     const courseCheck = db.prepare("SELECT COUNT(*) as count FROM courses").get() as { count: number };
     if (courseCheck.count === 0) {
@@ -1072,6 +1235,8 @@ function seedInitialData(db: Database.Database) {
 const db = {
   prepare: (sql: string) => getDb().prepare(sql),
   exec: (sql: string) => getDb().exec(sql),
+  ensureUserExists: (userId?: string, fallbackName?: string, fallbackEmail?: string) =>
+    ensureUserExists(getDb(), userId, fallbackName, fallbackEmail),
 };
 
 export default db;

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import db from "@/lib/db";
+import db, { ensureUserExists } from "@/lib/db";
 import { getCurrentUserFromRequest } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
@@ -8,6 +8,7 @@ export async function GET(request: Request) {
   try {
     const user = getCurrentUserFromRequest(request);
     const userId = user?.id || "usr_student_01";
+    ensureUserExists(db, userId, user?.full_name, user?.email);
 
     const rows = db.prepare(`
       SELECT * FROM student_experiences 
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
   try {
     const user = getCurrentUserFromRequest(request);
     const userId = user?.id || "usr_student_01";
+    ensureUserExists(db, userId, user?.full_name, user?.email);
     const body = await request.json();
 
     const {

@@ -104,6 +104,12 @@ export default function PassportPage() {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeSkills, setResumeSkills] = useState("");
   const [uploadingResume, setUploadingResume] = useState(false);
+  const [resumeUploadError, setResumeUploadError] = useState<string | null>(null);
+  const [resumeUploadSuccess, setResumeUploadSuccess] = useState<string | null>(null);
+
+  // Cert Form State
+  const [certUploadError, setCertUploadError] = useState<string | null>(null);
+  const [certUploadSuccess, setCertUploadSuccess] = useState<string | null>(null);
 
   // Profile Edit State
   const [editFullName, setEditFullName] = useState("");
@@ -127,6 +133,18 @@ export default function PassportPage() {
   // Share Notification & Onboarding State
   const [copiedShareLink, setCopiedShareLink] = useState(false);
   const [isOnboarding, setIsOnboarding] = useState(false);
+
+  const openResumeModal = () => {
+    setResumeUploadError(null);
+    setResumeUploadSuccess(null);
+    setShowResumeModal(true);
+  };
+
+  const openCertModal = () => {
+    setCertUploadError(null);
+    setCertUploadSuccess(null);
+    setShowCertModal(true);
+  };
 
   // Auto-resolve Google OAuth session from hash if present
   useEffect(() => {
@@ -567,8 +585,11 @@ export default function PassportPage() {
 
   const handleUploadCertificate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setCertUploadError(null);
+    setCertUploadSuccess(null);
+
     if (!certTitle || !certIssuer || !certDate) {
-      alert("Please fill in Title, Issuer, and Issue Date.");
+      setCertUploadError("Please provide Title, Issuer, and Issue Date.");
       return;
     }
 
@@ -590,8 +611,9 @@ export default function PassportPage() {
         method: "POST",
         body: fd,
       });
+      const resJson = await res.json();
       if (res.ok) {
-        setShowCertModal(false);
+        setCertUploadSuccess("Certificate registered and verified successfully!");
         setCertTitle("");
         setCertIssuer("");
         setCertDate("");
@@ -600,12 +622,16 @@ export default function PassportPage() {
         setCertSkills("");
         setCertFile(null);
         await loadPassport();
+        setTimeout(() => {
+          setShowCertModal(false);
+          setCertUploadSuccess(null);
+        }, 1200);
       } else {
-        const err = await res.json();
-        alert(err.error || "Failed to upload certificate.");
+        setCertUploadError(resJson.error || "Failed to upload certificate.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setCertUploadError(err.message || "Network error while uploading certificate.");
     } finally {
       setUploadingCert(false);
     }
@@ -613,8 +639,11 @@ export default function PassportPage() {
 
   const handleUploadResume = async (e: React.FormEvent) => {
     e.preventDefault();
+    setResumeUploadError(null);
+    setResumeUploadSuccess(null);
+
     if (!resumeFile) {
-      alert("Please select a PDF or DOCX file.");
+      setResumeUploadError("Please select a valid PDF or DOCX file.");
       return;
     }
 
@@ -628,17 +657,24 @@ export default function PassportPage() {
         method: "POST",
         body: fd,
       });
-      if (res.ok) {
-        setShowResumeModal(false);
+      const resJson = await res.json();
+      if (res.ok && resJson.success) {
+        setResumeUploadSuccess(
+          `Resume verified & parsed successfully! Extracted ${resJson.extractedSkillsCount || 0} skills, ${resJson.extractedEducation?.length || 0} education records, and ${resJson.extractedExperiences?.length || 0} experiences.`
+        );
         setResumeFile(null);
         setResumeSkills("");
         await loadPassport();
+        setTimeout(() => {
+          setShowResumeModal(false);
+          setResumeUploadSuccess(null);
+        }, 1400);
       } else {
-        const err = await res.json();
-        alert(err.error || "Failed to upload resume.");
+        setResumeUploadError(resJson.error || "Failed to process and sync resume. Please check the file.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setResumeUploadError(err.message || "Network error occurred while syncing resume.");
     } finally {
       setUploadingResume(false);
     }
@@ -706,7 +742,7 @@ export default function PassportPage() {
                 <span>Add Academic Details</span>
               </button>
               <button
-                onClick={() => setShowResumeModal(true)}
+                onClick={openResumeModal}
                 className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
               >
                 <IconFileText size={14} />
@@ -795,14 +831,14 @@ export default function PassportPage() {
                   <span>Build & Export CV</span>
                 </button>
                 <button
-                  onClick={() => setShowCertModal(true)}
+                  onClick={openCertModal}
                   className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-indigo-700 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-600 font-bold text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <IconUpload size={14} />
                   <span>Store Certificate</span>
                 </button>
                 <button
-                  onClick={() => setShowResumeModal(true)}
+                  onClick={openResumeModal}
                   className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-bold text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <IconFileText size={14} />
@@ -1166,7 +1202,7 @@ export default function PassportPage() {
                     <span>Download</span>
                   </a>
                   <button
-                    onClick={() => setShowResumeModal(true)}
+                    onClick={openResumeModal}
                     className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100 dark:border-slate-600 text-xs font-bold border border-slate-200 transition-colors cursor-pointer"
                   >
                     Replace
@@ -1276,7 +1312,7 @@ export default function PassportPage() {
             <div className="text-center py-6 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
               <p className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-3">No resume currently attached to your student record.</p>
               <button
-                onClick={() => setShowResumeModal(true)}
+                onClick={openResumeModal}
                 className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs cursor-pointer inline-flex items-center gap-2"
               >
                 <IconUpload size={14} />
@@ -1722,7 +1758,7 @@ export default function PassportPage() {
             </div>
 
             <button
-              onClick={() => setShowCertModal(true)}
+              onClick={openCertModal}
               className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all flex items-center gap-2 cursor-pointer self-start sm:self-auto"
             >
               <IconUpload size={14} />
@@ -1882,7 +1918,7 @@ export default function PassportPage() {
               </div>
               <p className="text-xs font-bold text-slate-700 dark:text-slate-300">No certificates stored yet.</p>
               <button
-                onClick={() => setShowCertModal(true)}
+                onClick={openCertModal}
                 className="mt-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs cursor-pointer inline-flex items-center gap-2"
               >
                 <IconUpload size={13} />
@@ -2179,10 +2215,23 @@ export default function PassportPage() {
             >
               ✕
             </button>
-            <h3 className="font-black text-lg text-slate-950 mb-1">Store Certificate in Locker</h3>
-            <p className="text-xs text-slate-500 font-medium mb-4">
+            <h3 className="font-black text-lg text-slate-950 dark:text-white mb-1">Store Certificate in Locker</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-4">
               Upload your certificate file (PDF, PNG, JPG) to keep verifiable proof attached to your student record.
             </p>
+
+            {certUploadError && (
+              <div className="mb-4 p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-start gap-2.5">
+                <span className="w-4 h-4 rounded-full bg-rose-600 text-white shrink-0 flex items-center justify-center font-bold text-[10px] mt-0.5">!</span>
+                <span className="leading-relaxed">{certUploadError}</span>
+              </div>
+            )}
+            {certUploadSuccess && (
+              <div className="mb-4 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-semibold flex items-start gap-2.5">
+                <IconCheckCircle size={16} className="text-emerald-600 shrink-0 mt-0.5" />
+                <span className="leading-relaxed">{certUploadSuccess}</span>
+              </div>
+            )}
 
             <form onSubmit={handleUploadCertificate} className="space-y-3.5 text-xs sm:text-sm">
               <div>
@@ -2296,10 +2345,23 @@ export default function PassportPage() {
             >
               ✕
             </button>
-            <h3 className="font-black text-lg text-slate-950 mb-1">Update Master Resume</h3>
-            <p className="text-xs text-slate-500 font-medium mb-4">
+            <h3 className="font-black text-lg text-slate-950 dark:text-white mb-1">Update Master Resume</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-4">
               Select your updated resume. It will be pre-attached whenever you submit applications through the Opportunity Radar.
             </p>
+
+            {resumeUploadError && (
+              <div className="mb-4 p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-start gap-2.5">
+                <span className="w-4 h-4 rounded-full bg-rose-600 text-white shrink-0 flex items-center justify-center font-bold text-[10px] mt-0.5">!</span>
+                <span className="leading-relaxed">{resumeUploadError}</span>
+              </div>
+            )}
+            {resumeUploadSuccess && (
+              <div className="mb-4 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-semibold flex items-start gap-2.5">
+                <IconCheckCircle size={16} className="text-emerald-600 shrink-0 mt-0.5" />
+                <span className="leading-relaxed">{resumeUploadSuccess}</span>
+              </div>
+            )}
 
             <form onSubmit={handleUploadResume} className="space-y-3.5 text-xs sm:text-sm">
               <div>

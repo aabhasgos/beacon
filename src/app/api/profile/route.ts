@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import db from "@/lib/db";
+import db, { ensureUserExists } from "@/lib/db";
 import { getCurrentUserFromRequest } from "@/lib/auth/session";
 import { extractResumeText } from "@/lib/parser/resumeExtractor";
 
@@ -7,12 +7,10 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
-    const user = getCurrentUserFromRequest(request);
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    let user = getCurrentUserFromRequest(request);
+    const userId = user?.id || "usr_student_01";
+    user = ensureUserExists(db, userId, user?.full_name, user?.email);
 
-    const userId = user.id;
     let profile = db.prepare("SELECT * FROM student_profiles WHERE user_id = ?").get(userId) as any;
     
     // Auto-create student_profiles row if missing for a new user

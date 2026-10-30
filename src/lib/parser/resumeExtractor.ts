@@ -57,16 +57,25 @@ export function extractDocxText(buffer: Buffer): string {
  */
 export function resolveResumeDiskPath(filePathOrUrl: string): string {
   if (!filePathOrUrl) return "";
-  if (fs.existsSync(filePathOrUrl)) return filePathOrUrl;
+  if (fs.existsSync(/*turbopackIgnore: true*/ filePathOrUrl)) return filePathOrUrl;
 
   const fileName = path.basename(filePathOrUrl);
-  const candidate = path.join(process.cwd(), "storage", "resumes", fileName);
-  if (fs.existsSync(candidate)) return candidate;
-
-  // Check without query params
   const cleanName = fileName.split("?")[0];
-  const candidateClean = path.join(process.cwd(), "storage", "resumes", cleanName);
-  if (fs.existsSync(candidateClean)) return candidateClean;
+
+  const candidateDirs = [
+    path.join(process.cwd(), "storage", "resumes"),
+    path.join("/tmp", "storage", "resumes"),
+    path.join(process.cwd(), "storage", "certificates"),
+    path.join("/tmp", "storage", "certificates"),
+  ];
+
+  for (const dir of candidateDirs) {
+    const candidate = path.join(/*turbopackIgnore: true*/ dir, fileName);
+    if (fs.existsSync(/*turbopackIgnore: true*/ candidate)) return candidate;
+
+    const candidateClean = path.join(/*turbopackIgnore: true*/ dir, cleanName);
+    if (fs.existsSync(/*turbopackIgnore: true*/ candidateClean)) return candidateClean;
+  }
 
   return "";
 }
@@ -77,9 +86,9 @@ export function resolveResumeDiskPath(filePathOrUrl: string): string {
 export function extractResumeText(filePath: string): string {
   try {
     const diskPath = resolveResumeDiskPath(filePath);
-    if (!diskPath || !fs.existsSync(diskPath)) return "";
+    if (!diskPath || !fs.existsSync(/*turbopackIgnore: true*/ diskPath)) return "";
 
-    const buffer = fs.readFileSync(diskPath);
+    const buffer = fs.readFileSync(/*turbopackIgnore: true*/ diskPath);
     const ext = path.extname(diskPath).toLowerCase();
 
     if (ext === ".docx") {
@@ -467,38 +476,58 @@ export function extractExperiencesFromText(
 export function syncExtractedSkillsToDb(
   db: any,
   userId: string,
-  skills: Array<{ name: string; level: string; evidence?: string }>
+  skills: Array<{ name: string; level: string; category?: string; evidence?: string }>
 ): number {
   if (!skills || skills.length === 0) return 0;
 
-  const existing = db.prepare("SELECT skill_name FROM skill_claims WHERE user_id = ?").all(userId) as any[];
-  const existingNames = new Set(existing.map((e: any) => e.skill_name.toLowerCase()));
+  try {
+    const existing = db.prepare("SELECT skill_name FROM skill_claims WHERE user_id = ?").all(userId) as any[];
+    const existingNames = new Set(existing.map((e: any) => e.skill_name.toLowerCase()));
 
-  const insertStmt = db.prepare(`
-    INSERT INTO skill_claims (id, user_id, skill_id, skill_name, level, provenance, evidence_notes, verified_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-  `);
+    const insertStmt = db.prepare(`
+      INSERT INTO skill_claims (id, user_id, skill_id, skill_name, level, provenance, evidence_notes, verified_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    `);
 
-  let addedCount = 0;
-  for (const skill of skills) {
-    if (!existingNames.has(skill.name.toLowerCase())) {
-      const skillId = `sk_${skill.name.toLowerCase().replace(/[^a-z0-9]/g, "_")}_${Date.now().toString(36)}`;
-      const claimId = `claim_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      insertStmt.run(
-        claimId,
-        userId,
-        skillId,
-        skill.name,
-        skill.level || "Intermediate",
-        "Resume-backed",
-        skill.evidence || `Extracted and verified from primary resume (${skill.name}).`
-      );
-      existingNames.add(skill.name.toLowerCase());
-      addedCount++;
+    let addedCount = 0;
+    for (const skill of skills) {
+      if (!existingNames.has(skill.name.toLowerCase())) {
+        const skillId = `sk_${skill.name.toLowerCase().replace(/[^a-z0-9]/g, "_")}_${Date.now().toString(36)}`;
+        const claimId = `claim_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+        
+        // Also register in skills lookup table if missing
+        try {
+          db.prepare("INSERT OR IGNORE INTO skills (id, name, category, description) VALUES (?, ?, ?, ?)").run(
+            skillId,
+            skill.name,
+            skill.category || categorizeSkill(skill.name),
+            `Technical competency extracted from primary resume.`
+          );
+        } catch (e) {}
+
+        try {
+          insertStmt.run(
+            claimId,
+            userId,
+            skillId,
+            skill.name,
+            skill.level || "Intermediate",
+            "Resume-backed",
+            skill.evidence || `Extracted and verified from primary resume (${skill.name}).`
+          );
+          existingNames.add(skill.name.toLowerCase());
+          addedCount++;
+        } catch (claimErr) {
+          console.warn("Could not insert skill claim:", claimErr);
+        }
+      }
     }
-  }
 
-  return addedCount;
+    return addedCount;
+  } catch (err) {
+    console.warn("syncExtractedSkillsToDb warning:", err);
+    return 0;
+  }
 }
 
 /**
@@ -511,29 +540,34 @@ export function syncExtractedEducationToDb(
 ): boolean {
   if (!educationList || educationList.length === 0) return false;
 
-  // Find college/university degree (preference for B.Tech, Degree vs High School)
-  const tertiaryEdu =
-    educationList.find((e) => /\b(university|institute|college)\b/i.test(e.institution) || /\b(b\.?tech|b\.?e\.?|degree|bachelor|master)\b/i.test(e.degree)) ||
-    educationList[0];
+  try {
+    // Find college/university degree (preference for B.Tech, Degree vs High School)
+    const tertiaryEdu =
+      educationList.find((e) => /\b(university|institute|college)\b/i.test(e.institution) || /\b(b\.?tech|b\.?e\.?|degree|bachelor|master)\b/i.test(e.degree)) ||
+      educationList[0];
 
-  if (!tertiaryEdu) return false;
+    if (!tertiaryEdu) return false;
 
-  const user = db.prepare("SELECT college, degree, graduation_year FROM users WHERE id = ?").get(userId) as any;
-  if (!user) return false;
+    const user = db.prepare("SELECT college, degree, graduation_year FROM users WHERE id = ?").get(userId) as any;
+    if (!user) return false;
 
-  const newCollege = user.college && user.college !== "University" ? user.college : tertiaryEdu.institution;
-  const newDegree = user.degree && user.degree !== "Computer Science" ? user.degree : tertiaryEdu.degree;
-  const newGradYear = user.graduation_year || tertiaryEdu.gradYear;
+    const newCollege = user.college && user.college !== "University" ? user.college : tertiaryEdu.institution;
+    const newDegree = user.degree && user.degree !== "Computer Science" ? user.degree : tertiaryEdu.degree;
+    const newGradYear = user.graduation_year || tertiaryEdu.gradYear;
 
-  db.prepare(`
-    UPDATE users SET
-      college = ?,
-      degree = ?,
-      graduation_year = COALESCE(?, graduation_year)
-    WHERE id = ?
-  `).run(newCollege, newDegree, newGradYear ? Number(newGradYear) : null, userId);
+    db.prepare(`
+      UPDATE users SET
+        college = ?,
+        degree = ?,
+        graduation_year = COALESCE(?, graduation_year)
+      WHERE id = ?
+    `).run(newCollege, newDegree, newGradYear ? Number(newGradYear) : null, userId);
 
-  return true;
+    return true;
+  } catch (err) {
+    console.warn("syncExtractedEducationToDb warning:", err);
+    return false;
+  }
 }
 
 /**
@@ -552,43 +586,52 @@ export function syncExtractedExperiencesToDb(
 ): number {
   if (!experiences || experiences.length === 0) return 0;
 
-  const existing = db.prepare("SELECT title, company FROM student_experiences WHERE user_id = ?").all(userId) as any[];
-  const existingKeys = new Set(existing.map((e: any) => `${e.title.toLowerCase()}__${e.company.toLowerCase()}`));
+  try {
+    const existing = db.prepare("SELECT title, company FROM student_experiences WHERE user_id = ?").all(userId) as any[];
+    const existingKeys = new Set(existing.map((e: any) => `${e.title.toLowerCase()}__${e.company.toLowerCase()}`));
 
-  const insertStmt = db.prepare(`
-    INSERT INTO student_experiences (
-      id, user_id, title, company, employment_type, location, is_remote, is_current, start_date, end_date, description, skills_used, proof_url, verified_status
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `);
+    const insertStmt = db.prepare(`
+      INSERT INTO student_experiences (
+        id, user_id, title, company, employment_type, location, is_remote, is_current, start_date, end_date, description, skills_used, proof_url, verified_status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
 
-  let added = 0;
-  for (const exp of experiences) {
-    const key = `${exp.title.toLowerCase()}__${exp.company.toLowerCase()}`;
-    if (!existingKeys.has(key)) {
-      const expId = `exp_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
-      const startDate = exp.duration || "Verified in Resume";
-      insertStmt.run(
-        expId,
-        userId,
-        exp.title,
-        exp.company,
-        exp.employment_type || "Internship",
-        "Document-verified",
-        0,
-        0,
-        startDate,
-        "Completed",
-        exp.description,
-        JSON.stringify([]),
-        "",
-        "Resume-Extracted"
-      );
-      existingKeys.add(key);
-      added++;
+    let added = 0;
+    for (const exp of experiences) {
+      const key = `${exp.title.toLowerCase()}__${exp.company.toLowerCase()}`;
+      if (!existingKeys.has(key)) {
+        const expId = `exp_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+        const startDate = exp.duration || "Verified in Resume";
+        try {
+          insertStmt.run(
+            expId,
+            userId,
+            exp.title,
+            exp.company,
+            exp.employment_type || "Internship",
+            "Document-verified",
+            0,
+            0,
+            startDate,
+            "Completed",
+            exp.description,
+            JSON.stringify([]),
+            "",
+            "Resume-Extracted"
+          );
+          existingKeys.add(key);
+          added++;
+        } catch (expErr) {
+          console.warn("Could not insert student experience:", expErr);
+        }
+      }
     }
-  }
 
-  return added;
+    return added;
+  } catch (err) {
+    console.warn("syncExtractedExperiencesToDb warning:", err);
+    return 0;
+  }
 }
 
 /**

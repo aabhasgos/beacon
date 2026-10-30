@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/db";
+import { getDb, ensureUserExists } from "@/lib/db";
 import { getGroqApiKey } from "@/lib/agent/groq";
 import { getCurrentUserFromRequest } from "@/lib/auth/session";
 import {
@@ -17,12 +17,7 @@ export async function POST(req: Request) {
     const db = getDb();
     const currentUser = getCurrentUserFromRequest(req);
     const userId = currentUser?.id || "usr_student_01";
-
-    // 1. Fetch user profile, certificates, and resumes
-    const user = db.prepare("SELECT * FROM users WHERE id = ?").get(userId) as any;
-    if (!user) {
-      return NextResponse.json({ error: "User profile not found." }, { status: 404 });
-    }
+    const user = ensureUserExists(db, userId, currentUser?.full_name, currentUser?.email);
 
     const profile = db.prepare("SELECT * FROM student_profiles WHERE user_id = ?").get(userId) as any;
     const certs = db.prepare("SELECT * FROM certificates WHERE user_id = ?").all(userId) as any[];
