@@ -42,7 +42,10 @@ export function getCurrentUserFromRequest(request?: Request): CurrentUser | null
 
     if (userId) {
       let user = db.prepare("SELECT * FROM users WHERE id = ?").get(userId) as any;
-      if (!user && (userId === "usr_student_01" || userId.startsWith("usr_student_"))) {
+      if (!user && (userId === "4f4a9a42-877b-4526-baef-c9ddc7638dee" || userId === "usr_student_01")) {
+        user = db.prepare("SELECT * FROM users WHERE id = 'usr_student_01' OR id = '4f4a9a42-877b-4526-baef-c9ddc7638dee' OR LOWER(email) = 'aabhasgos2@gmail.com'").get() as any;
+      }
+      if (!user) {
         user = ensureUserExists(db, userId);
       }
       if (user) {

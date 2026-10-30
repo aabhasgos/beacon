@@ -18,12 +18,14 @@ export default function AuthCallbackPage() {
         let userEmail: string | null = null;
         let userName: string | null = null;
         let userAvatar: string | null = null;
+        let userId: string | null = null;
 
         if (supabase) {
           // 1. Check current Supabase session
           const { data } = await supabase.auth.getSession();
           const sessionUser = data?.session?.user;
           if (sessionUser?.email) {
+            userId = sessionUser.id;
             userEmail = sessionUser.email;
             userName = sessionUser.user_metadata?.full_name || sessionUser.user_metadata?.name;
             userAvatar = sessionUser.user_metadata?.avatar_url || sessionUser.user_metadata?.picture;
@@ -38,6 +40,7 @@ export default function AuthCallbackPage() {
             try {
               const { data: { user } } = await supabase.auth.getUser(accessToken);
               if (user?.email) {
+                userId = user.id;
                 userEmail = user.email;
                 userName = user.user_metadata?.full_name || user.user_metadata?.name;
                 userAvatar = user.user_metadata?.avatar_url || user.user_metadata?.picture;
@@ -63,6 +66,7 @@ export default function AuthCallbackPage() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
+              id: userId,
               email: userEmail,
               name: userName || userEmail.split("@")[0].replace(/[._-]/g, " "),
               avatar: userAvatar,

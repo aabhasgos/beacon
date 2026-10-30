@@ -700,7 +700,7 @@ export default function OpportunitiesPage() {
                     <label className="block text-xs font-bold text-slate-800 mb-1">College / University</label>
                     <input
                       type="text"
-                      placeholder="e.g. NIT Kurukshetra, IIT, DTU"
+                      placeholder="e.g. Bennett University, IIT, BITS"
                       value={appCollege}
                       onChange={(e) => setAppCollege(e.target.value)}
                       className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-900 font-medium bg-white"

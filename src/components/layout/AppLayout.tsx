@@ -46,6 +46,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
+                  id: sessionUser.id,
                   email: sessionUser.email,
                   name: sessionUser.user_metadata?.full_name || sessionUser.user_metadata?.name || sessionUser.email.split("@")[0],
                   avatar: sessionUser.user_metadata?.avatar_url || sessionUser.user_metadata?.picture,

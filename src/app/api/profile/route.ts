@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import db, { ensureUserExists } from "@/lib/db";
 import { getCurrentUserFromRequest } from "@/lib/auth/session";
 import { extractResumeText } from "@/lib/parser/resumeExtractor";
+import { fetchAndSyncProfileFromSupabase, pushProfileToSupabase } from "@/lib/supabase/sync";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,14 @@ export async function GET(request: Request) {
   try {
     let user = getCurrentUserFromRequest(request);
     const userId = user?.id || "usr_student_01";
+
+    // 1. Durably fetch from Supabase Cloud if available
+    try {
+      await fetchAndSyncProfileFromSupabase(userId || user?.email || "aabhasgos2@gmail.com");
+    } catch (supaErr) {
+      console.warn("fetchAndSyncProfileFromSupabase warning:", supaErr);
+    }
+
     user = ensureUserExists(db, userId, user?.full_name, user?.email);
 
     let profile = db.prepare("SELECT * FROM student_profiles WHERE user_id = ?").get(userId) as any;
@@ -116,6 +125,31 @@ export async function PUT(request: Request) {
       isPublic !== undefined ? (isPublic ? 1 : 0) : null,
       userId
     );
+
+    // Durably sync changes to Supabase Cloud so edits survive serverless cold starts
+    try {
+      await pushProfileToSupabase({
+        id: userId,
+        email: user?.email || "aabhasgos2@gmail.com",
+        full_name: fullName || user?.full_name || "Aabhas Goswami",
+        headline,
+        bio,
+        location,
+        college,
+        degree,
+        graduation_year: graduationYear ? Number(graduationYear) : undefined,
+        cgpa: cgpa ? Number(cgpa) : undefined,
+        avatar_url: avatarUrl,
+        interests,
+        constraints,
+        github_url: githubUrl,
+        linkedin_url: linkedinUrl,
+        portfolio_url: portfolioUrl,
+        is_public: isPublic,
+      });
+    } catch (supaErr) {
+      console.warn("pushProfileToSupabase notice:", supaErr);
+    }
 
     const response = NextResponse.json({ success: true, message: "Profile updated successfully." });
     response.cookies.set("beacon_session", userId, {

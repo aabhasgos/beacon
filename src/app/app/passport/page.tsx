@@ -169,11 +169,13 @@ export default function PassportPage() {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
+                    id: sessionUser.id,
                     email: sessionUser.email,
                     name:
                       sessionUser.user_metadata?.full_name ||
                       sessionUser.user_metadata?.name ||
                       sessionUser.email.split("@")[0],
+                    avatar: sessionUser.user_metadata?.avatar_url || sessionUser.user_metadata?.picture,
                   }),
                 });
                 if (res.ok) {
@@ -2080,7 +2082,7 @@ export default function PassportPage() {
                     required
                     value={editCollege}
                     onChange={(e) => setEditCollege(e.target.value)}
-                    placeholder="e.g. NIT Kurukshetra, IIT, DTU"
+                    placeholder="e.g. Bennett University, IIT, BITS"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
                   />
                 </div>
@@ -2142,7 +2144,7 @@ export default function PassportPage() {
                     required
                     value={editLocation}
                     onChange={(e) => setEditLocation(e.target.value)}
-                    placeholder="e.g. Kurukshetra, India"
+                    placeholder="e.g. Greater Noida, Delhi NCR, India"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
                   />
                 </div>

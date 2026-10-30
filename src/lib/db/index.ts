@@ -437,6 +437,24 @@ export function initDatabase(db: Database.Database) {
     try { db.exec("ALTER TABLE learning_tasks ADD COLUMN task_type TEXT;"); } catch (e) {}
     try { db.exec("ALTER TABLE learning_tasks ADD COLUMN recruiter_impact TEXT;"); } catch (e) {}
 
+    // Auto-migrate any legacy Kurukshetra entries to Bennett University
+    try {
+      db.prepare(`
+        UPDATE users SET 
+          college = 'Bennett University (Times Group)',
+          degree = 'B.Tech Computer Science and Engineering',
+          location = 'Greater Noida / Delhi NCR',
+          email = CASE WHEN email = 'aabhas.goswami@nitk.edu.in' THEN 'aabhasgos2@gmail.com' ELSE email END
+        WHERE college LIKE '%Kurukshetra%' OR college LIKE '%NITK%' OR email = 'aabhas.goswami@nitk.edu.in'
+      `).run();
+      db.prepare(`
+        UPDATE cryptographic_credentials SET 
+          college = 'Bennett University (Times Group)',
+          degree = 'B.Tech Computer Science and Engineering'
+        WHERE college LIKE '%Kurukshetra%' OR college LIKE '%NITK%'
+      `).run();
+    } catch (migErr) {}
+
     seedInitialData(db);
   } catch (e) {
     // ignore
@@ -454,12 +472,16 @@ export function ensureUserExists(
   fallbackEmail?: string
 ) {
   if (!userId) userId = "usr_student_01";
+  const isAabhas = userId === "usr_student_01" || userId === "4f4a9a42-877b-4526-baef-c9ddc7638dee" || fallbackEmail?.toLowerCase() === "aabhasgos2@gmail.com";
+
   let user = database.prepare("SELECT * FROM users WHERE id = ?").get(userId) as any;
+  if (!user && isAabhas) {
+    user = database.prepare("SELECT * FROM users WHERE id = 'usr_student_01' OR id = '4f4a9a42-877b-4526-baef-c9ddc7638dee' OR LOWER(email) = 'aabhasgos2@gmail.com'").get() as any;
+  }
 
   if (!user) {
-    const isStudent01 = userId === "usr_student_01";
-    const name = fallbackName || (isStudent01 ? "Aabhas Goswami" : "Engineering Student");
-    const email = fallbackEmail || (isStudent01 ? "aabhas.goswami@nitk.edu.in" : `${userId.toLowerCase().replace(/[^a-z0-9_]/g, "")}@beacon.dev`);
+    const name = fallbackName || (isAabhas ? "Aabhas Goswami" : "Engineering Student");
+    const email = fallbackEmail || (isAabhas ? "aabhasgos2@gmail.com" : `${userId.toLowerCase().replace(/[^a-z0-9_]/g, "")}@beacon.dev`);
 
     try {
       database.prepare(`
@@ -468,14 +490,14 @@ export function ensureUserExists(
         ) VALUES (
           ?, ?, 'password123', ?, 'student',
           'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-          'Pre-final Year Robotics & Machine Learning | Full Stack & AI Systems',
+          'Pre-final Year B.Tech CSE @ Bennett University | AI & Systems Engineer',
           'Undergraduate engineer focused on high-throughput distributed systems, real-time computer vision inference, and verified developer tooling.',
-          'Kurukshetra / Delhi NCR',
+          'Greater Noida / Delhi NCR',
           'Undergraduate',
-          'National Institute of Technology Kurukshetra (NITK)',
-          'B.Tech Robotics & Machine Learning',
+          'Bennett University (Times Group)',
+          'B.Tech Computer Science and Engineering',
           2027,
-          8.92
+          8.8
         )
       `).run(userId, email, name);
     } catch (e) {
@@ -484,11 +506,28 @@ export function ensureUserExists(
         database.prepare(`
           INSERT OR IGNORE INTO users (
             id, email, password, full_name, role, avatar_url, headline, bio, location, education_stage, college, degree, graduation_year, cgpa
-          ) VALUES (?, ?, 'password123', ?, 'student', null, 'Engineering Student', '', 'India', 'Undergraduate', 'National Institute of Technology Kurukshetra (NITK)', 'B.Tech Computer Science & Engineering', 2027, 8.85)
+          ) VALUES (?, ?, 'password123', ?, 'student', null, 'Pre-final Year B.Tech CSE @ Bennett University', '', 'Greater Noida / Delhi NCR', 'Undergraduate', 'Bennett University (Times Group)', 'B.Tech Computer Science and Engineering', 2027, 8.8)
         `).run(userId, uniqueEmail, name);
       } catch (err2) {}
     }
     user = database.prepare("SELECT * FROM users WHERE id = ?").get(userId);
+  }
+
+  // Auto-correct any legacy or missing institutional info for Aabhas
+  if (user && isAabhas) {
+    if (!user.college || user.college.includes("Kurukshetra") || user.college.includes("NITK") || user.email === "aabhas.goswami@nitk.edu.in") {
+      try {
+        database.prepare(`
+          UPDATE users SET 
+            college = 'Bennett University (Times Group)',
+            degree = 'B.Tech Computer Science and Engineering',
+            location = 'Greater Noida / Delhi NCR',
+            email = 'aabhasgos2@gmail.com'
+          WHERE id = ?
+        `).run(user.id);
+        user = database.prepare("SELECT * FROM users WHERE id = ?").get(user.id);
+      } catch (err) {}
+    }
   }
 
   // Ensure student profile exists for this user
@@ -513,7 +552,7 @@ export function ensureUserExists(
 function seedInitialData(db: Database.Database) {
   try {
     // 0. Ensure Canonical Student User (usr_student_01) exists FIRST before any foreign key references it
-    ensureUserExists(db, "usr_student_01", "Aabhas Goswami", "aabhas.goswami@nitk.edu.in");
+    ensureUserExists(db, "usr_student_01", "Aabhas Goswami", "aabhasgos2@gmail.com");
 
     // Ensure Master Administrator exists
     const adminUser = db.prepare("SELECT id FROM users WHERE role = 'admin' LIMIT 1").get();
@@ -1144,15 +1183,15 @@ function seedInitialData(db: Database.Database) {
           id, credential_hash, user_id, user_name, college, degree, artifact_type, artifact_id, artifact_title, artifact_url, rubric_score, signature, issuer, issued_at
         ) VALUES 
         (
-          'cred_init_01', 'BCN-POW-8E4A-91C2', 'usr_student_01', 'Aabhas Goswami', 'National Institute of Technology Kurukshetra (NITK)',
-          'B.Tech Robotics & Machine Learning', 'Project Codebase', 'proj_01', 'Autonomous Edge Telemetry & High-Throughput Stream Processor',
+          'cred_init_01', 'BCN-POW-8E4A-91C2', 'usr_student_01', 'Aabhas Goswami', 'Bennett University (Times Group)',
+          'B.Tech Computer Science and Engineering', 'Project Codebase', 'proj_01', 'Autonomous Edge Telemetry & High-Throughput Stream Processor',
           'https://github.com/aabhas/edge-telemetry-engine', 94.5,
           'a89fbc01d9238e4a91c2b57e9301daec72109841bbcefa0143892019ab76ef02',
           'Beacon Proof-of-Work Protocol (SHA-256 HMAC Verified)', '2026-10-25T14:30:00Z'
         ),
         (
-          'cred_init_02', 'BCN-POW-4F1D-77B0', 'usr_student_01', 'Aabhas Goswami', 'National Institute of Technology Kurukshetra (NITK)',
-          'B.Tech Robotics & Machine Learning', 'Project Codebase', 'proj_02', 'Distributed Append-Only Consensus Ledger in Go & Raft',
+          'cred_init_02', 'BCN-POW-4F1D-77B0', 'usr_student_01', 'Aabhas Goswami', 'Bennett University (Times Group)',
+          'B.Tech Computer Science and Engineering', 'Project Codebase', 'proj_02', 'Distributed Append-Only Consensus Ledger in Go & Raft',
           'https://github.com/aabhas/distributed-consensus-ledger', 91.0,
           '58e41a9bc74f1d77b029a109ecf80214deba7011984210ab721980314bcfe019',
           'Beacon Proof-of-Work Protocol (SHA-256 HMAC Verified)', '2026-10-26T09:15:00Z'

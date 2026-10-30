@@ -317,7 +317,7 @@ export default function RegisterProfilePage() {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. NIT Kurukshetra, IIT, DTU"
+                      placeholder="e.g. Bennett University, IIT, BITS"
                       value={college}
                       onChange={(e) => setCollege(e.target.value)}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-colors"
